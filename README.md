@@ -1,48 +1,184 @@
-# cmu_fondue
+# 🧀 CMU Fondue – Clean Architecture Overview
 
-1. The Core Layers
-Your structure follows a three-layer pattern: Domain, Data, and Application.
+This project follows a **Clean Architecture–inspired structure** to keep the codebase scalable, testable, and easy to maintain. The architecture is divided into **three main layers**: **Domain**, **Data**, and **Application**.
 
-🏛️ Domain Layer (The Heart)
-This layer is independent of any other layer. It contains the business logic.
+---
 
-Entities: Simple classes representing your core data (e.g., a Pokemon class).
+## 🧱 1. Core Layers
 
-Repositories (Abstract): Interfaces that define what the data layer should do, without saying how it does it.
+### 🏛️ Domain Layer (The Heart)
 
-Usecases: Specific business rules (e.g., GetPokemonList).
+The **Domain layer** is the most important part of the application. It is completely independent from UI frameworks, databases, or external libraries.
 
-Note: In your screenshot, theme_selector_model.dart is inside usecases. Usually, models related to UI state belong in application, while usecases should be command-like classes (e.g., FetchPokemon).
+**Responsibilities**
 
-💾 Data Layer (The Infrastructure)
-This layer is responsible for fetching data from the internet or a local database.
+* Contains **business logic** and rules
+* Defines **what** the app can do, not **how** it does it
 
-Repositories Implementation (_impl): This is where you actually write the code to call an API (like using http or dio) and return the data defined by the Domain's interface.
+**Components**
 
-📱 Application Layer (The UI)
-This layer is what the user sees and interacts with.
+* **Entities**
+  Simple Dart classes that represent core data (e.g., `PokemonEntity`).
 
-Pages: The full screens of your app.
+* **Repositories (Abstract)**
+  Interfaces that define data operations without implementation details.
 
-Widgets: Small, reusable components (buttons, list tiles).
+* **Use Cases**
+  Command-like classes that represent specific business actions (e.g., `GetPokemonList`).
 
-2. Implementation Workflow
-To build a feature (like a Pokemon List) using this structure, follow this order:
+> ⚠️ **Note**
+> Models related to **UI state** (such as `theme_selector_model.dart`) should belong to the **Application layer**, not the Domain layer. Use cases should focus only on business behavior.
 
-Step A: Define the Domain
-Create the Entity: Write pokemon_entity.dart with basic properties (id, name, imageUrl).
+---
 
-Create the Repository Interface: Define an abstract class in pokemon_repo.dart.
+### 💾 Data Layer (The Infrastructure)
 
-Dart
+The **Data layer** is responsible for handling external data sources such as APIs or local storage.
 
+**Responsibilities**
+
+* Fetch data from APIs or databases
+* Convert raw data (JSON) into domain entities
+
+**Components**
+
+* **Repository Implementations (`_impl`)**
+  Concrete classes that implement domain repository interfaces.
+
+* **Remote / Local Data Sources**
+  Uses libraries like `http` or `dio` to retrieve data.
+
+This layer depends on the **Domain layer**, but never on the UI.
+
+---
+
+### 📱 Application Layer (The UI)
+
+The **Application layer** is where users interact with the app.
+
+**Responsibilities**
+
+* Display data to the user
+* Handle user interactions
+* Manage UI state
+
+**Components**
+
+* **Pages**
+  Full screens (e.g., `PokemonPage`).
+
+* **Widgets**
+  Reusable UI components (buttons, cards, list items).
+
+This layer depends on **Domain use cases** to perform actions.
+
+---
+
+## 🔄 2. Implementation Workflow
+
+To build a feature (for example, **Pokemon List**), follow these steps:
+
+---
+
+### 🅰️ Step A: Define the Domain
+
+#### 1️⃣ Create the Entity
+
+```dart
+class PokemonEntity {
+  final int id;
+  final String name;
+  final String imageUrl;
+
+  PokemonEntity({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+  });
+}
+```
+
+#### 2️⃣ Create the Repository Interface
+
+```dart
 abstract class PokemonRepository {
   Future<List<PokemonEntity>> getPokemons();
 }
-Step B: Implement the Data Layer
-Create the Implementation: In pokemon_repo_impl.dart, extend the domain repository. This is where you'd use a package like http to fetch JSON and convert it into your entities.
+```
 
-Step C: Build the UI
-Create the Widget: Build a PokemonIconWidget to show a single Pokemon.
+---
 
-Create the Page: In pokemon_page.dart, use a ListView (calling your pokemon_list.dart widget) to display the data.
+### 🅱️ Step B: Implement the Data Layer
+
+Create a repository implementation that connects to an API and returns domain entities.
+
+```dart
+class PokemonRepositoryImpl implements PokemonRepository {
+  @override
+  Future<List<PokemonEntity>> getPokemons() async {
+    // Call API using http or dio
+    // Parse JSON
+    // Map to PokemonEntity
+  }
+}
+```
+
+---
+
+### 🅲 Step C: Build the UI
+
+#### 🎨 Create a Widget
+
+A reusable widget to display a single Pokémon.
+
+```dart
+class PokemonIconWidget extends StatelessWidget {
+  final PokemonEntity pokemon;
+
+  const PokemonIconWidget({required this.pokemon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Image.network(pokemon.imageUrl),
+        Text(pokemon.name),
+      ],
+    );
+  }
+}
+```
+
+#### 📄 Create a Page
+
+Use a `ListView` to display Pokémon data.
+
+```dart
+class PokemonPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pokémon List')),
+      body: ListView.builder(
+        itemCount: pokemons.length,
+        itemBuilder: (context, index) {
+          return PokemonIconWidget(pokemon: pokemons[index]);
+        },
+      ),
+    );
+  }
+}
+```
+
+---
+
+## ✅ Benefits of This Architecture
+
+* Clear separation of concerns
+* Easy to test business logic
+* Scales well for large applications
+* UI can change without affecting core logic
+
+---
+
+✨ *This structure keeps CMU Fondue clean, maintainable, and future-proof.*
