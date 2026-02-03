@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349476512174",
+    "project_id": "cmu-fondue",
+    "storage_bucket": "cmu-fondue.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349476512174:android:b0bc779b537127ee52283f",
+        "android_client_info": {
+          "package_name": "com.example.cmu_fondue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGw7KU5YjWdJjUbCOONyPvlcEBl5X7fik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

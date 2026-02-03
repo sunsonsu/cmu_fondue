@@ -1,0 +1,64 @@
+type Users @table(key: "userId") {
+  userId: UUID! @default(expr: "auth.uid")
+  email: String! @col(dataType: "varchar(255)") @unique
+  password: String!
+  isAdmin: Boolean! @default(expr: "false")
+}
+
+type Problems @table(key: "problemId") {
+  problemId: UUID! @default(expr: "uuidV4()")
+  reporter: Users! @ref(fields: "reporterId", references: "userId")
+  reporterId: UUID!
+  title: String! @col(dataType: "varchar(50)")
+  detail: String! @col(dataType: "varchar(255)")
+  problemType: ProblemTypes! @ref(fields: "problemTypeId", references: "problemTypeId")
+  problemTypeId: UUID!
+  currentTags: ProblemTag! @ref(fields: "currentTagId", references: "problemTagId")
+  currentTagId: UUID!
+  createdAt: Timestamp! @default(expr: "request.time")
+  problemLat: Float!
+  problemLng: Float!
+  upvoteCount: Int! @default(value: 0)
+}
+
+type ProblemImages @table(key: "problemImageId") {
+  problemImageId: UUID! @default(expr: "uuidV4()")
+  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problemId: UUID!
+  imageUrl: String!
+  fileName: String! @col(dataType: "varchar(255)")
+  imageType: String! @col(dataType: "varchar(10)")
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type ProblemTypes @table(key: "problemTypeId") {
+  problemTypeId: UUID! @default(expr: "uuidV4()")
+  typeName: String! @col(dataType: "varchar(25)") @unique
+  typeThaiName: String! @col(dataType: "varchar(25)") @unique
+}
+
+type ProblemTag @table(key: "problemTagId") {
+  problemTagId: UUID! @default(expr: "uuidV4()")
+  tagName: String! @col(dataType: "varchar(25)") @unique
+  tagThaiName: String! @col(dataType: "varchar(25)") @unique
+}
+
+type UserUpvotes @table(key: ["userId", "problemId"]) {
+  user: Users! @ref(fields: "userId", references: "userId")
+  userId: UUID!
+  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problemId: UUID!
+}
+
+type AdminActionLogs @table(key: "adminActionLogId") {
+  adminActionLogId: UUID! @default(expr: "uuidV4()")
+  admin: Users! @ref(fields: "adminId", references: "userId")
+  adminId: UUID!
+  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problemId: UUID!
+  oldTag: ProblemTag! @ref(fields: "oldTagId", references: "problemTagId")
+  oldTagId: UUID!
+  newTag: ProblemTag! @ref(fields: "newTagId", references: "problemTagId")
+  newTagId: UUID!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
