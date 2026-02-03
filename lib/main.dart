@@ -4,7 +4,7 @@ import 'package:cmu_fondue/application/pages/pokemon_page.dart';
 import 'package:cmu_fondue/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dataconnect_generated/generated.dart';
+import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
