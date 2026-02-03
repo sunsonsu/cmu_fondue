@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/dataconnect_generated/generated.dart';
+import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/material.dart';
 
