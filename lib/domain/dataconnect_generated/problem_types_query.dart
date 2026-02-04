@@ -17,10 +17,10 @@ class ProblemTypesQueryVariablesBuilder {
 }
 
 @immutable
-class ProblemTypesQueryProblemTypess {
+class ProblemTypesQueryProblemTypes {
   final String typeName;
   final String typeThaiName;
-  ProblemTypesQueryProblemTypess.fromJson(dynamic json):
+  ProblemTypesQueryProblemTypes.fromJson(dynamic json):
   
   typeName = nativeFromJson<String>(json['typeName']),
   typeThaiName = nativeFromJson<String>(json['typeThaiName']);
@@ -33,7 +33,7 @@ class ProblemTypesQueryProblemTypess {
       return false;
     }
 
-    final ProblemTypesQueryProblemTypess otherTyped = other as ProblemTypesQueryProblemTypess;
+    final ProblemTypesQueryProblemTypes otherTyped = other as ProblemTypesQueryProblemTypes;
     return typeName == otherTyped.typeName && 
     typeThaiName == otherTyped.typeThaiName;
     
@@ -49,7 +49,7 @@ class ProblemTypesQueryProblemTypess {
     return json;
   }
 
-  ProblemTypesQueryProblemTypess({
+  ProblemTypesQueryProblemTypes({
     required this.typeName,
     required this.typeThaiName,
   });
@@ -57,11 +57,11 @@ class ProblemTypesQueryProblemTypess {
 
 @immutable
 class ProblemTypesQueryData {
-  final List<ProblemTypesQueryProblemTypess> problemTypess;
+  final List<ProblemTypesQueryProblemTypes> problemTypes;
   ProblemTypesQueryData.fromJson(dynamic json):
   
-  problemTypess = (json['problemTypess'] as List<dynamic>)
-        .map((e) => ProblemTypesQueryProblemTypess.fromJson(e))
+  problemTypes = (json['problemTypes'] as List<dynamic>)
+        .map((e) => ProblemTypesQueryProblemTypes.fromJson(e))
         .toList();
   @override
   bool operator ==(Object other) {
@@ -73,21 +73,21 @@ class ProblemTypesQueryData {
     }
 
     final ProblemTypesQueryData otherTyped = other as ProblemTypesQueryData;
-    return problemTypess == otherTyped.problemTypess;
+    return problemTypes == otherTyped.problemTypes;
     
   }
   @override
-  int get hashCode => problemTypess.hashCode;
+  int get hashCode => problemTypes.hashCode;
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['problemTypess'] = problemTypess.map((e) => e.toJson()).toList();
+    json['problemTypes'] = problemTypes.map((e) => e.toJson()).toList();
     return json;
   }
 
   ProblemTypesQueryData({
-    required this.problemTypess,
+    required this.problemTypes,
   });
 }
 

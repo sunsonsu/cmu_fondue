@@ -24,7 +24,7 @@ class DataConnectTestQueryPage extends StatelessWidget {
             return const Center(child: Text('No data available'));
           }
 
-          final problemTypes = snapshot.data!.data.problemTypess;
+          final problemTypes = snapshot.data!.data.problemTypes;
 
           if (problemTypes.isEmpty) {
             return const Center(child: Text('No problem types found'));

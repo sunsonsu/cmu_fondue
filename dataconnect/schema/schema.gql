@@ -1,17 +1,17 @@
-type Users @table(key: "userId") {
+type User @table(key: "userId") {
   userId: UUID! @default(expr: "auth.uid")
   email: String! @col(dataType: "varchar(255)") @unique
   password: String!
   isAdmin: Boolean! @default(expr: "false")
 }
 
-type Problems @table(key: "problemId") {
+type Problem @table(key: "problemId") {
   problemId: UUID! @default(expr: "uuidV4()")
-  reporter: Users! @ref(fields: "reporterId", references: "userId")
+  reporter: User! @ref(fields: "reporterId", references: "userId")
   reporterId: UUID!
   title: String! @col(dataType: "varchar(50)")
   detail: String! @col(dataType: "varchar(255)")
-  problemType: ProblemTypes! @ref(fields: "problemTypeId", references: "problemTypeId")
+  problemType: ProblemType! @ref(fields: "problemTypeId", references: "problemTypeId")
   problemTypeId: UUID!
   currentTags: ProblemTag! @ref(fields: "currentTagId", references: "problemTagId")
   currentTagId: UUID!
@@ -21,9 +21,9 @@ type Problems @table(key: "problemId") {
   upvoteCount: Int! @default(value: 0)
 }
 
-type ProblemImages @table(key: "problemImageId") {
+type ProblemImage @table(key: "problemImageId") {
   problemImageId: UUID! @default(expr: "uuidV4()")
-  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problem: Problem! @ref(fields: "problemId", references: "problemId")
   problemId: UUID!
   imageUrl: String!
   fileName: String! @col(dataType: "varchar(255)")
@@ -31,7 +31,7 @@ type ProblemImages @table(key: "problemImageId") {
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type ProblemTypes @table(key: "problemTypeId") {
+type ProblemType @table(key: "problemTypeId") {
   problemTypeId: UUID! @default(expr: "uuidV4()")
   typeName: String! @col(dataType: "varchar(25)") @unique
   typeThaiName: String! @col(dataType: "varchar(25)") @unique
@@ -43,18 +43,18 @@ type ProblemTag @table(key: "problemTagId") {
   tagThaiName: String! @col(dataType: "varchar(25)") @unique
 }
 
-type UserUpvotes @table(key: ["userId", "problemId"]) {
-  user: Users! @ref(fields: "userId", references: "userId")
+type UserUpvote @table(key: ["userId", "problemId"]) {
+  user: User! @ref(fields: "userId", references: "userId")
   userId: UUID!
-  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problem: Problem! @ref(fields: "problemId", references: "problemId")
   problemId: UUID!
 }
 
-type AdminActionLogs @table(key: "adminActionLogId") {
+type AdminActionLog @table(key: "adminActionLogId") {
   adminActionLogId: UUID! @default(expr: "uuidV4()")
-  admin: Users! @ref(fields: "adminId", references: "userId")
+  admin: User! @ref(fields: "adminId", references: "userId")
   adminId: UUID!
-  problem: Problems! @ref(fields: "problemId", references: "problemId")
+  problem: Problem! @ref(fields: "problemId", references: "problemId")
   problemId: UUID!
   oldTag: ProblemTag! @ref(fields: "oldTagId", references: "problemTagId")
   oldTagId: UUID!
