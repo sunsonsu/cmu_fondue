@@ -1,7 +1,6 @@
 type User @table(key: "userId") {
   userId: UUID! @default(expr: "auth.uid")
   email: String! @col(dataType: "varchar(255)") @unique
-  password: String!
   isAdmin: Boolean! @default(expr: "false")
 }
 
