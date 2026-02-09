@@ -1,3 +1,4 @@
+import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,6 @@ import 'package:cmu_fondue/domain/usecases/login.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
 
 // import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
-import 'package:cmu_fondue/application/pages/login_page.dart';
 import 'package:cmu_fondue/application/pages/pokemon_page.dart';
 
 void main() async {
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
           final authRepository = AuthRepositoryImpl(authDataSource);
 
-          return LoginPage(
+          return AuthPage(
             loginUseCase: LoginUseCase(authRepository),
             registerUseCase: RegisterUseCase(authRepository),
           );
