@@ -12,9 +12,10 @@ import 'package:cmu_fondue/data/repositories/auth_repo_impl.dart';
 import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 import 'package:cmu_fondue/domain/usecases/login.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
+import 'package:cmu_fondue/application/pages/app_page.dart';
+import 'package:cmu_fondue/application/theme/app_theme.dart';
 
 // import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
-import 'package:cmu_fondue/application/pages/pokemon_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,15 +38,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'CMU Fondue',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (_, snapshot) {
           if (snapshot.hasData) {
-            return const PokemonPage();
+            return const HomePage();
           }
 
           final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
