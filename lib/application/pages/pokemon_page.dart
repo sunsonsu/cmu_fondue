@@ -2,6 +2,7 @@ import 'package:cmu_fondue/application/widgets/pokemon_list.dart';
 import 'package:cmu_fondue/data/repositories/pokemon_repo_impl.dart';
 import 'package:cmu_fondue/domain/entities/pokemon_entity.dart';
 import 'package:cmu_fondue/domain/usecases/get_pokemon_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PokemonPage extends StatefulWidget {
@@ -34,12 +35,50 @@ class _PokemonPageState extends State<PokemonPage> {
     });
   }
 
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      // แค่สั่ง Sign Out อย่างเดียวพอ
+      await FirebaseAuth.instance.signOut();
+
+      // ไม่ต้องมี Navigator...
+      // StreamBuilder ใน main.dart จะทำงานและพาผู้ใช้กลับหน้า Login เอง
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Pokedex Sample')),
+      endDrawer: Drawer(
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: const Text("Pokemon Trainer"),
+              accountEmail: Text(
+                FirebaseAuth.instance.currentUser?.email ?? "Guest",
+              ),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, size: 40),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                // ปิด Drawer ก่อน (เพื่อความสวยงาม)
+                Navigator.pop(context);
+                // เรียกฟังก์ชัน SignOut
+                _signOut(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: FutureBuilder<List<PokemonInfo>>(
         future: _pokemonFuture,
         builder: (context, snapshot) {

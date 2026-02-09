@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
             return const PokemonPage();
           }
 
-          final authDataSource = FirebaseAuthDataSource();
-          final authRepository = AuthRepoImpl(authDataSource);
+          final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
+          final authRepository = AuthRepositoryImpl(authDataSource);
 
           return LoginPage(
             loginUseCase: LoginUseCase(authRepository),
