@@ -1,3 +1,8 @@
+# As this file is for query operation of dataconnect.
+# So it have more than one writer in this file.
+# The writer of query would be annoted before the query.
+
+# Apivit Suppaluk
 query ProblemTypesQuery @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
   problemTypes {
     typeName
