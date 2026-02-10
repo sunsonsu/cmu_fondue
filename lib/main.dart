@@ -1,3 +1,4 @@
+import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,6 @@ import 'package:cmu_fondue/application/pages/app_page.dart';
 import 'package:cmu_fondue/application/theme/app_theme.dart';
 
 // import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
-import 'package:cmu_fondue/application/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,10 +46,10 @@ class MyApp extends StatelessWidget {
             return const HomePage();
           }
 
-          final authDataSource = FirebaseAuthDataSource();
-          final authRepository = AuthRepoImpl(authDataSource);
+          final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
+          final authRepository = AuthRepositoryImpl(authDataSource);
 
-          return LoginPage(
+          return AuthPage(
             loginUseCase: LoginUseCase(authRepository),
             registerUseCase: RegisterUseCase(authRepository),
           );
