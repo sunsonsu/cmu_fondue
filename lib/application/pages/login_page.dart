@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/application/pages/pokemon_page.dart';
+import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
 import 'package:cmu_fondue/domain/usecases/login.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
 import 'package:flutter/gestures.dart';
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PokemonPage(),
+                        builder: (context) => CreateProblemPage(),
                       ),
                     ),
                     style: ButtonStyle(
