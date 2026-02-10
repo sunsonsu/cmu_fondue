@@ -1,0 +1,11 @@
+mutation insertProblemType($name: String!, $description: String!) @auth(level: PUBLIC) {
+  problemType_insert(
+    data: {typeName: $name, typeThaiName: $description}
+  )
+}
+
+mutation insertUser($email: String!, $isAdmin: Boolean!) @auth(level: USER) {
+  user_insert(
+    data: {email: $email, isAdmin: $isAdmin}
+  )
+}

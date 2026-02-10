@@ -1,6 +1,3 @@
-
-# This is a file for you to write an un-named query.
-# Only one un-named query is allowed per file.
 query ProblemTypesQuery @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
   problemTypes {
     typeName

@@ -21,13 +21,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
-    // 10.0.2.2 is the 'localhost' for Android Emulators
-    // 127.0.0.1 or localhost works for iOS/Web
     String host = defaultTargetPlatform == TargetPlatform.android
         ? '10.0.2.2'
         : 'localhost';
+
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
   }
+
   runApp(const MyApp());
 }
 
@@ -47,7 +47,10 @@ class MyApp extends StatelessWidget {
           }
 
           final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
-          final authRepository = AuthRepositoryImpl(authDataSource);
+          final authRepository = AuthRepositoryImpl(
+            authDataSource,
+            ConnectorConnector.instance,
+          );
 
           return AuthPage(
             loginUseCase: LoginUseCase(authRepository),
