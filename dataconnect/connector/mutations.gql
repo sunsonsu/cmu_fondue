@@ -1,0 +1,45 @@
+mutation CreateProblem(
+  $title: String!, 
+  $detail: String!, 
+  $lat: Float!, 
+  $lng: Float!,
+  $reporterId: UUID!,
+  $typeId: UUID!,
+  $tagId: UUID!
+) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
+  problem_insert(data: {
+    title: $title,
+    detail: $detail,
+    problemLat: $lat,
+    problemLng: $lng,
+    reporterId: $reporterId,
+    problemTypeId: $typeId,
+    currentTagId: $tagId
+  })
+}
+
+mutation UpdateProblem(
+  $id: UUID!,
+  $title: String!, 
+  $detail: String!, 
+  $lat: Float!, 
+  $lng: Float!,
+  $typeId: UUID!,
+  $tagId: UUID!
+) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
+  problem_update(
+    key: { problemId: $id }, 
+    data: {
+      title: $title,
+      detail: $detail,
+      problemLat: $lat,
+      problemLng: $lng,
+      problemTypeId: $typeId,
+      currentTagId: $tagId
+    }
+  )
+}
+
+mutation DeleteProblem($id: UUID!) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
+  problem_delete(key: { problemId: $id })
+}
