@@ -30,5 +30,11 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> logout() {
     return dataSource.logout();
   }
+
+  @override
+  UserEntity? get currentUser {
+    final user = dataSource.currentUser; // ดึงมาจาก FirebaseDataSource
+    return user != null ? UserEntity.fromFirebase(user) : null;
+  }
 }
 

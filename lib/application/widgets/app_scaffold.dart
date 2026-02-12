@@ -51,6 +51,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                 isCenter: true,
               ),
               _buildNavItem(icon: Icons.history, label: 'History', index: 2),
+              _buildNavItem(icon: Icons.person, label: 'Profile', index: 3),
             ],
           ),
         ),
