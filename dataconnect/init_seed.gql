@@ -1,0 +1,74 @@
+# This file is used to seed initial data into the database for testing and development purposes.
+
+mutation SeedInitialData @auth(level: PUBLIC) {
+  # ใช้ _upsert แทน _insert เพื่อป้องกัน Error "ALREADY_EXISTS"
+  
+  # 1. สร้าง/อัปเดต User ตัวอย่าง
+  user_upsert(
+    data: {
+      userId: "11111111-2222-3333-4444-555555555555"
+      email: "admin_test@cmu.ac.th"
+      isAdmin: true
+    }
+  )
+
+  # 2. สร้าง/อัปเดตประเภทปัญหา (ProblemTypes)
+  type1: problemType_upsert(
+    data: {
+      problemTypeId: "22222222-3333-4444-5555-666666666666"
+      typeName: "Garbage"
+      typeThaiName: "ขยะ"
+    }
+  )
+  type2: problemType_upsert(
+    data: {
+      problemTypeId: "33333333-4444-5555-6666-777777777777"
+      typeName: "Electricity"
+      typeThaiName: "ไฟฟ้า/แสงสว่าง"
+    }
+  )
+  type3: problemType_upsert(
+    data: {
+      problemTypeId: "44444444-5555-6666-7777-888888888888"
+      typeName: "Roads"
+      typeThaiName: "ถนน/ทางเท้า"
+    }
+  )
+  type4: problemType_upsert(
+    data: {
+      problemTypeId: "d5f1c828-39c2-4145-93c4-bb4ccea3da62"
+      typeName: "Others"
+      typeThaiName: "อื่นๆ"
+    }
+  )
+
+  # 3. สร้าง/อัปเดตสถานะปัญหา (ProblemTags)
+  tag1: problemTag_upsert(
+    data: {
+      problemTagId: "d74d3f00-e2fb-4b71-9d06-1f4b336c56b7"
+      tagName: "Received Report"
+      tagThaiName: "รับเรื่องแล้ว"
+    }
+  )
+  tag2: problemTag_upsert(
+    data: {
+      problemTagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8"
+      tagName: "Pending"
+      tagThaiName: "ยังไม่ได้แก้ไข"
+    }
+  )
+  tag3: problemTag_upsert(
+    data: {
+      problemTagId: "619a08f6-ee74-4b2b-870e-b35c951c8ef9"
+      tagName: "In Progress"
+      tagThaiName: "กำลังแก้ไข"
+    }
+  )
+  tag4: problemTag_upsert(
+    data: {
+      problemTagId: "f306d165-b7f8-422e-b509-571eea11e99b"
+      tagName: "Completed"
+      tagThaiName: "เสร็จสิ้น"
+    }
+  )
+}
