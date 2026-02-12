@@ -1,3 +1,5 @@
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/application/pages/create_report_page.dart';
@@ -10,74 +12,7 @@ class AssignedProblemsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Mock data - ปัญหาที่เคยถูกแจ้ง
-    final mockProblems = [
-      {
-        'title': 'แอร์ห้องเรียน 301 เสีย ร้อนมาก',
-        'status': 'รับเรื่องแล้ว',
-        'type': 'ไฟฟ้า',
-        'reportedDate': '20/01/2568',
-        'location': location,
-        'description':
-            'แอร์ในห้องเรียน 301 อาคาร Computer Science เสียมา 2 สัปดาห์แล้ว นักศึกษาเรียนลำบากมาก ร้อนจนไม่สามารถเรียนได้',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1631545775396-496e0b152bd6?w=400',
-      },
-      {
-        'title': 'ห้องน้ำชั้น 2 ท่อน้ำรั่ว น้ำขังเยอะ',
-        'status': 'กำลังแก้ไข',
-        'type': 'อื่นๆ',
-        'reportedDate': '18/01/2568',
-        'location': location,
-        'description':
-            'ห้องน้ำหญิงชั้น 2 มีน้ำรั่วจากท่อ ทำให้พื้นเปียกลื่นตลอดเวลา อาจเสี่ยงต่อการลื่นล้ม',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400',
-      },
-      {
-        'title': 'ไฟฟ้าดับบ่อยในห้อง Lab คอมพิวเตอร์',
-        'status': 'ยังไม่ได้แก้ไข',
-        'type': 'ไฟฟ้า',
-        'reportedDate': '15/01/2568',
-        'location': location,
-        'description':
-            'ไฟฟ้าในห้อง Lab 401 ดับบ่อยครั้ง โดยเฉพาะช่วงบ่าย ทำให้การเรียนการสอนไม่ต่อเนื่อง',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400',
-      },
-      {
-        'title': 'ประตูทางเข้าอาคารชำรุด ปิดไม่สนิท',
-        'status': 'รับเรื่องแล้ว',
-        'type': 'อื่นๆ',
-        'reportedDate': '12/01/2568',
-        'location': location,
-        'description':
-            'ประตูกระจกทางเข้าด้านหน้าอาคารชำรุด ปิดไม่สนิท ทำให้ฝนสาดเข้ามาในอาคาร',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1519666213631-80f8c5ca84d3?w=400',
-      },
-      {
-        'title': 'แอร์ไม่ติดบ่อย และมีเสียงดังผิดปกติ',
-        'status': 'กำลังแก้ไข',
-        'type': 'อื่นๆ',
-        'reportedDate': '10/01/2568',
-        'location': location,
-        'description':
-            'แอร์อาคาร Computer Science ไม่ติดบ่อยครั้ง และมีเสียงดังผิดปกติ อาจเสี่ยงอันตราย',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1600543992453-e0a2b4a66e71?w=400',
-      },
-      {
-        'title': 'โต๊ะเก้าอี้ในห้องเรียน 201 ชำรุดหลายตัว',
-        'status': 'รับเรื่องแล้ว',
-        'type': 'อื่นๆ',
-        'reportedDate': '08/01/2568',
-        'location': location,
-        'description':
-            'เก้าอี้ในห้องเรียน 201 หักและโยกงายหลายตัว ไม่สามารถนั่งได้ ควรเปลี่ยนใหม่',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=400',
-      },
-    ];
+    final getProblemsUseCase = GetProblemsNearbyUseCase();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -135,19 +70,36 @@ class AssignedProblemsPage extends StatelessWidget {
 
           // Problems List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: mockProblems.length,
-              itemBuilder: (context, index) {
-                final problem = mockProblems[index];
-                return ProblemCard(
-                  title: problem['title'] as String,
-                  status: problem['status'] as String,
-                  type: problem['type'] as String,
-                  reportedDate: problem['reportedDate'] as String,
-                  location: problem['location'] as String,
-                  description: problem['description'] as String,
-                  imageUrl: problem['imageUrl'],
+            child: FutureBuilder<List<ProblemEntity>>(
+              future: getProblemsUseCase
+                  .call(), // เรียก UseCase (คืนค่าเป็น Future)
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล'),
+                  );
+                }
+
+                final problems = snapshot.data ?? [];
+
+                if (problems.isEmpty) {
+                  return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  itemCount: problems.length,
+                  itemBuilder: (context, index) {
+                    // ส่งปัญหาทั้ง Entity เข้าไปใน Card ตัวใหม่ของคุณ
+                    return ProblemCard(problem: problems[index]);
+                  },
                 );
               },
             ),
