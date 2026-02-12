@@ -2,7 +2,7 @@ import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 
 class ProblemStatusTag extends StatelessWidget {
-  final ProblemStatus status;
+  final ProblemTag status;
 
   const ProblemStatusTag({super.key, required this.status});
 

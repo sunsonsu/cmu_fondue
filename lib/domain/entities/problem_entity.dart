@@ -1,3 +1,5 @@
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+
 class ProblemEntity {
   final String id;
   final String title;
@@ -7,8 +9,10 @@ class ProblemEntity {
   final int upvoteCount;
   final DateTime createdAt;
   final String reporterEmail;
-  final String typeName;
-  final String tagName;
+  final ProblemType typeName;
+  final ProblemTag tagName;
+  final String imageUrl;
+  final String locationName;
 
   ProblemEntity({
     required this.id,
@@ -21,6 +25,8 @@ class ProblemEntity {
     required this.reporterEmail,
     required this.typeName,
     required this.tagName,
+    required this.imageUrl,
+    required this.locationName,
   });
 
   factory ProblemEntity.fromGenerated(dynamic data) {
@@ -31,10 +37,24 @@ class ProblemEntity {
       lat: data.problemLat.toDouble(),
       lng: data.problemLng.toDouble(),
       upvoteCount: data.upvoteCount,
-      createdAt: data.createdAt.toDateTime(), 
+      createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
-      typeName: data.problemType.typeName,
-      tagName: data.currentTags.tagName,
+
+      // แปลง String เป็น ProblemType
+      typeName: ProblemType.values.firstWhere(
+        (e) => e.name == data.problemType.typeName,
+        orElse: () => ProblemType.other,
+      ),
+
+      // แปลง String เป็น ProblemTag (Status)
+      // สมมติว่า data.currentTags.tagName คือ "pending", "inProgress" ฯลฯ
+      tagName: ProblemTag.values.firstWhere(
+        (e) => e.name == data.currentTags.tagName,
+        orElse: () => ProblemTag.pending,
+      ),
+
+      locationName: data.locationName ?? '',
+      imageUrl: data.imageUrl ?? '',
     );
   }
 }

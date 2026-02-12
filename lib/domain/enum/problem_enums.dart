@@ -1,30 +1,30 @@
 import 'dart:ui';
 
-enum ProblemStatus { pending, received, inProgress, completed }
+enum ProblemTag { pending, received, inProgress, completed }
 
-extension ProblemStatusX on ProblemStatus {
+extension ProblemTagX on ProblemTag {
   String get labelTh {
     switch (this) {
-      case ProblemStatus.pending:
+      case ProblemTag.pending:
         return 'รอรับเรื่อง';
-      case ProblemStatus.received:
+      case ProblemTag.received:
         return 'รับเรื่องแล้ว';
-      case ProblemStatus.inProgress:
+      case ProblemTag.inProgress:
         return 'กำลังดำเนินการ';
-      case ProblemStatus.completed:
+      case ProblemTag.completed:
         return 'เสร็จสิ้น';
     }
   }
 
   Color get getStatusColor {
     switch (this) {
-      case ProblemStatus.pending:
+      case ProblemTag.pending:
         return const Color(0xFFE53935); // แดง
-      case ProblemStatus.received:
+      case ProblemTag.received:
         return const Color(0xFF5D3891); // ม่วง
-      case ProblemStatus.inProgress:
+      case ProblemTag.inProgress:
         return const Color(0xFFFF8604); // ส้ม
-      case ProblemStatus.completed:
+      case ProblemTag.completed:
         return const Color(0xFF2E7D32); // เขียว
     }
   }

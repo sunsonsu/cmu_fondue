@@ -12,7 +12,7 @@ class ProblemDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final formattedDate = DateFormat(
       'dd/MM/yyyy HH:mm',
-    ).format(problem.reportedAt);
+    ).format(problem.createdAt);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,17 +41,15 @@ class ProblemDetailPage extends StatelessWidget {
               'แจ้งเมื่อ: $formattedDate',
               style: const TextStyle(fontSize: 16, color: Color(0xff696969)),
             ),
-            const SizedBox(height: 8),
             // --- สถานะ ---
             Text(
-              problem.status.labelTh,
-              style: TextStyle(color: problem.status.getStatusColor),
+              problem.tagName.labelTh,
+              style: TextStyle(fontSize: 16, color: problem.tagName.getStatusColor),
             ),
-            const SizedBox(height: 8),
             // --- สถานที่ ---
             RichText(
               text: TextSpan(
-                text: '${problem.location} ',
+                text: '${problem.locationName} ',
                 style: const TextStyle(color: Color(0xff696969), fontSize: 16),
                 children: [
                   WidgetSpan(
@@ -76,7 +74,7 @@ class ProblemDetailPage extends StatelessWidget {
             const SizedBox(height: 8),
             // --- รายละเอียด ---
             Text(
-              problem.description,
+              problem.detail,
               style: const TextStyle(fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 8),

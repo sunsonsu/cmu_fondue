@@ -86,7 +86,7 @@ class ProblemCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'แจ้งเมื่อ: ${{problem.reportedAt}}',
+                        'แจ้งเมื่อ: ${{problem.createdAt}}',
                         style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                       ),
                     ],
@@ -102,7 +102,7 @@ class ProblemCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          problem.location,
+                          problem.locationName,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[700],
@@ -120,15 +120,15 @@ class ProblemCard extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 4,
                     children: [
-                      ProblemStatusTag(status: problem.status),
-                      ProblemCategoryTag(category: problem.type),
+                      ProblemStatusTag(status: problem.tagName),
+                      ProblemCategoryTag(category: problem.typeName),
                     ],
                   ),
                   const SizedBox(height: 8),
 
                   // Description
                   Text(
-                    problem.description,
+                    problem.detail,
                     style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
