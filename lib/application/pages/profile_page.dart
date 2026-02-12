@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('โปรไฟล์'),
+        title: const Text('Profile'),
         centerTitle: true,
       ),
       body: Padding(
@@ -25,15 +25,15 @@ class ProfilePage extends StatelessWidget {
               radius: 50,
               backgroundColor: const Color(0xFF5D3891),
               child: Text(
-                user?.email?[0].toUpperCase() ?? 'U',
+                user?.email[0].toUpperCase() ?? 'U',
                 style: const TextStyle(fontSize: 40, color: Colors.white),
               ),
             ),
             const SizedBox(height: 24),
             // แสดง Email
-            const Text('อีเมลผู้ใช้งาน', style: TextStyle(color: Colors.grey)),
+            const Text('Email', style: TextStyle(color: Colors.grey)),
             Text(
-              user?.email ?? 'ไม่พบข้อมูล',
+              user?.email ?? 'Not Available',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
@@ -43,7 +43,7 @@ class ProfilePage extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => authProvider.logout(),
                 icon: const Icon(Icons.logout),
-                label: const Text('ออกจากระบบ'),
+                label: const Text('Logout'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
