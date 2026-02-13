@@ -44,18 +44,29 @@ class ProblemDetailPage extends StatelessWidget {
             // --- สถานะ ---
             Text(
               problem.tagName.labelTh,
-              style: TextStyle(fontSize: 16, color: problem.tagName.getStatusColor),
+              style: TextStyle(
+                fontSize: 16,
+                color: problem.tagName.getStatusColor,
+              ),
             ),
             // --- สถานที่ ---
-            RichText(
-              text: TextSpan(
+            // ✅ เปลี่ยนจาก RichText เป็น Text.rich
+            Text.rich(
+              TextSpan(
                 text: '${problem.locationName} ',
-                style: const TextStyle(color: Color(0xff696969), fontSize: 16),
+                // ไม่ต้องใช้ DefaultTextStyle.of(context) แล้วครับ
+                // ใส่แค่สไตล์ที่เราต้องการปรับแต่งเพิ่มพอ
+                style: const TextStyle(
+                  color: Color(0xff696969),
+                  fontSize: 16,
+                  // เส้นเหลืองจะหายไป เพราะ Text.rich จะไปดึง Font Kanit มาให้เอง
+                ),
                 children: [
                   WidgetSpan(
+                    alignment: PlaceholderAlignment
+                        .middle, // ช่วยให้ Widget ตรงกลางบรรทัด
                     child: GestureDetector(
                       onTap: () {
-                        // TODO: ใส่ Logic เปิด Google Maps
                         print("Open Map");
                       },
                       child: const Text(
