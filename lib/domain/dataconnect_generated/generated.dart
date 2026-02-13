@@ -3,17 +3,17 @@ import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
-part 'list_problems.dart';
-
-part 'list_problem_types.dart';
-
-part 'list_problem_tags.dart';
-
 part 'create_problem.dart';
 
 part 'update_problem.dart';
 
 part 'delete_problem.dart';
+
+part 'list_problems.dart';
+
+part 'list_problem_types.dart';
+
+part 'list_problem_tags.dart';
 
 
 
@@ -22,21 +22,6 @@ part 'delete_problem.dart';
 
 
 class ConnectorConnector {
-  
-  
-  ListProblemsVariablesBuilder listProblems () {
-    return ListProblemsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTypesVariablesBuilder listProblemTypes () {
-    return ListProblemTypesVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTagsVariablesBuilder listProblemTags () {
-    return ListProblemTagsVariablesBuilder(dataConnect, );
-  }
   
   
   CreateProblemVariablesBuilder createProblem ({required String title, required String detail, required double lat, required double lng, required String reporterId, required String typeId, required String tagId, }) {
@@ -51,6 +36,21 @@ class ConnectorConnector {
   
   DeleteProblemVariablesBuilder deleteProblem ({required String id, }) {
     return DeleteProblemVariablesBuilder(dataConnect, id: id,);
+  }
+  
+  
+  ListProblemsVariablesBuilder listProblems () {
+    return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTypesVariablesBuilder listProblemTypes () {
+    return ListProblemTypesVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTagsVariablesBuilder listProblemTags () {
+    return ListProblemTagsVariablesBuilder(dataConnect, );
   }
   
 
