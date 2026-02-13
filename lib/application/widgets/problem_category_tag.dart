@@ -1,7 +1,8 @@
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 
 class ProblemCategoryTag extends StatelessWidget {
-  final String category;
+  final ProblemType category;
 
   const ProblemCategoryTag({super.key, required this.category});
 
@@ -15,7 +16,7 @@ class ProblemCategoryTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        category,
+        category.labelTh,
         style: const TextStyle(
           fontSize: 13,
           color: Colors.black,
