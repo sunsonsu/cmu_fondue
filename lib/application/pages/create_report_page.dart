@@ -36,6 +36,36 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   Future<void> _pickImageFromGallery() async {
+    // Check current permission status
+    final currentStatus = await Permission.photos.status;
+
+    // Show dialog if permission not granted
+    if (!currentStatus.isGranted && !currentStatus.isLimited) {
+      final shouldRequest = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('ขออนุญาตเข้าถึงคลังรูปภาพ'),
+            content: const Text(
+              'แอปต้องการเข้าถึงคลังรูปภาพของคุณเพื่อเลือกรูปภาพสำหรับรายงานปัญหา',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('ยกเลิก'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('อนุญาต'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (shouldRequest != true) return;
+    }
+
     // Request photo library permission
     final status = await Permission.photos.request();
 
@@ -60,13 +90,29 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } else if (status.isDenied || status.isPermanentlyDenied) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('กรุณาอนุญาตการเข้าถึงรูปภาพในการตั้งค่า'),
-            duration: Duration(seconds: 3),
-          ),
+        final goToSettings = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('ไม่สามารถเข้าถึงคลังรูปภาพ'),
+              content: const Text(
+                'กรุณาอนุญาตการเข้าถึงคลังรูปภาพในการตั้งค่าระบบ',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('ยกเลิก'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('ไปที่การตั้งค่า'),
+                ),
+              ],
+            );
+          },
         );
-        if (status.isPermanentlyDenied) {
+
+        if (goToSettings == true) {
           await openAppSettings();
         }
       }
@@ -74,6 +120,36 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   Future<void> _takePicture() async {
+    // Check current permission status
+    final currentStatus = await Permission.camera.status;
+
+    // Show dialog if permission not granted
+    if (!currentStatus.isGranted) {
+      final shouldRequest = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('ขออนุญาตเข้าถึงกล้อง'),
+            content: const Text(
+              'แอปต้องการเข้าถึงกล้องของคุณเพื่อถ่ายรูปภาพสำหรับรายงานปัญหา',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('ยกเลิก'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('อนุญาต'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (shouldRequest != true) return;
+    }
+
     final status = await Permission.camera.request();
 
     if (status.isGranted) {
@@ -97,13 +173,29 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } else if (status.isDenied || status.isPermanentlyDenied) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่า'),
-            duration: Duration(seconds: 3),
-          ),
+        final goToSettings = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('ไม่สามารถเข้าถึงกล้อง'),
+              content: const Text(
+                'กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('ยกเลิก'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('ไปที่การตั้งค่า'),
+                ),
+              ],
+            );
+          },
         );
-        if (status.isPermanentlyDenied) {
+
+        if (goToSettings == true) {
           await openAppSettings();
         }
       }
