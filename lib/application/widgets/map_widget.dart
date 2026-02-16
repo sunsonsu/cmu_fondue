@@ -4,19 +4,26 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key, required this.center});
+  const MapWidget({super.key});
 
-  final LatLng center;
   @override
   State<MapWidget> createState() => MapWidgetState();
 }
 
 class MapWidgetState<T extends MapWidget> extends State<T> {
   late GoogleMapController mapController;
+  late Future<Position> _userLocationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userLocationFuture = getUserCurrentLocation();
+  }
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -38,35 +45,76 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.grey[200],
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: GoogleMap(
-                onMapCreated: onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: widget.center,
-                  zoom: 15.0,
+    return FutureBuilder<Position>(
+      future: _userLocationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        LatLng target = LatLng(18.808310458255793, 98.95468245511799);
+        if (snapshot.hasData) {
+          target = LatLng(snapshot.data!.latitude, snapshot.data!.longitude);
+        }
+
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.grey[200],
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: GoogleMap(
+                    onMapCreated: onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: target,
+                      zoom: 15.0,
+                    ),
+                    markers: markers,
+                    onCameraMove: onCameraMove,
+                    onCameraIdle: onCameraIdle,
+                  ),
                 ),
-                markers: markers,
-                onCameraMove: onCameraMove,
-                onCameraIdle: onCameraIdle,
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  Future<Position> getUserCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 }
 
 class MapViewerWidget extends MapWidget {
-  const MapViewerWidget({super.key, required super.center});
+  const MapViewerWidget({super.key});
 
   @override
   State<MapViewerWidget> createState() => _MapViewerWidgetState();
@@ -92,7 +140,7 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
         Marker(
           markerId: const MarkerId('me'),
           icon: BitmapDescriptor.bytes(markerIcon!),
-          position: widget.center,
+          position: LatLng(18.808310458255793, 98.95468245511799),
           infoWindow: const InfoWindow(
             title: 'การ์ฟิลด์',
             snippet: 'การ์ฟิลด์นะเนี่ย',
@@ -192,8 +240,8 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     try {
       await setLocaleIdentifier("th_TH");
       placemarks = await placemarkFromCoordinates(
-        widget.center.latitude,
-        widget.center.longitude,
+        18.808310458255793,
+        98.95468245511799,
       );
       if (mounted) {
         // setState not strictly needed if placemarks are not used in build immediately or if they are just logging
@@ -210,11 +258,7 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 }
 
 class MapSubmitWidget extends MapWidget {
-  const MapSubmitWidget({
-    super.key,
-    required super.center,
-    this.onPlacemarkChanged,
-  });
+  const MapSubmitWidget({super.key, this.onPlacemarkChanged});
 
   final ValueChanged<List<Placemark>>? onPlacemarkChanged;
 
@@ -233,7 +277,9 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
   Future<void> onCameraIdle() async {
     // If user hasn't moved yet, we might want to use the initial center or wait.
     // userLastPosition is null initially.
-    final target = userLastPosition?.target ?? widget.center;
+    final target =
+        userLastPosition?.target ??
+        LatLng(18.808310458255793, 98.95468245511799);
 
     List<Placemark> placemarks = [];
     try {

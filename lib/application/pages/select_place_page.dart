@@ -91,7 +91,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                 // Map
                 Positioned.fill(
                   child: MapSubmitWidget(
-                    center: const LatLng(18.808310458255793, 98.95468245511799),
                     onPlacemarkChanged: (placemark) =>
                         _placemarkNotifier.value = placemark,
                   ),

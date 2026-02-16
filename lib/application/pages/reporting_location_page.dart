@@ -27,7 +27,6 @@ class _ReportingLocationPageState extends State<ReportingLocationPage> {
     return Stack(
       children: [
         MapSubmitWidget(
-          center: const LatLng(18.808310458255793, 98.95468245511799),
           onPlacemarkChanged: (placemark) =>
               _placemarkNotifier.value = placemark,
         ),
