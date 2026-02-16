@@ -1,7 +1,8 @@
+import 'package:cmu_fondue/application/pages/reporting_location_page.dart';
 import 'package:cmu_fondue/application/pages/profile_page.dart';
+import 'package:cmu_fondue/application/pages/select_place_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/pages/map_viewer_page.dart';
-import 'package:cmu_fondue/application/pages/reporting_page.dart';
 import 'package:cmu_fondue/application/pages/history_page.dart';
 import 'package:cmu_fondue/application/widgets/app_scaffold.dart';
 
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = const [
     MapViewerPage(),
-    ReportingPage(),
+    SelectPlaceBottomSheet(),
     HistoryPage(),
     ProfilePage(),
   ];

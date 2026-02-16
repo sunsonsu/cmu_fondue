@@ -1,6 +1,10 @@
+import 'package:cmu_fondue/application/widgets/submit_location_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/pages/assigned_problems_page.dart';
 import 'package:cmu_fondue/application/widgets/location_search.dart';
+import 'package:cmu_fondue/application/widgets/map_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 class SelectPlaceBottomSheet extends StatefulWidget {
   const SelectPlaceBottomSheet({super.key});
@@ -11,6 +15,14 @@ class SelectPlaceBottomSheet extends StatefulWidget {
 
 class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   String? _selectedPlace;
+  final ValueNotifier<List<Placemark>?> _placemarkNotifier = ValueNotifier(
+    null,
+  );
+  @override
+  void dispose() {
+    _placemarkNotifier.dispose();
+    super.dispose();
+  }
 
   // Mock data - สถานที่ในมช.
   final List<String> _cmuPlaces = [
@@ -29,7 +41,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     'หอประชุม มช.',
     'Computer Science Building',
     'Computer Engineering Building',
-    'Department of Computer Science Building'
+    'Department of Computer Science Building',
   ];
 
   void _onLocationSelected(String place) {
@@ -43,10 +55,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'เลือกตำแหน่ง',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
@@ -78,120 +86,20 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
 
           // Main Content - Map
           Expanded(
-            child: Column(
+            child: Stack(
               children: [
-                // Map placeholder
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Stack(
-                      children: [
-                        // Map placeholder with icon
-                        Center(
-                          child: Icon(
-                            Icons.map,
-                            size: 80,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                        // Location marker in center
-                        Center(
-                          child: Icon(
-                            Icons.location_on,
-                            size: 48,
-                            color: Colors.red[700],
-                          ),
-                        ),
-                      ],
-                    ),
+                // Map
+                Positioned.fill(
+                  child: MapSubmitWidget(
+                    center: const LatLng(18.808310458255793, 98.95468245511799),
+                    onPlacemarkChanged: (placemark) =>
+                        _placemarkNotifier.value = placemark,
                   ),
                 ),
 
-                const SizedBox(height: 16),
-
-                // Your Location info
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Your Location',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _selectedPlace ??
-                            'QXX3+8FQ, Suthep, Mueang Chiang Mai District, Chiang Mai 50200',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
+                // Bottom Sheet
+                SubmitLocationBottomSheet(locationNotifier: _placemarkNotifier),
               ],
-            ),
-          ),
-
-          // Bottom Button
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withOpacity(0.05),
-              //     blurRadius: 4,
-              //     offset: const Offset(0, -2),
-              //   ),
-              // ],
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selectedPlace != null
-                      ? () {
-                          // Navigate to assigned problems page
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AssignedProblemsPage(
-                                location: _selectedPlace!,
-                              ),
-                            ),
-                          );
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: const Color(0xFF5D3891),
-                    disabledBackgroundColor: Colors.grey[300],
-                  ),
-                  child: Text(
-                    'เลือกตำแหน่งนี้',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: _selectedPlace != null
-                          ? Colors.white
-                          : Colors.grey[600],
-                    ),
-                  ),
-                ),
-              ),
             ),
           ),
         ],

@@ -29,7 +29,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     'หอประชุม มช.',
     'Computer Science Building',
     'Computer Engineering Building',
-    'Department of Computer Science Building'
+    'Department of Computer Science Building',
   ];
 
   void _onLocationSelected(String place) {
