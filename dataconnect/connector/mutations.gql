@@ -3,7 +3,7 @@ mutation CreateProblem(
   $detail: String!, 
   $lat: Float!, 
   $lng: Float!,
-  $reporterId: UUID!,
+  $reporterId: String!,
   $typeId: UUID!,
   $tagId: UUID!
 ) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
