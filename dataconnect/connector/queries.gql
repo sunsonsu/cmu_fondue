@@ -37,3 +37,10 @@ query ListProblemTags @auth(level: PUBLIC insecureReason: "This operation is saf
     tagThaiName
   }
 }
+
+query ProblemTypesQuery @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  problemTypes {
+    typeName
+    typeThaiName
+  }
+}

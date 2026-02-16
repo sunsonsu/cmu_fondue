@@ -28,6 +28,7 @@ class ProblemRepoImpl implements ProblemRepo {
   Future<String> createProblem({
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String reporterId,
@@ -38,6 +39,7 @@ class ProblemRepoImpl implements ProblemRepo {
         .createProblem(
           title: title,
           detail: detail,
+          locationName: locationName,
           lat: lat,
           lng: lng,
           reporterId: reporterId,
@@ -55,6 +57,7 @@ class ProblemRepoImpl implements ProblemRepo {
     required String id,
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String typeId,
@@ -66,6 +69,7 @@ class ProblemRepoImpl implements ProblemRepo {
             id: id,
             title: title,
             detail: detail,
+            locationName: locationName,
             lat: lat,
             lng: lng,
             typeId: typeId,

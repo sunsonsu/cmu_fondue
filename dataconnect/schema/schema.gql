@@ -1,5 +1,5 @@
 type User @table(key: "userId") {
-  userId: UUID! @default(expr: "auth.uid")
+  userId: String! @default(expr: "auth.uid")
   email: String! @col(dataType: "varchar(255)") @unique
   isAdmin: Boolean! @default(expr: "false")
 }
@@ -7,7 +7,7 @@ type User @table(key: "userId") {
 type Problem @table(key: "problemId") {
   problemId: UUID! @default(expr: "uuidV4()")
   reporter: User! @ref(fields: "reporterId", references: "userId")
-  reporterId: UUID!
+  reporterId: String!
   title: String! @col(dataType: "varchar(50)")
   detail: String! @col(dataType: "varchar(255)")
   problemType: ProblemType! @ref(fields: "problemTypeId", references: "problemTypeId")
@@ -15,6 +15,7 @@ type Problem @table(key: "problemId") {
   currentTags: ProblemTag! @ref(fields: "currentTagId", references: "problemTagId")
   currentTagId: UUID!
   createdAt: Timestamp! @default(expr: "request.time")
+  locationName: String!
   problemLat: Float!
   problemLng: Float!
   upvoteCount: Int! @default(value: 0)
@@ -44,7 +45,7 @@ type ProblemTag @table(key: "problemTagId") {
 
 type UserUpvote @table(key: ["userId", "problemId"]) {
   user: User! @ref(fields: "userId", references: "userId")
-  userId: UUID!
+  userId: String!
   problem: Problem! @ref(fields: "problemId", references: "problemId")
   problemId: UUID!
 }
@@ -52,7 +53,7 @@ type UserUpvote @table(key: ["userId", "problemId"]) {
 type AdminActionLog @table(key: "adminActionLogId") {
   adminActionLogId: UUID! @default(expr: "uuidV4()")
   admin: User! @ref(fields: "adminId", references: "userId")
-  adminId: UUID!
+  adminId: String!
   problem: Problem! @ref(fields: "problemId", references: "problemId")
   problemId: UUID!
   oldTag: ProblemTag! @ref(fields: "oldTagId", references: "problemTagId")

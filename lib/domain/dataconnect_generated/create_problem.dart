@@ -3,6 +3,7 @@ part of 'generated.dart';
 class CreateProblemVariablesBuilder {
   String title;
   String detail;
+  String locationName;
   double lat;
   double lng;
   String reporterId;
@@ -10,7 +11,7 @@ class CreateProblemVariablesBuilder {
   String tagId;
 
   final FirebaseDataConnect _dataConnect;
-  CreateProblemVariablesBuilder(this._dataConnect, {required  this.title,required  this.detail,required  this.lat,required  this.lng,required  this.reporterId,required  this.typeId,required  this.tagId,});
+  CreateProblemVariablesBuilder(this._dataConnect, {required  this.title,required  this.detail,required  this.locationName,required  this.lat,required  this.lng,required  this.reporterId,required  this.typeId,required  this.tagId,});
   Deserializer<CreateProblemData> dataDeserializer = (dynamic json)  => CreateProblemData.fromJson(jsonDecode(json));
   Serializer<CreateProblemVariables> varsSerializer = (CreateProblemVariables vars) => jsonEncode(vars.toJson());
   Future<OperationResult<CreateProblemData, CreateProblemVariables>> execute() {
@@ -18,7 +19,7 @@ class CreateProblemVariablesBuilder {
   }
 
   MutationRef<CreateProblemData, CreateProblemVariables> ref() {
-    CreateProblemVariables vars= CreateProblemVariables(title: title,detail: detail,lat: lat,lng: lng,reporterId: reporterId,typeId: typeId,tagId: tagId,);
+    CreateProblemVariables vars= CreateProblemVariables(title: title,detail: detail,locationName: locationName,lat: lat,lng: lng,reporterId: reporterId,typeId: typeId,tagId: tagId,);
     return _dataConnect.mutation("CreateProblem", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -95,6 +96,7 @@ class CreateProblemData {
 class CreateProblemVariables {
   final String title;
   final String detail;
+  final String locationName;
   final double lat;
   final double lng;
   final String reporterId;
@@ -105,6 +107,7 @@ class CreateProblemVariables {
   
   title = nativeFromJson<String>(json['title']),
   detail = nativeFromJson<String>(json['detail']),
+  locationName = nativeFromJson<String>(json['locationName']),
   lat = nativeFromJson<double>(json['lat']),
   lng = nativeFromJson<double>(json['lng']),
   reporterId = nativeFromJson<String>(json['reporterId']),
@@ -122,6 +125,7 @@ class CreateProblemVariables {
     final CreateProblemVariables otherTyped = other as CreateProblemVariables;
     return title == otherTyped.title && 
     detail == otherTyped.detail && 
+    locationName == otherTyped.locationName && 
     lat == otherTyped.lat && 
     lng == otherTyped.lng && 
     reporterId == otherTyped.reporterId && 
@@ -130,13 +134,14 @@ class CreateProblemVariables {
     
   }
   @override
-  int get hashCode => Object.hashAll([title.hashCode, detail.hashCode, lat.hashCode, lng.hashCode, reporterId.hashCode, typeId.hashCode, tagId.hashCode]);
+  int get hashCode => Object.hashAll([title.hashCode, detail.hashCode, locationName.hashCode, lat.hashCode, lng.hashCode, reporterId.hashCode, typeId.hashCode, tagId.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['title'] = nativeToJson<String>(title);
     json['detail'] = nativeToJson<String>(detail);
+    json['locationName'] = nativeToJson<String>(locationName);
     json['lat'] = nativeToJson<double>(lat);
     json['lng'] = nativeToJson<double>(lng);
     json['reporterId'] = nativeToJson<String>(reporterId);
@@ -148,6 +153,7 @@ class CreateProblemVariables {
   CreateProblemVariables({
     required this.title,
     required this.detail,
+    required this.locationName,
     required this.lat,
     required this.lng,
     required this.reporterId,
