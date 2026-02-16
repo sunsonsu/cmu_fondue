@@ -1,0 +1,171 @@
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+// import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
+
+class GetProblemsNearbyUseCase {
+  final List<ProblemEntity> _mockProblems = [
+    ProblemEntity(
+      id: '1',
+      title: 'ถนนแตกหน้าหอสมุด',
+      detail:
+          'ถนนมีรอยแตกขนาดใหญ่ ความยาวประมาณ 2 เมตร อาจเกิดอันตรายต่อการสัญจร',
+      locationName: 'หน้าอาคารหอสมุด มช.',
+      imageUrl:
+          'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=400&h=400&fit=crop',
+      lat: 18.8000,
+      lng: 98.9500,
+      upvoteCount: 12,
+      createdAt: DateTime(2024, 1, 15),
+      reporterEmail: 'student01@cmu.ac.th',
+      typeName: ProblemType.road,
+      tagName: ProblemTag.pending,
+    ),
+    ProblemEntity(
+      id: '2',
+      title: 'ไฟฟ้าขัดข้อง',
+      detail: 'ไฟส่องสว่างดับหมดทั้งชั้น ส่งผลกระทบต่อการเรียนการสอน',
+      locationName: 'อาคารวิศวกรรม ชั้น 3',
+      imageUrl:
+          'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400&h=400&fit=crop',
+      lat: 18.7950,
+      lng: 98.9520,
+      upvoteCount: 5,
+      createdAt: DateTime(2024, 1, 18),
+      reporterEmail: 'staff02@cmu.ac.th',
+      typeName: ProblemType.electricity,
+      tagName: ProblemTag.inProgress,
+    ),
+    ProblemEntity(
+      id: '3',
+      title: 'ท่อน้ำแตก',
+      detail: 'ท่อน้ำแตกทำให้น้ำไหลออกมาอย่างต่อเนื่อง อาจทำให้เกิดน้ำท่วมขัง',
+      locationName: 'หลังอาคารวิทยาศาสตร์',
+      imageUrl:
+          'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=400&fit=crop',
+      lat: 18.7980,
+      lng: 98.9480,
+      upvoteCount: 20,
+      createdAt: DateTime(2024, 1, 20),
+      reporterEmail: 'user03@gmail.com',
+      typeName: ProblemType.water,
+      tagName: ProblemTag.pending,
+    ),
+    ProblemEntity(
+      id: '4',
+      title: 'ทางเท้าชำรุด',
+      detail:
+          'ทางเท้าแตกเป็นแผ่นสร้างความไม่สะดวกในการเดิน ได้รับการซ่อมแซมเรียบร้อยแล้ว',
+      locationName: 'ทางเข้าคณะพาณิชย์',
+      imageUrl:
+          'https://images.unsplash.com/photo-1599481238640-191a4c52e5b2?w=400&h=400&fit=crop',
+      lat: 18.7920,
+      lng: 98.9550,
+      upvoteCount: 8,
+      createdAt: DateTime(2024, 1, 10),
+      reporterEmail: 'alumni04@cmu.ac.th',
+      typeName: ProblemType.road,
+      tagName: ProblemTag.completed,
+    ),
+    ProblemEntity(
+      id: '5',
+      title: 'ต้นไม้ล้ม',
+      detail: 'ต้นไม้ใหญ่ล้มขวางทางเดิน จำเป็นต้องตัดและเคลื่อนย้ายออก',
+      locationName: 'สวนหย่อมหน้าคณะมนุษย์',
+      imageUrl:
+          'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=400&fit=crop',
+      lat: 18.8020,
+      lng: 98.9510,
+      upvoteCount: 15,
+      createdAt: DateTime(2024, 1, 22),
+      reporterEmail: 'green_team@cmu.ac.th',
+      typeName: ProblemType.other,
+      tagName: ProblemTag.inProgress,
+    ),
+    ProblemEntity(
+      id: '6',
+      title: 'ป้ายจราจรชำรุด',
+      detail: 'ป้ายจราจรล้มเอียง ไม่สามารถมองเห็นสัญลักษณ์ได้ชัดเจน',
+      locationName: 'สี่แยกหน้าประตู 1',
+      imageUrl:
+          'https://images.unsplash.com/photo-1449253984488-e5b74f37809f?w=400&h=400&fit=crop',
+      lat: 18.8050,
+      lng: 98.9450,
+      upvoteCount: 3,
+      createdAt: DateTime(2024, 1, 19),
+      reporterEmail: 'safety_first@cmu.ac.th',
+      typeName: ProblemType.other,
+      tagName: ProblemTag.received,
+    ),
+    ProblemEntity(
+      id: '7',
+      title: 'ถังขยะเต็ม',
+      detail: 'ถังขยะเต็มล้นจนขยะเกลื่อนพื้น ได้รับการเก็บและทำความสะอาดแล้ว',
+      locationName: 'ลานจอดรถ คณะศึกษาศาสตร์',
+      imageUrl:
+          'https://images.unsplash.com/photo-1526951521990-620dc14c214b?w=400&h=400&fit=crop',
+      lat: 18.7910,
+      lng: 98.9580,
+      upvoteCount: 25,
+      createdAt: DateTime(2024, 1, 12),
+      reporterEmail: 'janitor_cmu@hotmail.com',
+      typeName: ProblemType.garbage,
+      tagName: ProblemTag.completed,
+    ),
+    ProblemEntity(
+      id: '8',
+      title: 'รั้วชำรุด',
+      detail: 'รั้วกั้นหักเสียหายยาวหลายเมตร อาจเกิดอันตรายแก่นักศึกษา',
+      locationName: 'ข้างสนามกีฬา',
+      imageUrl:
+          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',
+      lat: 18.7990,
+      lng: 98.9600,
+      upvoteCount: 7,
+      createdAt: DateTime(2024, 1, 21),
+      reporterEmail: 'security_unit@cmu.ac.th',
+      typeName: ProblemType.other,
+      tagName: ProblemTag.inProgress,
+    ),
+    ProblemEntity(
+      id: '9',
+      title: 'ไฟถนนไม่ติด',
+      detail: 'ไฟถนนไม่ติดหลายจุดทำให้กลางคืนมืดมากเกินไป ไม่ปลอดภัย',
+      locationName: 'ถนนหลังหอพัก',
+      imageUrl:
+          'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop',
+      lat: 18.8080,
+      lng: 98.9420,
+      upvoteCount: 40,
+      createdAt: DateTime(2024, 1, 23),
+      reporterEmail: 'night_watch@cmu.ac.th',
+      typeName: ProblemType.electricity,
+      tagName: ProblemTag.pending,
+    ),
+    ProblemEntity(
+      id: '10',
+      title: 'หลุมบนถนน',
+      detail: 'หลุมลึกเป็นอันตรายต่อรถจักรยานยนต์และรถยนต์ที่ผ่านไปมา',
+      locationName: 'ถนนเข้าอาคารเรียนรวม',
+      imageUrl:
+          'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=400&fit=crop',
+      lat: 18.8030,
+      lng: 98.9540,
+      upvoteCount: 18,
+      createdAt: DateTime(2024, 1, 24),
+      reporterEmail: 'rider007@gmail.com',
+      typeName: ProblemType.road,
+      tagName: ProblemTag.pending,
+    ),
+  ];
+  
+  GetProblemsNearbyUseCase();
+
+  // final ProblemRepository repository;
+  // GetProblemsNearbyUseCase(this.repository);
+
+  Future<List<ProblemEntity>> call() async {
+    await Future.delayed(const Duration(milliseconds: 500)); // fake loading
+
+    return _mockProblems;
+  }
+}

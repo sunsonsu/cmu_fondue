@@ -1,0 +1,186 @@
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
+import 'package:flutter/material.dart';
+import 'package:cmu_fondue/application/widgets/problem_card.dart';
+import 'package:cmu_fondue/application/pages/create_report_page.dart';
+
+class AssignedProblemsPage extends StatelessWidget {
+  final String location;
+
+  const AssignedProblemsPage({super.key, required this.location});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mock data - ปัญหาที่เคยถูกแจ้ง
+    final getProblemsUseCase = GetProblemsNearbyUseCase();
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'ปัญหาที่เคยถูกแจ้งบริเวณนี้',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Description
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Text(
+              'ตรวจสอบว่าปัญหาที่คุณต้องการแจ้ง มีคนแจ้งแล้วหรือยัง ถ้ามีการแจ้งแล้วสามารถกด Upvote ได้ แต่ถ้ายังสามารถกดแจ้งปัญหาได้',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+                height: 1.4,
+              ),
+            ),
+          ),
+
+          // Location Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Location',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  location,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Problems List
+          Expanded(
+            child: FutureBuilder<List<ProblemEntity>>(
+              future: getProblemsUseCase
+                  .call(), // เรียก UseCase (คืนค่าเป็น Future)
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล'),
+                  );
+                }
+
+                final problems = snapshot.data ?? [];
+
+                if (problems.isEmpty) {
+                  return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  itemCount: problems.length,
+                  itemBuilder: (context, index) {
+                    // ส่งปัญหาทั้ง Entity เข้าไปใน Card ตัวใหม่ของคุณ
+                    return ProblemCard(problem: problems[index]);
+                  },
+                );
+              },
+            ),
+          ),
+
+          // Bottom Buttons
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  // Report Problem Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CreateReportPage(location: location),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: const Color(0xFF5D3891),
+                      ),
+                      child: const Text(
+                        'แจ้งปัญหา',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Cancel Button
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: const BorderSide(
+                          color: Color(0xFF5D3891),
+                          width: 2,
+                        ),
+                      ),
+                      child: const Text(
+                        'ยกเลิก',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF5D3891),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

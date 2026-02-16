@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class AppScaffold extends StatefulWidget {
   final int currentIndex;
   final Function(int)? onNavigationChanged;
+  final Widget child;
 
   const AppScaffold({
     super.key,
     this.currentIndex = 0,
     this.onNavigationChanged,
+    required this.child,
   });
 
   @override
@@ -18,7 +20,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: Column()),
+      body: SafeArea(child: widget.child),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -49,6 +51,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                 isCenter: true,
               ),
               _buildNavItem(icon: Icons.history, label: 'History', index: 2),
+              _buildNavItem(icon: Icons.person, label: 'Profile', index: 3),
             ],
           ),
         ),

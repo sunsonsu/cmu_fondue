@@ -1,8 +1,12 @@
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 
 class ProblemsBottomSheet extends StatefulWidget {
-  const ProblemsBottomSheet({super.key});
+  final GetProblemsNearbyUseCase getProblemsNearby;
+
+  const ProblemsBottomSheet({super.key, required this.getProblemsNearby});
 
   @override
   State<ProblemsBottomSheet> createState() => _ProblemsBottomSheetState();
@@ -11,6 +15,14 @@ class ProblemsBottomSheet extends StatefulWidget {
 class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
+
+  late Future<List<ProblemEntity>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = widget.getProblemsNearby();
+  }
 
   @override
   void dispose() {
@@ -91,140 +103,33 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: 10,
-                  itemBuilder: (context, index) => _buildProblemCard(index),
+                child: FutureBuilder<List<ProblemEntity>>(
+                  future: _future,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('เกิดข้อผิดพลาด'));
+                    }
+
+                    final problems = snapshot.data!;
+
+                    return ListView.builder(
+                      controller: scrollController,
+                      itemCount: problems.length,
+                      itemBuilder: (context, index) {
+                        return ProblemCard(problem: problems[index]);
+                      },
+                    );
+                  },
                 ),
               ),
             ],
           ),
         );
       },
-    );
-  }
-
-  Widget _buildProblemCard(int index) {
-    final problems = [
-      {
-        'title': 'ถนนแตกหน้าหอสมุด',
-        'status': 'ยังไม่ได้แก้ไข',
-        'type': 'ถนน',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=200&h=200&fit=crop',
-        'reportedDate': '15/01/2567',
-        'location': 'หน้าอาคารหอสมุด มช.',
-        'description':
-            'ถนนมีรอยแตกขนาดใหญ่ ความยาวประมาณ 2 เมตร อาจเกิดอันตรายต่อการสัญจร',
-      },
-      {
-        'title': 'ไฟฟ้าขัดข้อง',
-        'status': 'กำลังแก้ไข',
-        'type': 'ไฟฟ้า',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=200&h=200&fit=crop',
-        'reportedDate': '18/01/2567',
-        'location': 'อาคารวิศวกรรม ชั้น 3',
-        'description': 'ไฟส่องสว่างดับหมดทั้งชั้น ส่งผลกระทบต่อการเรียนการสอน',
-      },
-      {
-        'title': 'ท่อน้ำแตก',
-        'status': 'ยังไม่ได้แก้ไข',
-        'type': 'ขยะ',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=200&h=200&fit=crop',
-        'reportedDate': '20/01/2567',
-        'location': 'หลังอาคารวิทยาศาสตร์',
-        'description':
-            'ท่อน้ำแตกทำให้น้ำไหลออกมาอย่างต่อเนื่อง อาจทำให้เกิดน้ำท่วมขัง',
-      },
-      {
-        'title': 'ทางเท้าชำรุด',
-        'status': 'เสร็จสิ้น',
-        'type': 'ถนน',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1599481238640-191a4c52e5b2?w=200&h=200&fit=crop',
-        'reportedDate': '10/01/2567',
-        'location': 'ทางเข้าคณะพาณิชย์',
-        'description':
-            'ทางเท้าแตกเป็นแผ่นสร้างความไม่สะดวกในการเดิน ได้รับการซ่อมแซมเรียบร้อยแล้ว',
-      },
-      {
-        'title': 'ต้นไม้ล้ม',
-        'status': 'กำลังแก้ไข',
-        'type': 'อื่นๆ',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=200&h=200&fit=crop',
-        'reportedDate': '22/01/2567',
-        'location': 'สวนหย่อมหน้าคณะมนุษย์',
-        'description':
-            'ต้นไม้ใหญ่ล้มขวางทางเดิน จำเป็นต้องตัดและเคลื่อนย้ายออก',
-      },
-      {
-        'title': 'ป้ายจราจรชำรุด',
-        'status': 'รับเรื่องแล้ว',
-        'type': 'อื่นๆ',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1449253984488-e5b74f37809f?w=200&h=200&fit=crop',
-        'reportedDate': '19/01/2567',
-        'location': 'สี่แยกหน้าประตู 1',
-        'description': 'ป้ายจราจรล้มเอียง ไม่สามารถมองเห็นสัญลักษณ์ได้ชัดเจน',
-      },
-      {
-        'title': 'ถังขยะเต็ม',
-        'status': 'เสร็จสิ้น',
-        'type': 'อื่นๆ',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1526951521990-620dc14c214b?w=200&h=200&fit=crop',
-        'reportedDate': '12/01/2567',
-        'location': 'ลานจอดรถ คณะศึกษาศาสตร์',
-        'description':
-            'ถังขยะเต็มล้นจนขยะเกลื่อนพื้น ได้รับการเก็บและทำความสะอาดแล้ว',
-      },
-      {
-        'title': 'รั้วชำรุด',
-        'status': 'กำลังแก้ไข',
-        'type': 'อื่นๆ',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop',
-        'reportedDate': '21/01/2567',
-        'location': 'ข้างสนามกีฬา',
-        'description':
-            'รั้วกั้นหักเสียหายยาวหลายเมตร อาจเกิดอันตรายแก่นักศึกษา',
-      },
-      {
-        'title': 'ไฟถนนไม่ติด',
-        'status': 'ยังไม่ได้แก้ไข',
-        'type': 'ไฟฟ้า',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=200&h=200&fit=crop',
-        'reportedDate': '23/01/2567',
-        'location': 'ถนนหลังหอพัก',
-        'description': 'ไฟถนนไม่ติดหลายจุดทำให้กลางคืนมืดมากเกินไป ไม่ปลอดภัย',
-      },
-      {
-        'title': 'หลุมบนถนน',
-        'status': 'ยังไม่ได้แก้ไข',
-        'type': 'ถนน',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=200&h=200&fit=crop',
-        'reportedDate': '24/01/2567',
-        'location': 'ถนนเข้าอาคารเรียนรวม',
-        'description': 'หลุมลึกเป็นอันตรายต่อรถจักรยานยนต์และรถยนต์ที่ผ่านไปมา',
-      },
-    ];
-
-    final problem = problems[index % problems.length];
-
-    return ProblemCard(
-      title: problem['title'] as String,
-      status: problem['status'] as String,
-      type: problem['type'] as String,
-      imageUrl: problem['imageUrl'] as String,
-      reportedDate: problem['reportedDate'] as String,
-      location: problem['location'] as String,
-      description: problem['description'] as String,
     );
   }
 }
