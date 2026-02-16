@@ -78,12 +78,6 @@ class MyApp extends StatelessWidget {
             return const HomePage();
           }
 
-          final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
-          final authRepository = AuthRepositoryImpl(
-            authDataSource,
-            ConnectorConnector.instance,
-          );
-
           return AuthPage(
             loginUseCase: context.read<LoginUseCase>(),
             registerUseCase: context.read<RegisterUseCase>(),
