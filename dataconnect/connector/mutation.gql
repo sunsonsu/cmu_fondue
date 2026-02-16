@@ -1,0 +1,17 @@
+# As this file is for mutation operation of dataconnect.
+# So it have more than one writer in this file.
+# The write of mutation gonna be annoted before the mutation.
+
+# Apivit Suppaluk
+mutation insertProblemType($name: String!, $description: String!) @auth(level: PUBLIC) {
+  problemType_insert(
+    data: {typeName: $name, typeThaiName: $description}
+  )
+}
+
+# Apivit Suppaluk
+mutation insertUser($email: String!, $isAdmin: Boolean!) @auth(level: USER) {
+  user_insert(
+    data: {email: $email, isAdmin: $isAdmin}
+  )
+}

@@ -26,16 +26,18 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
   if (kDebugMode) {
-    // 10.0.2.2 is the 'localhost' for Android Emulators
-    // 127.0.0.1 or localhost works for iOS/Web
     String host = defaultTargetPlatform == TargetPlatform.android
         ? '10.0.2.2'
         : 'localhost';
+
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
   }
 
   final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
-  final authRepository = AuthRepositoryImpl(authDataSource);
+  final authRepository = AuthRepositoryImpl(
+    authDataSource,
+    ConnectorConnector.instance,
+  );
 
   runApp(
     MultiProvider(
