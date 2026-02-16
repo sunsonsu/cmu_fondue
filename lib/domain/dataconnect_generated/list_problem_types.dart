@@ -1,27 +1,29 @@
 part of 'generated.dart';
 
-class ProblemTypesQueryVariablesBuilder {
+class ListProblemTypesVariablesBuilder {
   
   final FirebaseDataConnect _dataConnect;
-  ProblemTypesQueryVariablesBuilder(this._dataConnect, );
-  Deserializer<ProblemTypesQueryData> dataDeserializer = (dynamic json)  => ProblemTypesQueryData.fromJson(jsonDecode(json));
+  ListProblemTypesVariablesBuilder(this._dataConnect, );
+  Deserializer<ListProblemTypesData> dataDeserializer = (dynamic json)  => ListProblemTypesData.fromJson(jsonDecode(json));
   
-  Future<QueryResult<ProblemTypesQueryData, void>> execute() {
+  Future<QueryResult<ListProblemTypesData, void>> execute() {
     return ref().execute();
   }
 
-  QueryRef<ProblemTypesQueryData, void> ref() {
+  QueryRef<ListProblemTypesData, void> ref() {
     
-    return _dataConnect.query("ProblemTypesQuery", dataDeserializer, emptySerializer, null);
+    return _dataConnect.query("ListProblemTypes", dataDeserializer, emptySerializer, null);
   }
 }
 
 @immutable
-class ProblemTypesQueryProblemTypes {
+class ListProblemTypesProblemTypes {
+  final String problemTypeId;
   final String typeName;
   final String typeThaiName;
-  ProblemTypesQueryProblemTypes.fromJson(dynamic json):
+  ListProblemTypesProblemTypes.fromJson(dynamic json):
   
+  problemTypeId = nativeFromJson<String>(json['problemTypeId']),
   typeName = nativeFromJson<String>(json['typeName']),
   typeThaiName = nativeFromJson<String>(json['typeThaiName']);
   @override
@@ -33,35 +35,38 @@ class ProblemTypesQueryProblemTypes {
       return false;
     }
 
-    final ProblemTypesQueryProblemTypes otherTyped = other as ProblemTypesQueryProblemTypes;
-    return typeName == otherTyped.typeName && 
+    final ListProblemTypesProblemTypes otherTyped = other as ListProblemTypesProblemTypes;
+    return problemTypeId == otherTyped.problemTypeId && 
+    typeName == otherTyped.typeName && 
     typeThaiName == otherTyped.typeThaiName;
     
   }
   @override
-  int get hashCode => Object.hashAll([typeName.hashCode, typeThaiName.hashCode]);
+  int get hashCode => Object.hashAll([problemTypeId.hashCode, typeName.hashCode, typeThaiName.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
+    json['problemTypeId'] = nativeToJson<String>(problemTypeId);
     json['typeName'] = nativeToJson<String>(typeName);
     json['typeThaiName'] = nativeToJson<String>(typeThaiName);
     return json;
   }
 
-  ProblemTypesQueryProblemTypes({
+  ListProblemTypesProblemTypes({
+    required this.problemTypeId,
     required this.typeName,
     required this.typeThaiName,
   });
 }
 
 @immutable
-class ProblemTypesQueryData {
-  final List<ProblemTypesQueryProblemTypes> problemTypes;
-  ProblemTypesQueryData.fromJson(dynamic json):
+class ListProblemTypesData {
+  final List<ListProblemTypesProblemTypes> problemTypes;
+  ListProblemTypesData.fromJson(dynamic json):
   
   problemTypes = (json['problemTypes'] as List<dynamic>)
-        .map((e) => ProblemTypesQueryProblemTypes.fromJson(e))
+        .map((e) => ListProblemTypesProblemTypes.fromJson(e))
         .toList();
   @override
   bool operator ==(Object other) {
@@ -72,7 +77,7 @@ class ProblemTypesQueryData {
       return false;
     }
 
-    final ProblemTypesQueryData otherTyped = other as ProblemTypesQueryData;
+    final ListProblemTypesData otherTyped = other as ListProblemTypesData;
     return problemTypes == otherTyped.problemTypes;
     
   }
@@ -86,7 +91,7 @@ class ProblemTypesQueryData {
     return json;
   }
 
-  ProblemTypesQueryData({
+  ListProblemTypesData({
     required this.problemTypes,
   });
 }

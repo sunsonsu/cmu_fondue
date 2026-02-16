@@ -1,0 +1,39 @@
+query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems{
+    problemId
+    reporter {
+      email
+      isAdmin
+    }
+    title
+    detail
+    problemType {
+      typeName
+      typeThaiName
+    }
+    currentTags {
+      tagName
+      tagThaiName
+    }
+    createdAt
+    problemLat
+    problemLng
+    upvoteCount
+  }
+}
+
+query ListProblemTypes @auth(level: PUBLIC insecureReason: "This operation is safe to expose to the public") {
+  problemTypes {
+    problemTypeId
+    typeName
+    typeThaiName
+  }
+}
+
+query ListProblemTags @auth(level: PUBLIC insecureReason: "This operation is safe to expose to the public") {
+  problemTags {
+    problemTagId
+    tagName
+    tagThaiName
+  }
+}

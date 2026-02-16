@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:cmu_fondue/application/pages/select_place_page.dart';
 
 class ReportingPage extends StatefulWidget {
   const ReportingPage({super.key, this.location});

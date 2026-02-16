@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/application/pages/reporting_location_page.dart';
+import 'package:cmu_fondue/application/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/pages/map_viewer_page.dart';
 import 'package:cmu_fondue/application/pages/history_page.dart';
@@ -18,6 +19,7 @@ class _HomePageState extends State<HomePage> {
     MapViewerPage(),
     ReportingLocationPage(),
     HistoryPage(),
+    ProfilePage(),
   ];
 
   @override

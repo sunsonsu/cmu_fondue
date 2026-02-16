@@ -5,7 +5,9 @@ class FirebaseAuthDataSource {
   final FirebaseAuth _firebaseAuth;
 
   FirebaseAuthDataSource(this._firebaseAuth);
-
+  
+  User? get currentUser => _firebaseAuth.currentUser;
+  
   Future<User> login(String email, String password) async {
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
