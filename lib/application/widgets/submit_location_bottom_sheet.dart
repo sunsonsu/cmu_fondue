@@ -1,4 +1,5 @@
-import 'package:cmu_fondue/application/pages/nearby_problem_page.dart';
+import 'package:cmu_fondue/application/pages/assigned_problems_page.dart';
+// import 'package:cmu_fondue/application/pages/nearby_problem_page.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -20,22 +21,40 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
   @override
   void initState() {
     super.initState();
-    widget.locationNotifier?.addListener(_resetSelection);
+    widget.locationNotifier?.addListener(_onPlacemarksChanged);
+
+    final placemarks = widget.locationNotifier?.value;
+    if (placemarks != null && placemarks.isNotEmpty) {
+      _selectedPlacemark = placemarks.first;
+    }
   }
 
-  void _resetSelection() {
-    if (_selectedPlacemark != null) {
-      setState(() {
+  void _onPlacemarksChanged() {
+    final placemarks = widget.locationNotifier?.value;
+    setState(() {
+      if (placemarks != null && placemarks.isNotEmpty) {
+        _selectedPlacemark = placemarks.first;
+      } else {
         _selectedPlacemark = null;
-      });
-    }
+      }
+    });
   }
 
   @override
   void dispose() {
-    widget.locationNotifier?.removeListener(_resetSelection);
+    widget.locationNotifier?.removeListener(_onPlacemarksChanged);
     _controller.dispose();
     super.dispose();
+  }
+
+  String _getFormattedAddress(Placemark p) {
+    return [
+      p.name,
+      p.street,
+      p.subLocality,
+      p.locality,
+      p.postalCode,
+    ].where((e) => e != null && e.isNotEmpty).toSet().join(' ');
   }
 
   @override
@@ -94,11 +113,8 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'เลือกตำแหน่ง',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            'Your Location',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ),
                       ),
@@ -121,87 +137,39 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                             );
                           }
 
-                          if (_selectedPlacemark != null) {
-                            return ListView(
-                              controller: scrollController,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.grey[300]!,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    [
-                                          _selectedPlacemark!.name,
-                                          _selectedPlacemark!.street,
-                                          _selectedPlacemark!.subLocality,
-                                          _selectedPlacemark!.locality,
-                                          _selectedPlacemark!.postalCode,
-                                        ]
-                                        .where((e) => e != null && e.isNotEmpty)
-                                        .toSet()
-                                        .join(' '),
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => NearbyProblemPage(
-                                          location: _selectedPlacemark,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(
-                                      double.infinity,
-                                      48,
-                                    ),
-                                    backgroundColor: const Color(0xFF5D3891),
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text('เลือกตำแหน่ง'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedPlacemark = null;
-                                    });
-                                  },
-                                  child: const Text('เลือกตำแหน่งใหม่'),
-                                ),
-                              ],
-                            );
+                          final uniquePlacemarks = <Placemark>[];
+                          final seenAddresses = <String>{};
+
+                          for (final p in placemarks) {
+                            final address = _getFormattedAddress(p);
+                            if (!seenAddresses.contains(address)) {
+                              seenAddresses.add(address);
+                              uniquePlacemarks.add(p);
+                            }
                           }
 
                           return ListView.separated(
                             controller: scrollController,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: placemarks.length,
+                            itemCount: uniquePlacemarks.length,
                             separatorBuilder: (context, index) =>
                                 const SizedBox(height: 8),
                             itemBuilder: (context, index) {
-                              final p = placemarks[index];
+                              final p = uniquePlacemarks[index];
+                              final isSelected = p == _selectedPlacemark;
+
                               return Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[100],
+                                  color: isSelected
+                                      ? Colors.green.withOpacity(0.1)
+                                      : Colors.grey[100],
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Colors.green
+                                        : Colors.grey[300]!,
+                                  ),
                                 ),
                                 child: TextButton(
                                   onPressed: () {
@@ -210,18 +178,16 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                                     });
                                   },
                                   child: Text(
-                                    [
-                                          p.name,
-                                          p.street,
-                                          p.subLocality,
-                                          p.locality,
-                                          p.postalCode,
-                                        ]
-                                        .where((e) => e != null && e.isNotEmpty)
-                                        .toSet()
-                                        .join(' '),
+                                    _getFormattedAddress(p),
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(color: Colors.black),
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.green[800]
+                                          : Colors.black,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
                                   ),
                                 ),
                               );
@@ -229,6 +195,51 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                           );
                         },
                       ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                child: SafeArea(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _selectedPlacemark != null
+                          ? () {
+                              // Navigate to assigned problems page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AssignedProblemsPage(
+                                    location:
+                                        "${_selectedPlacemark?.name}, ${_selectedPlacemark?.street}",
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: const Color(0xFF5D3891),
+                        disabledBackgroundColor: Colors.grey[300],
+                      ),
+                      child: Text(
+                        'เลือกตำแหน่งนี้',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: _selectedPlacemark != null
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
