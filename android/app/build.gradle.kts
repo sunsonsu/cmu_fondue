@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -12,6 +14,13 @@ android {
     namespace = "com.example.cmu_fondue"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    val dartDefines = project.property("dart-defines") as String
+    val dartDefinesMap = dartDefines.split(",").associate {
+        val decoded = String(Base64.getDecoder().decode(it))
+        val parts = decoded.split("=")
+        parts[0] to parts[1]
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -31,6 +40,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["gcpApiKey"] = dartDefinesMap["GCP_API_KEY"] ?: ""
     }
 
     buildTypes {
