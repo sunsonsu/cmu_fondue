@@ -186,6 +186,100 @@ ref.subscribe(...);
 
 ## Mutations
 
+### insertProblemType
+#### Required Arguments
+```dart
+String name = ...;
+String description = ...;
+ConnectorConnector.instance.insertProblemType(
+  name: name,
+  description: description,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<insertProblemTypeData, insertProblemTypeVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.insertProblemType(
+  name: name,
+  description: description,
+);
+insertProblemTypeData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String name = ...;
+String description = ...;
+
+final ref = ConnectorConnector.instance.insertProblemType(
+  name: name,
+  description: description,
+).ref();
+ref.execute();
+```
+
+
+### insertUser
+#### Required Arguments
+```dart
+String email = ...;
+bool isAdmin = ...;
+ConnectorConnector.instance.insertUser(
+  email: email,
+  isAdmin: isAdmin,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<insertUserData, insertUserVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.insertUser(
+  email: email,
+  isAdmin: isAdmin,
+);
+insertUserData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String email = ...;
+bool isAdmin = ...;
+
+final ref = ConnectorConnector.instance.insertUser(
+  email: email,
+  isAdmin: isAdmin,
+).ref();
+ref.execute();
+```
+
+
 ### CreateProblem
 #### Required Arguments
 ```dart
