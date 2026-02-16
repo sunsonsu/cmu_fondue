@@ -34,7 +34,10 @@ void main() async {
   }
 
   final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
-  final authRepository = AuthRepositoryImpl(authDataSource);
+  final authRepository = AuthRepositoryImpl(
+    authDataSource,
+    ConnectorConnector.instance,
+  );
 
   runApp(
     MultiProvider(
