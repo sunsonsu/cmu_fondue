@@ -235,6 +235,202 @@ ref.subscribe(...);
 
 ## Mutations
 
+### CreateProblem
+#### Required Arguments
+```dart
+String title = ...;
+String detail = ...;
+String locationName = ...;
+double lat = ...;
+double lng = ...;
+String reporterId = ...;
+String typeId = ...;
+String tagId = ...;
+ConnectorConnector.instance.createProblem(
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  reporterId: reporterId,
+  typeId: typeId,
+  tagId: tagId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<CreateProblemData, CreateProblemVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.createProblem(
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  reporterId: reporterId,
+  typeId: typeId,
+  tagId: tagId,
+);
+CreateProblemData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String title = ...;
+String detail = ...;
+String locationName = ...;
+double lat = ...;
+double lng = ...;
+String reporterId = ...;
+String typeId = ...;
+String tagId = ...;
+
+final ref = ConnectorConnector.instance.createProblem(
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  reporterId: reporterId,
+  typeId: typeId,
+  tagId: tagId,
+).ref();
+ref.execute();
+```
+
+
+### UpdateProblem
+#### Required Arguments
+```dart
+String id = ...;
+String title = ...;
+String detail = ...;
+String locationName = ...;
+double lat = ...;
+double lng = ...;
+String typeId = ...;
+String tagId = ...;
+ConnectorConnector.instance.updateProblem(
+  id: id,
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  typeId: typeId,
+  tagId: tagId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<UpdateProblemData, UpdateProblemVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.updateProblem(
+  id: id,
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  typeId: typeId,
+  tagId: tagId,
+);
+UpdateProblemData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String id = ...;
+String title = ...;
+String detail = ...;
+String locationName = ...;
+double lat = ...;
+double lng = ...;
+String typeId = ...;
+String tagId = ...;
+
+final ref = ConnectorConnector.instance.updateProblem(
+  id: id,
+  title: title,
+  detail: detail,
+  locationName: locationName,
+  lat: lat,
+  lng: lng,
+  typeId: typeId,
+  tagId: tagId,
+).ref();
+ref.execute();
+```
+
+
+### DeleteProblem
+#### Required Arguments
+```dart
+String id = ...;
+ConnectorConnector.instance.deleteProblem(
+  id: id,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<DeleteProblemData, DeleteProblemVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.deleteProblem(
+  id: id,
+);
+DeleteProblemData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String id = ...;
+
+final ref = ConnectorConnector.instance.deleteProblem(
+  id: id,
+).ref();
+ref.execute();
+```
+
+
 ### insertProblemType
 #### Required Arguments
 ```dart
@@ -324,192 +520,6 @@ bool isAdmin = ...;
 final ref = ConnectorConnector.instance.insertUser(
   email: email,
   isAdmin: isAdmin,
-).ref();
-ref.execute();
-```
-
-
-### CreateProblem
-#### Required Arguments
-```dart
-String title = ...;
-String detail = ...;
-double lat = ...;
-double lng = ...;
-String reporterId = ...;
-String typeId = ...;
-String tagId = ...;
-ConnectorConnector.instance.createProblem(
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  reporterId: reporterId,
-  typeId: typeId,
-  tagId: tagId,
-).execute();
-```
-
-
-
-#### Return Type
-`execute()` returns a `OperationResult<CreateProblemData, CreateProblemVariables>`
-```dart
-/// Result of an Operation Request (query/mutation).
-class OperationResult<Data, Variables> {
-  OperationResult(this.dataConnect, this.data, this.ref);
-  Data data;
-  OperationRef<Data, Variables> ref;
-  FirebaseDataConnect dataConnect;
-}
-
-final result = await ConnectorConnector.instance.createProblem(
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  reporterId: reporterId,
-  typeId: typeId,
-  tagId: tagId,
-);
-CreateProblemData data = result.data;
-final ref = result.ref;
-```
-
-#### Getting the Ref
-Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
-An example of how to use the `Ref` object is shown below:
-```dart
-String title = ...;
-String detail = ...;
-double lat = ...;
-double lng = ...;
-String reporterId = ...;
-String typeId = ...;
-String tagId = ...;
-
-final ref = ConnectorConnector.instance.createProblem(
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  reporterId: reporterId,
-  typeId: typeId,
-  tagId: tagId,
-).ref();
-ref.execute();
-```
-
-
-### UpdateProblem
-#### Required Arguments
-```dart
-String id = ...;
-String title = ...;
-String detail = ...;
-double lat = ...;
-double lng = ...;
-String typeId = ...;
-String tagId = ...;
-ConnectorConnector.instance.updateProblem(
-  id: id,
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  typeId: typeId,
-  tagId: tagId,
-).execute();
-```
-
-
-
-#### Return Type
-`execute()` returns a `OperationResult<UpdateProblemData, UpdateProblemVariables>`
-```dart
-/// Result of an Operation Request (query/mutation).
-class OperationResult<Data, Variables> {
-  OperationResult(this.dataConnect, this.data, this.ref);
-  Data data;
-  OperationRef<Data, Variables> ref;
-  FirebaseDataConnect dataConnect;
-}
-
-final result = await ConnectorConnector.instance.updateProblem(
-  id: id,
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  typeId: typeId,
-  tagId: tagId,
-);
-UpdateProblemData data = result.data;
-final ref = result.ref;
-```
-
-#### Getting the Ref
-Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
-An example of how to use the `Ref` object is shown below:
-```dart
-String id = ...;
-String title = ...;
-String detail = ...;
-double lat = ...;
-double lng = ...;
-String typeId = ...;
-String tagId = ...;
-
-final ref = ConnectorConnector.instance.updateProblem(
-  id: id,
-  title: title,
-  detail: detail,
-  lat: lat,
-  lng: lng,
-  typeId: typeId,
-  tagId: tagId,
-).ref();
-ref.execute();
-```
-
-
-### DeleteProblem
-#### Required Arguments
-```dart
-String id = ...;
-ConnectorConnector.instance.deleteProblem(
-  id: id,
-).execute();
-```
-
-
-
-#### Return Type
-`execute()` returns a `OperationResult<DeleteProblemData, DeleteProblemVariables>`
-```dart
-/// Result of an Operation Request (query/mutation).
-class OperationResult<Data, Variables> {
-  OperationResult(this.dataConnect, this.data, this.ref);
-  Data data;
-  OperationRef<Data, Variables> ref;
-  FirebaseDataConnect dataConnect;
-}
-
-final result = await ConnectorConnector.instance.deleteProblem(
-  id: id,
-);
-DeleteProblemData data = result.data;
-final ref = result.ref;
-```
-
-#### Getting the Ref
-Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
-An example of how to use the `Ref` object is shown below:
-```dart
-String id = ...;
-
-final ref = ConnectorConnector.instance.deleteProblem(
-  id: id,
 ).ref();
 ref.execute();
 ```

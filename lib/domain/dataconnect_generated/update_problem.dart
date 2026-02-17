@@ -4,13 +4,14 @@ class UpdateProblemVariablesBuilder {
   String id;
   String title;
   String detail;
+  String locationName;
   double lat;
   double lng;
   String typeId;
   String tagId;
 
   final FirebaseDataConnect _dataConnect;
-  UpdateProblemVariablesBuilder(this._dataConnect, {required  this.id,required  this.title,required  this.detail,required  this.lat,required  this.lng,required  this.typeId,required  this.tagId,});
+  UpdateProblemVariablesBuilder(this._dataConnect, {required  this.id,required  this.title,required  this.detail,required  this.locationName,required  this.lat,required  this.lng,required  this.typeId,required  this.tagId,});
   Deserializer<UpdateProblemData> dataDeserializer = (dynamic json)  => UpdateProblemData.fromJson(jsonDecode(json));
   Serializer<UpdateProblemVariables> varsSerializer = (UpdateProblemVariables vars) => jsonEncode(vars.toJson());
   Future<OperationResult<UpdateProblemData, UpdateProblemVariables>> execute() {
@@ -18,7 +19,7 @@ class UpdateProblemVariablesBuilder {
   }
 
   MutationRef<UpdateProblemData, UpdateProblemVariables> ref() {
-    UpdateProblemVariables vars= UpdateProblemVariables(id: id,title: title,detail: detail,lat: lat,lng: lng,typeId: typeId,tagId: tagId,);
+    UpdateProblemVariables vars= UpdateProblemVariables(id: id,title: title,detail: detail,locationName: locationName,lat: lat,lng: lng,typeId: typeId,tagId: tagId,);
     return _dataConnect.mutation("UpdateProblem", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -98,6 +99,7 @@ class UpdateProblemVariables {
   final String id;
   final String title;
   final String detail;
+  final String locationName;
   final double lat;
   final double lng;
   final String typeId;
@@ -108,6 +110,7 @@ class UpdateProblemVariables {
   id = nativeFromJson<String>(json['id']),
   title = nativeFromJson<String>(json['title']),
   detail = nativeFromJson<String>(json['detail']),
+  locationName = nativeFromJson<String>(json['locationName']),
   lat = nativeFromJson<double>(json['lat']),
   lng = nativeFromJson<double>(json['lng']),
   typeId = nativeFromJson<String>(json['typeId']),
@@ -125,6 +128,7 @@ class UpdateProblemVariables {
     return id == otherTyped.id && 
     title == otherTyped.title && 
     detail == otherTyped.detail && 
+    locationName == otherTyped.locationName && 
     lat == otherTyped.lat && 
     lng == otherTyped.lng && 
     typeId == otherTyped.typeId && 
@@ -132,7 +136,7 @@ class UpdateProblemVariables {
     
   }
   @override
-  int get hashCode => Object.hashAll([id.hashCode, title.hashCode, detail.hashCode, lat.hashCode, lng.hashCode, typeId.hashCode, tagId.hashCode]);
+  int get hashCode => Object.hashAll([id.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, lat.hashCode, lng.hashCode, typeId.hashCode, tagId.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -140,6 +144,7 @@ class UpdateProblemVariables {
     json['id'] = nativeToJson<String>(id);
     json['title'] = nativeToJson<String>(title);
     json['detail'] = nativeToJson<String>(detail);
+    json['locationName'] = nativeToJson<String>(locationName);
     json['lat'] = nativeToJson<double>(lat);
     json['lng'] = nativeToJson<double>(lng);
     json['typeId'] = nativeToJson<String>(typeId);
@@ -151,6 +156,7 @@ class UpdateProblemVariables {
     required this.id,
     required this.title,
     required this.detail,
+    required this.locationName,
     required this.lat,
     required this.lng,
     required this.typeId,
