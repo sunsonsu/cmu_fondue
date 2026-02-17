@@ -1,153 +1,122 @@
+import 'package:cmu_fondue/application/widgets/problem_card.dart';
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            'Report History',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-        ),
+  State<HistoryPage> createState() => _HistoryPageState();
+}
 
-        // History List
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 5,
-            itemBuilder: (context, index) => _buildHistoryCard(index),
+class _HistoryPageState extends State<HistoryPage> {
+  final GetProblemsNearbyUseCase _getProblemsUseCase = GetProblemsNearbyUseCase();
+  List<ProblemEntity> _userProblems = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProblems();
+  }
+
+  Future<void> _loadProblems() async {
+    setState(() => _isLoading = true);
+    
+    // ดึงข้อมูลจาก GetProblemsNearbyUseCase
+    final problems = await _getProblemsUseCase();
+    
+    setState(() {
+      _userProblems = problems;
+      _isLoading = false;
+    });
+  }
+
+  List<ProblemEntity> _filterByStatus(List<ProblemTag> tags) {
+    return _userProblems.where((p) => tags.contains(p.tagName)).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pendingProblems = _filterByStatus([ProblemTag.pending, ProblemTag.received]);
+    final inProgressProblems = _filterByStatus([ProblemTag.inProgress]);
+    final completedProblems = _filterByStatus([ProblemTag.completed]);
+
+    return RefreshIndicator(
+      onRefresh: _loadProblems,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'ประวัติการแจ้งเรื่อง',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-      ],
+
+          // Content
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _userProblems.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'ไม่มีประวัติการแจ้งเรื่อง',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        children: [
+                          // รอเคลม Section
+                          if (pendingProblems.isNotEmpty) ...[
+                            _buildSectionHeader('รอดำเนินการ', pendingProblems.length),
+                            ...pendingProblems.map((p) => ProblemCard(
+                                  problem: p,
+                                  onDeleted: _loadProblems,
+                                )),
+                            const SizedBox(height: 16),
+                          ],
+
+                          // กำลังเคลม Section
+                          if (inProgressProblems.isNotEmpty) ...[
+                            _buildSectionHeader('กำลังดำเนินการ', inProgressProblems.length),
+                            ...inProgressProblems.map((p) => ProblemCard(
+                                  problem: p,
+                                  onDeleted: _loadProblems,
+                                )),
+                            const SizedBox(height: 16),
+                          ],
+
+                          // เสร็จสิ้น Section
+                          if (completedProblems.isNotEmpty) ...[
+                            _buildSectionHeader('เสร็จสิ้น', completedProblems.length),
+                            ...completedProblems.map((p) => ProblemCard(
+                                  problem: p,
+                                  onDeleted: _loadProblems,
+                                )),
+                            const SizedBox(height: 16),
+                          ],
+                        ],
+                      ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildHistoryCard(int index) {
-    final reports = [
-      {
-        'title': 'Broken Road',
-        'date': '2026-02-08',
-        'status': 'pending',
-        'type': 'road',
-      },
-      {
-        'title': 'ถนนแตกหน้าหอสมุด',
-        'date': '2026-02-07',
-        'status': 'in_progress',
-        'type': 'ถนน',
-      },
-      {
-        'title': 'Street Light Out',
-        'date': '2026-02-05',
-        'status': 'resolved',
-        'type': 'light',
-      },
-      {
-        'title': 'Water Leak',
-        'date': '2026-02-03',
-        'status': 'resolved',
-        'type': 'water',
-      },
-      {
-        'title': 'ป้ายจราจรชำรุด',
-        'date': '2026-02-01',
-        'status': 'pending',
-        'type': 'sign',
-      },
-    ];
-
-    final report = reports[index];
-    final status = report['status'] as String;
-
-    Color statusColor;
-    String statusText;
-
-    switch (status) {
-      case 'pending':
-        statusColor = Colors.orange;
-        statusText = 'Pending';
-        break;
-      case 'in_progress':
-        statusColor = Colors.blue;
-        statusText = 'In Progress';
-        break;
-      case 'resolved':
-        statusColor = Colors.green;
-        statusText = 'Resolved';
-        break;
-      default:
-        statusColor = Colors.grey;
-        statusText = 'Unknown';
-    }
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    report['title'] as String,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: statusColor),
-                  ),
-                  child: Text(
-                    statusText,
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.category, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 4),
-                Text(
-                  report['type'] as String,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-                const SizedBox(width: 16),
-                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 4),
-                Text(
-                  report['date'] as String,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-              ],
-            ),
-          ],
+  Widget _buildSectionHeader(String title, int count) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Text(
+        '$title ($count)',
+        style: const TextStyle(
+          fontSize: 19,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
