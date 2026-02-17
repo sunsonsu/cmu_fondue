@@ -57,7 +57,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
       appBar: AppBar(
         title: const Text(
           'เลือกตำแหน่ง',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -66,7 +66,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
         children: [
           // Description text
           Padding(
-            padding: const EdgeInsets.fromLTRB(35, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
