@@ -28,4 +28,8 @@ abstract class ProblemRepo {
 
   //Delete a problem
   Future<void> deleteProblem(String id);
+
+  Future<int> countProblemsByTag({
+    required String currentTagId,
+  });
 }

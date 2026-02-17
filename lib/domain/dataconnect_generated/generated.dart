@@ -21,6 +21,8 @@ part 'list_problem_tags.dart';
 
 part 'problem_types_query.dart';
 
+part 'problems_by_tag.dart';
+
 
 
 
@@ -72,6 +74,11 @@ class ConnectorConnector {
   
   ProblemTypesQueryVariablesBuilder problemTypesQuery () {
     return ProblemTypesQueryVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
+    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
   }
   
 

@@ -10,6 +10,7 @@ ConnectorConnector.instance.ListProblems().execute();
 ConnectorConnector.instance.ListProblemTypes().execute();
 ConnectorConnector.instance.ListProblemTags().execute();
 ConnectorConnector.instance.ProblemTypesQuery().execute();
+ConnectorConnector.instance.ProblemsByTag(problemsByTagVariables).execute();
 
 ```
 

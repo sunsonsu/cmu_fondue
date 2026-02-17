@@ -184,6 +184,55 @@ ref.execute();
 ref.subscribe(...);
 ```
 
+
+### ProblemsByTag
+#### Required Arguments
+```dart
+String TagId = ...;
+ConnectorConnector.instance.problemsByTag(
+  TagId: TagId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `QueryResult<ProblemsByTagData, ProblemsByTagVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+/// Result of a query request. Created to hold extra variables in the future.
+class QueryResult<Data, Variables> extends OperationResult<Data, Variables> {
+  QueryResult(super.dataConnect, super.data, super.ref);
+}
+
+final result = await ConnectorConnector.instance.problemsByTag(
+  TagId: TagId,
+);
+ProblemsByTagData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String TagId = ...;
+
+final ref = ConnectorConnector.instance.problemsByTag(
+  TagId: TagId,
+).ref();
+ref.execute();
+
+ref.subscribe(...);
+```
+
 ## Mutations
 
 ### insertProblemType

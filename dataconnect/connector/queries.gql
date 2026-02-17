@@ -44,3 +44,10 @@ query ProblemTypesQuery @auth(level: PUBLIC, insecureReason: "This operation is 
     typeThaiName
   }
 }
+
+query ProblemsByTag($TagId: UUID!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(where: { currentTags: { problemTagId: { eq: $TagId } } }) {
+    problemId
+  }
+}
+

@@ -86,4 +86,15 @@ class ProblemRepoImpl implements ProblemRepo {
       throw Exception("ไม่สามารถลบข้อมูลได้: $e");
     }
   }
+
+  @override
+  Future<int> countProblemsByTag({required String currentTagId}) async {
+    try {
+      final result = await connector.ProblemsByTag(TagId: currentTagId).execute();
+      return result.data.problems.length;
+    } catch (e) {
+      throw Exception("ไม่สามารถนับจำนวนปัญหาตามแท็กได้: $e");
+    }
+  }
+
 }
