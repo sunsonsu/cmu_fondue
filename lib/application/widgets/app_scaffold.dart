@@ -4,12 +4,14 @@ class AppScaffold extends StatefulWidget {
   final int currentIndex;
   final Function(int)? onNavigationChanged;
   final Widget child;
+  final String profileLabel;
 
   const AppScaffold({
     super.key,
     this.currentIndex = 0,
     this.onNavigationChanged,
     required this.child,
+    this.profileLabel = 'Profile',
   });
 
   @override
@@ -51,7 +53,13 @@ class _AppScaffoldState extends State<AppScaffold> {
                 isCenter: true,
               ),
               _buildNavItem(icon: Icons.history, label: 'History', index: 2),
-              _buildNavItem(icon: Icons.person, label: 'Profile', index: 3),
+              _buildNavItem(
+                icon: widget.profileLabel == 'Admin' 
+                    ? Icons.admin_panel_settings 
+                    : Icons.person,
+                label: widget.profileLabel,
+                index: 3,
+              ),
             ],
           ),
         ),
