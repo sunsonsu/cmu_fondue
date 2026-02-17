@@ -61,3 +61,9 @@ query ProblemImageByProblemId($problemId: UUID!) @auth(level: PUBLIC insecureRea
     createdAt
   }
 }
+query ProblemsByTag($TagId: UUID!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(where: { currentTags: { problemTagId: { eq: $TagId } } }) {
+    problemId
+  }
+}
+

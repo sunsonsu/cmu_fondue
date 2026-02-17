@@ -29,6 +29,8 @@ part 'problem_types_query.dart';
 
 part 'problem_image_by_problem_id.dart';
 
+part 'problems_by_tag.dart';
+
 
 
 
@@ -100,6 +102,11 @@ class ConnectorConnector {
   
   ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
     return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
+  }
+  
+  
+  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
+    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
   }
   
 

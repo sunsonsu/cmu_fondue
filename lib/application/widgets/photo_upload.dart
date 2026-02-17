@@ -129,7 +129,7 @@ class PhotoUploadWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Upload Photo',
+                          'อัพโหลดรูปภาพ',
                           style: GoogleFonts.kanit(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -154,7 +154,7 @@ class PhotoUploadWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Take a Photo',
+                          'ถ่ายรูปจากกล้อง',
                           style: GoogleFonts.kanit(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

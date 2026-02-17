@@ -9,6 +9,8 @@ import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/data/repositories/problem_type_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
+import 'package:cmu_fondue/data/repositories/problem_tag_repo_impl.dart';
+import 'package:cmu_fondue/domain/entities/problem_tag_entity.dart';
 
 class CreateProblemPage extends StatefulWidget {
   const CreateProblemPage({super.key});
@@ -67,6 +69,7 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
     final connector = ConnectorConnector.instance;
     final typeRepo = ProblemTypeRepoImpl(connector: connector);
     final problemRepo = ProblemRepoImpl(connector: connector);
+    final tagRepo = ProblemTagRepoImpl(connector: connector);
 
     _getProblemTypesUseCase = GetProblemTypesUseCase(typeRepo);
     _createProblemUseCase = CreateProblemUseCase(problemRepo);
@@ -75,13 +78,15 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
     _deleteProblemUseCase = DeleteProblemUseCase(problemRepo);
   }
 
-  /// ดึงข้อมูลใหม่จาก Server ทั้ง Types และ Problems
+  /// ดึงข้อมูลใหม่จาก Server ทั้ง Types, Problems, และ Tags
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
     try {
+      final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
       final results = await Future.wait([
         _getProblemTypesUseCase.call(),
         _getProblemsUseCase.call(),
+        tagRepo.getAllProblemTags(),
       ]);
       setState(() {
         _problemTypes = results[0] as List<ProblemTypeEntity>;
@@ -92,11 +97,28 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
           _selectedTypeId = _problemTypes.first.problemTypeId;
         }
       });
+      
+      // โหลดจำนวนปัญหาแต่ละแท็ก
+      await _loadTagCounts();
     } catch (e) {
       _showErrorSnackBar("โหลดข้อมูลไม่สำเร็จ: $e");
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  /// ดึงจำนวนปัญหาในแต่ละแท็ก
+  Future<void> _loadTagCounts() async {
+    final counts = <String, int>{};
+    for (var tag in _problemTags) {
+      try {
+        final count = await _getProblemsUseCase.countByTag(tag.problemTagId);
+        counts[tag.problemTagId] = count;
+      } catch (e) {
+        counts[tag.problemTagId] = 0;
+      }
+    }
+    setState(() => _tagCounts = counts);
   }
 
   /// ล้างฟอร์มกลับเป็นค่าว่าง (สำหรับยกเลิกการแก้ไขหรือหลังส่งข้อมูล)
