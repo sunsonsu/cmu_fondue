@@ -8,6 +8,7 @@ abstract class ProblemRepo {
   Future<String> createProblem({
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String reporterId,
@@ -20,6 +21,7 @@ abstract class ProblemRepo {
     required String id,
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String typeId,

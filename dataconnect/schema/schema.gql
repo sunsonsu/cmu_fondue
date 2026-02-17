@@ -15,6 +15,7 @@ type Problem @table(key: "problemId") {
   currentTags: ProblemTag! @ref(fields: "currentTagId", references: "problemTagId")
   currentTagId: UUID!
   createdAt: Timestamp! @default(expr: "request.time")
+  locationName: String!
   problemLat: Float!
   problemLng: Float!
   upvoteCount: Int! @default(value: 0)
