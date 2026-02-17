@@ -13,6 +13,12 @@ part 'insert_problem_type.dart';
 
 part 'insert_user.dart';
 
+part 'create_problem_image.dart';
+
+part 'update_problem_image.dart';
+
+part 'delete_problem_image.dart';
+
 part 'list_problems.dart';
 
 part 'list_problem_types.dart';
@@ -20,6 +26,8 @@ part 'list_problem_types.dart';
 part 'list_problem_tags.dart';
 
 part 'problem_types_query.dart';
+
+part 'problem_image_by_problem_id.dart';
 
 
 
@@ -35,8 +43,8 @@ class ConnectorConnector {
   }
   
   
-  UpdateProblemVariablesBuilder updateProblem ({required String id, required String title, required String detail, required String locationName, required double lat, required double lng, required String typeId, required String tagId, }) {
-    return UpdateProblemVariablesBuilder(dataConnect, id: id,title: title,detail: detail,locationName: locationName,lat: lat,lng: lng,typeId: typeId,tagId: tagId,);
+  UpdateProblemVariablesBuilder updateProblem ({required String id, }) {
+    return UpdateProblemVariablesBuilder(dataConnect, id: id,);
   }
   
   
@@ -52,6 +60,21 @@ class ConnectorConnector {
   
   InsertUserVariablesBuilder insertUser ({required String email, required bool isAdmin, }) {
     return InsertUserVariablesBuilder(dataConnect, email: email,isAdmin: isAdmin,);
+  }
+  
+  
+  CreateProblemImageVariablesBuilder createProblemImage ({required String problemId, required String imageUrl, required String fileName, required String imageType, }) {
+    return CreateProblemImageVariablesBuilder(dataConnect, problemId: problemId,imageUrl: imageUrl,fileName: fileName,imageType: imageType,);
+  }
+  
+  
+  UpdateProblemImageVariablesBuilder updateProblemImage ({required String problemImageId, required String problemId, }) {
+    return UpdateProblemImageVariablesBuilder(dataConnect, problemImageId: problemImageId,problemId: problemId,);
+  }
+  
+  
+  DeleteProblemImageVariablesBuilder deleteProblemImage ({required String problemImageId, }) {
+    return DeleteProblemImageVariablesBuilder(dataConnect, problemImageId: problemImageId,);
   }
   
   
@@ -72,6 +95,11 @@ class ConnectorConnector {
   
   ProblemTypesQueryVariablesBuilder problemTypesQuery () {
     return ProblemTypesQueryVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
+    return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
   }
   
 

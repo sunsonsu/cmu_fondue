@@ -1,13 +1,10 @@
 # This file is used to seed initial data into the database for testing and development purposes.
-
+# Komsan
 mutation SeedInitialData @auth(level: PUBLIC) {
-  # ใช้ _upsert แทน _insert เพื่อป้องกัน Error "ALREADY_EXISTS"
-  
-  # 1. สร้าง/อัปเดต User ตัวอย่าง
   user_upsert(
     data: {
-      userId: "11111111-2222-3333-4444-555555555555"
-      email: "admin_test@cmu.ac.th"
+      userId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
+      email: "admin@test.com"
       isAdmin: true
     }
   )
@@ -47,21 +44,21 @@ mutation SeedInitialData @auth(level: PUBLIC) {
     data: {
       problemTagId: "d74d3f00-e2fb-4b71-9d06-1f4b336c56b7"
       tagName: "Received Report"
-      tagThaiName: "รับเรื่องแล้ว"
+      tagThaiName: "รอดำเนินการ"
     }
   )
   tag2: problemTag_upsert(
     data: {
       problemTagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8"
       tagName: "Pending"
-      tagThaiName: "ยังไม่ได้แก้ไข"
+      tagThaiName: "รับเรื่องแล้ว"
     }
   )
   tag3: problemTag_upsert(
     data: {
       problemTagId: "619a08f6-ee74-4b2b-870e-b35c951c8ef9"
       tagName: "In Progress"
-      tagThaiName: "กำลังแก้ไข"
+      tagThaiName: "กำลังดำเนินการ"
     }
   )
   tag4: problemTag_upsert(
@@ -71,4 +68,107 @@ mutation SeedInitialData @auth(level: PUBLIC) {
       tagThaiName: "เสร็จสิ้น"
     }
   )
+
+  problem1: problem_upsert(
+    data: {
+      problemId: "11111111222233334444555555555555"
+      currentTagId: "d74d3f00e2fb4b719d061f4b336c56b7"
+      problemTypeId: "22222222333344445555666666666666"
+      reporterId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
+      createdAt: "2026-02-17T06:17:27.514Z"
+      detail: "หน้าทางเข้าหอสมุดมีขยะใหญ่มาก"
+      locationName: "CMU-Library"
+      problemLat: 18.80137117148102
+      problemLng: 98.95185602432956
+      title: "มีขยะเลอะเทอะอยู่หน้าหอสมุด"
+      upvoteCount: 0
+    }
+  )
+    problem2: problem_upsert(
+    data: {
+      problemId: "11111111222233334444555555555556"
+      currentTagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8"
+      problemTypeId: "33333333-4444-5555-6666-777777777777"
+      reporterId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
+      createdAt: "2026-02-16T06:17:27.514Z"
+      detail: "หน้าตึกวิทย์คอมมืดมาก ไม่มีไฟส่องสว่างเลย"
+      locationName: "CS CMU"
+      problemLat: 18.803881188271525
+      problemLng: 98.95262758384776
+      title: "ไฟฟ้าตึกวิทย์คอมเสีย"
+      upvoteCount: 0
+    }
+  )
+  problem3: problem_upsert(
+    data: {
+      problemId: "11111111222233334444555555555557"
+      currentTagId: "f306d165-b7f8-422e-b509-571eea11e99b"
+      problemTypeId: "44444444-5555-6666-7777-888888888888"
+      reporterId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
+      createdAt: "2026-02-15T06:17:27.514Z"
+      detail: "ถนนเป็นหลุมเป็นบ่อ ขับรถผ่านทีไรล้อสะเทือนทุกที"
+      locationName: "ศูนย์อาหารหลัก มหาวิทยาลัยเชียงใหม่"
+      problemLat: 18.799774681642354
+      problemLng: 98.9516508791162
+      title: "ถนนเสีย หน้าโรงอาหารใหม่"
+      upvoteCount: 0
+    }
+  )
+    problem4: problem_upsert(
+    data: {
+      problemId: "11111111222233334444555555555558"
+      currentTagId: "f306d165-b7f8-422e-b509-571eea11e99b"
+      problemTypeId: "44444444-5555-6666-7777-888888888888"
+      reporterId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
+      createdAt: "2026-02-14T06:17:27.514Z"
+      detail: "ห้องน้ำ RB5 ชั้น 1 เสีย เข้าไปใช้ไม่ได้เลย"
+      locationName: "ตึกเรียนรวม RB5 ชั้น 1"
+      problemLat: 18.80123248435703
+      problemLng: 98.95259418015277
+      title: "ห้องน้ำ RB5 ชั้น 1 เสีย"
+      upvoteCount: 0
+    }
+  )
+
+    problemImage1: problemImage_upsert(
+    data: {
+      problemImageId: "c864f35c-e336-47fc-9408-68f4fc30ee39"
+      problemId: "11111111222233334444555555555555"
+      createdAt: "2026-02-17T06:17:27.514Z"
+      fileName: "หอสมุด.jpg"
+      imageType: "User Uploaded"
+      imageUrl: "https://library.cmu.ac.th/file_upload/jbimages/DSC09556.JPG"
+    }
+  )
+    problemImage2: problemImage_upsert(
+    data: {
+      problemImageId: "fb519744-1f4d-4602-aca4-66db897bcda9"
+      problemId: "11111111222233334444555555555556"
+      createdAt: "2026-02-16T06:17:27.514Z"
+      fileName: "cs-cmu-building.jpg"
+      imageType: "User Uploaded"
+      imageUrl: "https://www.science.cmu.ac.th/2022/images/department/cs.jpg"
+    }
+  )
+    problemImage3: problemImage_upsert(
+    data: {
+      problemImageId: "76a2384f-7cb2-4f60-8940-f7e7bcde7bd7"
+      problemId: "11111111222233334444555555555557"
+      createdAt: "2026-02-15T06:17:27.514Z"
+      fileName: "road-cmu.jpg"
+      imageType: "User Uploaded"
+      imageUrl: "https://www.cmu.ac.th/content/Article/2021/15b4ed97-29b0-4411-b40b-58522ef2660a/c8173289-18ee-436d-b737-51424ed46da5.jpg"
+    }
+  )
+    problemImage4: problemImage_upsert(
+    data: {
+      problemImageId: "f9e4e6fe-bf6f-433f-8e87-390de88ffdae"
+      problemId: "11111111222233334444555555555558"
+      createdAt: "2026-02-14T06:17:27.514Z"
+      fileName: "bathroom-cmu.jpg"
+      imageType: "User Uploaded"
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPVs57BDST1i4DErkiPOBFWuonZckWNrLu1A&s"
+    }
+  )
+
 }

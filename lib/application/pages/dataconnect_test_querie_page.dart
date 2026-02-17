@@ -339,15 +339,42 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                       itemCount: _existingProblems.length,
                       itemBuilder: (context, index) {
                         final p = _existingProblems[index];
+                        final imageUrl = p.imageUrl; 
+                        
                         return Card(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 4,
                           ),
                           child: ListTile(
-                            leading: const CircleAvatar(
-                              child: Icon(Icons.location_on),
-                            ),
+                            leading: imageUrl != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      imageUrl,
+                                      width: 56,
+                                      height: 56,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return const CircleAvatar(
+                                          child: Icon(Icons.location_on),
+                                        );
+                                      },
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return const SizedBox(
+                                          width: 56,
+                                          height: 56,
+                                          child: Center(
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : const CircleAvatar(
+                                    child: Icon(Icons.location_on),
+                                  ),
                             title: Text(
                               p.title,
                               style: const TextStyle(

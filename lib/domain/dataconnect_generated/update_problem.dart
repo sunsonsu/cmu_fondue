@@ -2,16 +2,44 @@ part of 'generated.dart';
 
 class UpdateProblemVariablesBuilder {
   String id;
-  String title;
-  String detail;
-  String locationName;
-  double lat;
-  double lng;
-  String typeId;
-  String tagId;
+  Optional<String> _title = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<String> _detail = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<String> _locationName = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<double> _lat = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<double> _lng = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<String> _typeId = Optional.optional(nativeFromJson, nativeToJson);
+  Optional<String> _tagId = Optional.optional(nativeFromJson, nativeToJson);
 
-  final FirebaseDataConnect _dataConnect;
-  UpdateProblemVariablesBuilder(this._dataConnect, {required  this.id,required  this.title,required  this.detail,required  this.locationName,required  this.lat,required  this.lng,required  this.typeId,required  this.tagId,});
+  final FirebaseDataConnect _dataConnect;  UpdateProblemVariablesBuilder title(String? t) {
+   _title.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder detail(String? t) {
+   _detail.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder locationName(String? t) {
+   _locationName.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder lat(double? t) {
+   _lat.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder lng(double? t) {
+   _lng.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder typeId(String? t) {
+   _typeId.value = t;
+   return this;
+  }
+  UpdateProblemVariablesBuilder tagId(String? t) {
+   _tagId.value = t;
+   return this;
+  }
+
+  UpdateProblemVariablesBuilder(this._dataConnect, {required  this.id,});
   Deserializer<UpdateProblemData> dataDeserializer = (dynamic json)  => UpdateProblemData.fromJson(jsonDecode(json));
   Serializer<UpdateProblemVariables> varsSerializer = (UpdateProblemVariables vars) => jsonEncode(vars.toJson());
   Future<OperationResult<UpdateProblemData, UpdateProblemVariables>> execute() {
@@ -19,7 +47,7 @@ class UpdateProblemVariablesBuilder {
   }
 
   MutationRef<UpdateProblemData, UpdateProblemVariables> ref() {
-    UpdateProblemVariables vars= UpdateProblemVariables(id: id,title: title,detail: detail,locationName: locationName,lat: lat,lng: lng,typeId: typeId,tagId: tagId,);
+    UpdateProblemVariables vars= UpdateProblemVariables(id: id,title: _title,detail: _detail,locationName: _locationName,lat: _lat,lng: _lng,typeId: _typeId,tagId: _tagId,);
     return _dataConnect.mutation("UpdateProblem", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -97,24 +125,48 @@ class UpdateProblemData {
 @immutable
 class UpdateProblemVariables {
   final String id;
-  final String title;
-  final String detail;
-  final String locationName;
-  final double lat;
-  final double lng;
-  final String typeId;
-  final String tagId;
+  late final Optional<String>title;
+  late final Optional<String>detail;
+  late final Optional<String>locationName;
+  late final Optional<double>lat;
+  late final Optional<double>lng;
+  late final Optional<String>typeId;
+  late final Optional<String>tagId;
   @Deprecated('fromJson is deprecated for Variable classes as they are no longer required for deserialization.')
   UpdateProblemVariables.fromJson(Map<String, dynamic> json):
   
-  id = nativeFromJson<String>(json['id']),
-  title = nativeFromJson<String>(json['title']),
-  detail = nativeFromJson<String>(json['detail']),
-  locationName = nativeFromJson<String>(json['locationName']),
-  lat = nativeFromJson<double>(json['lat']),
-  lng = nativeFromJson<double>(json['lng']),
-  typeId = nativeFromJson<String>(json['typeId']),
-  tagId = nativeFromJson<String>(json['tagId']);
+  id = nativeFromJson<String>(json['id']) {
+  
+  
+  
+    title = Optional.optional(nativeFromJson, nativeToJson);
+    title.value = json['title'] == null ? null : nativeFromJson<String>(json['title']);
+  
+  
+    detail = Optional.optional(nativeFromJson, nativeToJson);
+    detail.value = json['detail'] == null ? null : nativeFromJson<String>(json['detail']);
+  
+  
+    locationName = Optional.optional(nativeFromJson, nativeToJson);
+    locationName.value = json['locationName'] == null ? null : nativeFromJson<String>(json['locationName']);
+  
+  
+    lat = Optional.optional(nativeFromJson, nativeToJson);
+    lat.value = json['lat'] == null ? null : nativeFromJson<double>(json['lat']);
+  
+  
+    lng = Optional.optional(nativeFromJson, nativeToJson);
+    lng.value = json['lng'] == null ? null : nativeFromJson<double>(json['lng']);
+  
+  
+    typeId = Optional.optional(nativeFromJson, nativeToJson);
+    typeId.value = json['typeId'] == null ? null : nativeFromJson<String>(json['typeId']);
+  
+  
+    tagId = Optional.optional(nativeFromJson, nativeToJson);
+    tagId.value = json['tagId'] == null ? null : nativeFromJson<String>(json['tagId']);
+  
+  }
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -142,13 +194,27 @@ class UpdateProblemVariables {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['id'] = nativeToJson<String>(id);
-    json['title'] = nativeToJson<String>(title);
-    json['detail'] = nativeToJson<String>(detail);
-    json['locationName'] = nativeToJson<String>(locationName);
-    json['lat'] = nativeToJson<double>(lat);
-    json['lng'] = nativeToJson<double>(lng);
-    json['typeId'] = nativeToJson<String>(typeId);
-    json['tagId'] = nativeToJson<String>(tagId);
+    if(title.state == OptionalState.set) {
+      json['title'] = title.toJson();
+    }
+    if(detail.state == OptionalState.set) {
+      json['detail'] = detail.toJson();
+    }
+    if(locationName.state == OptionalState.set) {
+      json['locationName'] = locationName.toJson();
+    }
+    if(lat.state == OptionalState.set) {
+      json['lat'] = lat.toJson();
+    }
+    if(lng.state == OptionalState.set) {
+      json['lng'] = lng.toJson();
+    }
+    if(typeId.state == OptionalState.set) {
+      json['typeId'] = typeId.toJson();
+    }
+    if(tagId.state == OptionalState.set) {
+      json['tagId'] = tagId.toJson();
+    }
     return json;
   }
 

@@ -19,13 +19,13 @@ abstract class ProblemRepo {
   //Update an existing problem
   Future<void> updateProblem({
     required String id,
-    required String title,
-    required String detail,
-    required String locationName,
-    required double lat,
-    required double lng,
-    required String typeId,
-    required String tagId,
+    String? title,
+    String? detail,
+    String? locationName,
+    double? lat,
+    double? lng,
+    String? typeId,
+    String? tagId,
   });
 
   //Delete a problem

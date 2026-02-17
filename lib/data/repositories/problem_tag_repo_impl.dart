@@ -7,12 +7,14 @@ class ProblemTagRepoImpl implements ProblemTagRepo {
   final ConnectorConnector connector;
   ProblemTagRepoImpl({required this.connector});
 
+  // Komsan
   @override
   Future<List<ProblemTagEntity>> getAllProblemTags() async{
     final result = await connector.listProblemTags().execute();
     return result.data.problemTags.map((e) => ProblemTagEntity.fromGenerated(e)).toList();
   }
 
+  // Komsan
   @override
   Future<void> insertProblemTag() async {
   }

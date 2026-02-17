@@ -1,5 +1,5 @@
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-
+// Komsan
 class ProblemEntity {
   final String id;
   final String title;
@@ -11,8 +11,8 @@ class ProblemEntity {
   final String reporterEmail;
   final ProblemType typeName;
   final ProblemTag tagName;
-  final String imageUrl;
   final String locationName;
+  final String? imageUrl; 
 
   ProblemEntity({
     required this.id,
@@ -25,11 +25,17 @@ class ProblemEntity {
     required this.reporterEmail,
     required this.typeName,
     required this.tagName,
-    required this.imageUrl,
     required this.locationName,
+    this.imageUrl,
   });
 
   factory ProblemEntity.fromGenerated(dynamic data) {
+    String? firstImageUrl;
+    if (data.problemImages_on_problem != null && 
+        data.problemImages_on_problem.isNotEmpty) {
+      firstImageUrl = data.problemImages_on_problem[0].imageUrl;
+    }
+
     return ProblemEntity(
       id: data.problemId,
       title: data.title,
@@ -40,6 +46,7 @@ class ProblemEntity {
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
 
+      // Rachata
       // แปลง String เป็น ProblemType
       typeName: ProblemType.values.firstWhere(
         (e) => e.name == data.problemType.typeName,
@@ -53,8 +60,8 @@ class ProblemEntity {
         orElse: () => ProblemTag.pending,
       ),
 
-      locationName: data.locationName ?? '',
-      imageUrl: data.imageUrl ?? '',
+      locationName: data.locationName,
+      imageUrl: firstImageUrl,
     );
   }
 }
