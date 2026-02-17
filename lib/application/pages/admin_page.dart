@@ -1,0 +1,34 @@
+import 'package:cmu_fondue/application/widgets/admin_logout_button.dart';
+import 'package:cmu_fondue/application/widgets/staff_dashboard.dart';
+import 'package:flutter/material.dart';
+
+class AdminPage extends StatelessWidget {
+  const AdminPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFEAE5F1),
+      appBar: AppBar(
+        title: const Text(
+          'Staff Dashboard',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5D3891),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: AdminLogoutButton(),
+          ),
+        ],
+      ),
+      body: const StaffDashboard(),
+    );
+  }
+}
