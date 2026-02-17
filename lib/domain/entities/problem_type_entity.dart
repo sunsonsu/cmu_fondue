@@ -1,3 +1,4 @@
+// Komsan
 class ProblemTypeEntity {
   final String problemTypeId;
   final String typeName;

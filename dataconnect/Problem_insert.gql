@@ -1,7 +1,0 @@
-# This is a file for you to write an un-named mutation. 
-# Only one un-named mutation is allowed per file.
-mutation {
-  problem_insert(
-    data: {problemId: "11111111222233334444555555555555", currentTagId: "11111111222233334444555555555555", problemTypeId: "11111111222233334444555555555555", reporterId: "11111111222233334444555555555555", createdAt: "2026-02-13T12:34:23.777Z", detail: "", problemLat: 0, problemLng: 0, title: "", upvoteCount: 0}
-  )
-}

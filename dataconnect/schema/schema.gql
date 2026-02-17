@@ -27,7 +27,7 @@ type ProblemImage @table(key: "problemImageId") {
   problemId: UUID!
   imageUrl: String!
   fileName: String! @col(dataType: "varchar(255)")
-  imageType: String! @col(dataType: "varchar(10)")
+  imageType: String! @col(dataType: "varchar(20)")
   createdAt: Timestamp! @default(expr: "request.time")
 }
 

@@ -22,24 +22,30 @@ class ListProblemsProblems {
   final ListProblemsProblemsReporter reporter;
   final String title;
   final String detail;
+  final String locationName;
   final ListProblemsProblemsProblemType problemType;
   final ListProblemsProblemsCurrentTags currentTags;
   final Timestamp createdAt;
   final double problemLat;
   final double problemLng;
   final int upvoteCount;
+  final List<ListProblemsProblemsProblemImagesOnProblem> problemImages_on_problem;
   ListProblemsProblems.fromJson(dynamic json):
   
   problemId = nativeFromJson<String>(json['problemId']),
   reporter = ListProblemsProblemsReporter.fromJson(json['reporter']),
   title = nativeFromJson<String>(json['title']),
   detail = nativeFromJson<String>(json['detail']),
+  locationName = nativeFromJson<String>(json['locationName']),
   problemType = ListProblemsProblemsProblemType.fromJson(json['problemType']),
   currentTags = ListProblemsProblemsCurrentTags.fromJson(json['currentTags']),
   createdAt = Timestamp.fromJson(json['createdAt']),
   problemLat = nativeFromJson<double>(json['problemLat']),
   problemLng = nativeFromJson<double>(json['problemLng']),
-  upvoteCount = nativeFromJson<int>(json['upvoteCount']);
+  upvoteCount = nativeFromJson<int>(json['upvoteCount']),
+  problemImages_on_problem = (json['problemImages_on_problem'] as List<dynamic>)
+        .map((e) => ListProblemsProblemsProblemImagesOnProblem.fromJson(e))
+        .toList();
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -54,16 +60,18 @@ class ListProblemsProblems {
     reporter == otherTyped.reporter && 
     title == otherTyped.title && 
     detail == otherTyped.detail && 
+    locationName == otherTyped.locationName && 
     problemType == otherTyped.problemType && 
     currentTags == otherTyped.currentTags && 
     createdAt == otherTyped.createdAt && 
     problemLat == otherTyped.problemLat && 
     problemLng == otherTyped.problemLng && 
-    upvoteCount == otherTyped.upvoteCount;
+    upvoteCount == otherTyped.upvoteCount && 
+    problemImages_on_problem == otherTyped.problemImages_on_problem;
     
   }
   @override
-  int get hashCode => Object.hashAll([problemId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, upvoteCount.hashCode]);
+  int get hashCode => Object.hashAll([problemId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, upvoteCount.hashCode, problemImages_on_problem.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -72,12 +80,14 @@ class ListProblemsProblems {
     json['reporter'] = reporter.toJson();
     json['title'] = nativeToJson<String>(title);
     json['detail'] = nativeToJson<String>(detail);
+    json['locationName'] = nativeToJson<String>(locationName);
     json['problemType'] = problemType.toJson();
     json['currentTags'] = currentTags.toJson();
     json['createdAt'] = createdAt.toJson();
     json['problemLat'] = nativeToJson<double>(problemLat);
     json['problemLng'] = nativeToJson<double>(problemLng);
     json['upvoteCount'] = nativeToJson<int>(upvoteCount);
+    json['problemImages_on_problem'] = problemImages_on_problem.map((e) => e.toJson()).toList();
     return json;
   }
 
@@ -86,12 +96,14 @@ class ListProblemsProblems {
     required this.reporter,
     required this.title,
     required this.detail,
+    required this.locationName,
     required this.problemType,
     required this.currentTags,
     required this.createdAt,
     required this.problemLat,
     required this.problemLng,
     required this.upvoteCount,
+    required this.problemImages_on_problem,
   });
 }
 
@@ -209,6 +221,50 @@ class ListProblemsProblemsCurrentTags {
   ListProblemsProblemsCurrentTags({
     required this.tagName,
     required this.tagThaiName,
+  });
+}
+
+@immutable
+class ListProblemsProblemsProblemImagesOnProblem {
+  final String imageUrl;
+  final String fileName;
+  final String imageType;
+  ListProblemsProblemsProblemImagesOnProblem.fromJson(dynamic json):
+  
+  imageUrl = nativeFromJson<String>(json['imageUrl']),
+  fileName = nativeFromJson<String>(json['fileName']),
+  imageType = nativeFromJson<String>(json['imageType']);
+  @override
+  bool operator ==(Object other) {
+    if(identical(this, other)) {
+      return true;
+    }
+    if(other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    final ListProblemsProblemsProblemImagesOnProblem otherTyped = other as ListProblemsProblemsProblemImagesOnProblem;
+    return imageUrl == otherTyped.imageUrl && 
+    fileName == otherTyped.fileName && 
+    imageType == otherTyped.imageType;
+    
+  }
+  @override
+  int get hashCode => Object.hashAll([imageUrl.hashCode, fileName.hashCode, imageType.hashCode]);
+  
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {};
+    json['imageUrl'] = nativeToJson<String>(imageUrl);
+    json['fileName'] = nativeToJson<String>(fileName);
+    json['imageType'] = nativeToJson<String>(imageType);
+    return json;
+  }
+
+  ListProblemsProblemsProblemImagesOnProblem({
+    required this.imageUrl,
+    required this.fileName,
+    required this.imageType,
   });
 }
 
