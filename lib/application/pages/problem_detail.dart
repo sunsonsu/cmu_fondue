@@ -45,7 +45,7 @@ class ProblemDetailPage extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -122,7 +122,7 @@ class ProblemDetailPage extends StatelessWidget {
                   ),
                 ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 4),
 
             // --- ข้อมูลเมตา: วันที่และสถานที่ ---
             Container(
