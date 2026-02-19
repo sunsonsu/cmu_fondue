@@ -5,7 +5,7 @@ import 'package:cmu_fondue/application/pages/create_report_page.dart';
 import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
-class AssignedProblemsPage extends StatelessWidget {
+class AssignedProblemsPage extends StatefulWidget {
   final CmuPlaceEntity location;
 
   const AssignedProblemsPage({super.key, required this.location});
@@ -67,7 +67,7 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  location.formattedAddress,
+                  widget.location.formattedAddress,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

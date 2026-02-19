@@ -7,10 +7,8 @@ class MapViewerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: [
-        // Map Section (Full Screen)
         const MapViewerWidget(),
 
         // Draggable Problems Bottom Sheet

@@ -1,13 +1,17 @@
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
+import 'package:cmu_fondue/application/pages/problem_detail.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
@@ -127,9 +131,7 @@ class MapViewerWidget extends MapWidget {
 }
 
 class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
-  final String cmuLogoUrl =
-      'https://static.wikia.nocookie.net/garfield/images/5/5e/GarfieldNoBackground.png/revision/latest/scale-to-width/360?cb=20250828223330';
-  Uint8List? markerIcon;
+  final Map<String, Uint8List> _markerIcons = {};
 
   late List<Placemark> placemarks;
 
@@ -141,23 +143,33 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   @override
   Set<Marker> get markers {
-    if (markerIcon != null) {
-      return {
-        Marker(
-          markerId: const MarkerId('me'),
-          icon: BitmapDescriptor.bytes(markerIcon!),
-          position: LatLng(18.808310458255793, 98.95468245511799),
-          infoWindow: const InfoWindow(
-            title: 'การ์ฟิลด์',
-            snippet: 'การ์ฟิลด์นะเนี่ย',
-          ),
-          onTap: () {
-            print("Hello World");
-          },
+    final problems = Provider.of<ProblemProvider>(
+      context,
+      listen: false,
+    ).problems;
+
+    return problems.map((ProblemEntity problem) {
+      final Uint8List? icon = _markerIcons[problem.id];
+      return Marker(
+        markerId: MarkerId(problem.id),
+        icon: icon != null
+            ? BitmapDescriptor.bytes(icon)
+            : BitmapDescriptor.defaultMarker,
+        position: LatLng(problem.lat, problem.lng),
+        infoWindow: InfoWindow(
+          title: problem.title,
+          snippet: problem.locationName,
         ),
-      };
-    }
-    return {};
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProblemDetailPage(problem: problem),
+            ),
+          );
+        },
+      );
+    }).toSet();
   }
 
   Future<Uint8List> getBytesFromUrl(String url, int width) async {
@@ -233,30 +245,26 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     }
   }
 
-  Future<void> loadData() async {
-    try {
-      markerIcon = await getBytesFromUrl(cmuLogoUrl, 50);
-      if (mounted) {
-        setState(() {});
+  Future<void> _loadMarkerIcons(List<ProblemEntity> problems) async {
+    for (final problem in problems) {
+      if (problem.imageUrl != null && problem.imageUrl!.isNotEmpty) {
+        try {
+          final iconBytes = await getBytesFromUrl(problem.imageUrl!, 50);
+          _markerIcons[problem.id] = iconBytes;
+        } catch (e) {
+          debugPrint('Error loading marker icon for ${problem.id}: $e');
+        }
       }
-    } catch (e) {
-      debugPrint('Error loading marker icon: $e');
     }
+    if (mounted) setState(() {});
+  }
 
-    try {
-      await setLocaleIdentifier("th_TH");
-      placemarks = await placemarkFromCoordinates(
-        18.808310458255793,
-        98.95468245511799,
-      );
-      if (mounted) {
-        // setState not strictly needed if placemarks are not used in build immediately or if they are just logging
-        // But the previous code had it.
-        setState(() {});
-      }
-    } catch (e) {
-      debugPrint('Error loading placemarks: $e');
-    }
+  Future<void> loadData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
+      await provider.fetchProblems();
+      await _loadMarkerIcons(provider.problems);
+    });
   }
 }
 
