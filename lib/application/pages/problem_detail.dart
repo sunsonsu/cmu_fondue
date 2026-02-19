@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
+import 'package:cmu_fondue/application/widgets/admin_status_management.dart';
+import 'package:cmu_fondue/application/widgets/problem_location_map.dart';
+import 'package:cmu_fondue/application/widgets/photo_upload.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,6 +23,7 @@ class ProblemDetailPage extends StatefulWidget {
 
 class _ProblemDetailPageState extends State<ProblemDetailPage> {
   File? _completedImage;
+  File? _tempImage;
   final ImagePicker _picker = ImagePicker();
   ProblemTag? _currentStatus;
   DateTime? _statusUpdatedAt;
@@ -50,135 +55,117 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   }
 
   Future<void> _showPhotoUploadDialog() async {
+    _tempImage = null;
     await showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Center(
-                      child: Column(
-                        children: const [
-                          Text(
-                            'กรุณาเพิ่มรูปภาพ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'หลังจากแก้ไขเสร็จสิ้น',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PhotoUploadWidget(
+                  onUploadPressed: () async {
+                    final XFile? image = await _picker.pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 80,
+                    );
+                    if (image != null) {
+                      setDialogState(() {
+                        _tempImage = File(image.path);
+                      });
+                    }
+                  },
+                  onTakePhotoPressed: () async {
+                    final XFile? image = await _picker.pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 80,
+                    );
+                    if (image != null) {
+                      setDialogState(() {
+                        _tempImage = File(image.path);
+                      });
+                    }
+                  },
+                  selectedImage: _tempImage,
+                ),
+                if (_tempImage != null) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _completedImage = _tempImage;
+                        });
+                        Navigator.pop(context);
+                        _changeStatus(ProblemTag.completed);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF5D3891),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'ยืนยัน',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
                 ],
-              ),
-              const SizedBox(height: 20),
-              Icon(
-                Icons.cloud_upload_outlined,
-                size: 80,
-                color: const Color(0xFF5D3891),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'เฉพาะไฟล์ .png, .jpg, .jpeg, .HEIC',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await _pickImage(ImageSource.gallery);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: const Color(0xFF5D3891),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Upload Photo',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await _pickImage(ImageSource.camera);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: Color(0xFF5D3891), width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Take a Photo',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF5D3891),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(source: source, imageQuality: 80);
-      if (image != null) {
-        setState(() {
-          _completedImage = File(image.path);
-        });
-        _changeStatus(ProblemTag.completed);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
-        );
-      }
+  Future<void> _deleteProblem() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => const DeleteConfirmationDialog(),
+    );
+
+    if (confirmed == true && mounted) {
+      // TODO: Implement actual delete logic with backend
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Flexible(
+                child: Text('ลบปัญหาเรียบร้อยแล้ว'),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: MediaQuery.of(context).size.width * 0.3,
+            right: 16,
+          ),
+          duration: const Duration(seconds: 2),
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      // Navigate back after deletion
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) Navigator.pop(context);
     }
   }
 
@@ -346,7 +333,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
 
             const SizedBox(height: 4),
 
-            // --- ข้อมูลเมตา: วันที่และสถานที่ ---
+            // --- ข้อมูล: วันที่และสถานที่ ---
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
@@ -440,77 +427,11 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // พิกัด
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.place,
-                          size: 16,
-                          color: Colors.grey[700],
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Kanit',
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'พิกัด: ',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '${widget.problem.lat.toStringAsFixed(6)}, ${widget.problem.lng.toStringAsFixed(6)}',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Google Map
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      height: 250,
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(widget.problem.lat, widget.problem.lng),
-                          zoom: 16,
-                        ),
-                        markers: {
-                          Marker(
-                            markerId: const MarkerId('problem_location'),
-                            position: LatLng(widget.problem.lat, widget.problem.lng),
-                            infoWindow: InfoWindow(
-                              title: widget.problem.title,
-                              snippet: widget.problem.locationName,
-                            ),
-                          ),
-                        },
-                        zoomControlsEnabled: true,
-                        myLocationButtonEnabled: false,
-                        mapToolbarEnabled: false,
-                      ),
-                    ),
+                  // Google Map with Coordinates
+                  ProblemLocationMap(
+                    location: LatLng(widget.problem.lat, widget.problem.lng),
+                    title: widget.problem.title,
+                    snippet: widget.problem.locationName,
                   ),
                 ],
               ),
@@ -693,7 +614,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
               ),
             ),
 
-            // --- รูปภาพที่ admin upload (ถ้ามี) ---
+            // --- รูปภาพที่ admin upload ---
             if (_completedImage != null) ...[
               const SizedBox(height: 12),
               Container(
@@ -769,168 +690,28 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.admin_panel_settings,
-                          color: const Color(0xFF5D3891),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'จัดการสถานะ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF5D3891),
-                          ),
-                        ),
-                      ],
+                    AdminStatusManagement(
+                      currentStatus: currentStatus,
+                      onStatusChange: _showStatusChangeDialog,
                     ),
-                    const SizedBox(height: 16),
                     
-                    // แสดงปุ่มตามสถานะปัจจุบัน
-                    if (currentStatus == ProblemTag.pending) ...[
-                      // ยังไม่ได้แก้ไข -> รับเรื่อง
-                      ElevatedButton.icon(
-                        onPressed: () => _showStatusChangeDialog(ProblemTag.received),
-                        icon: const Icon(Icons.check_circle_outline, size: 20),
-                        label: const Text('รับเรื่อง'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1976D2),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ] else if (currentStatus == ProblemTag.received) ...[
-                      // รับเรื่อง -> กำลังแก้ไข (primary)
-                      ElevatedButton.icon(
-                        onPressed: () => _showStatusChangeDialog(ProblemTag.inProgress),
-                        icon: const Icon(Icons.build_circle_outlined, size: 20),
-                        label: const Text('เริ่มดำเนินการแก้ไข'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF8604),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // ย้อนกลับเป็นยังไม่ได้แก้ไข (secondary)
-                      OutlinedButton.icon(
-                        onPressed: () => _showStatusChangeDialog(ProblemTag.pending),
-                        icon: const Icon(Icons.undo, size: 18),
-                        label: const Text('ยังไม่ได้แก้ไข'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.grey[700],
-                          side: BorderSide(color: Colors.grey[400]!),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ] else if (currentStatus == ProblemTag.inProgress) ...[
-                      // กำลังแก้ไข -> เสร็จสิ้น (primary)
-                      ElevatedButton.icon(
-                        onPressed: () => _showStatusChangeDialog(ProblemTag.completed),
-                        icon: const Icon(Icons.check_circle, size: 20),
-                        label: const Text('ทำเครื่องหมายเสร็จสิ้น'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2E7D32),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // ตัวเลือกรอง
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () => _showStatusChangeDialog(ProblemTag.received),
-                              icon: const Icon(Icons.arrow_back, size: 18),
-                              label: const Text('รับเรื่อง'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.grey[700],
-                                side: BorderSide(color: Colors.grey[400]!),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () => _showStatusChangeDialog(ProblemTag.pending),
-                              icon: const Icon(Icons.cancel_outlined, size: 18),
-                              label: const Text('ยังไม่ได้แก้ไข'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: const Color(0xFFE53935),
-                                side: const BorderSide(color: Color(0xFFE53935)),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ] else if (currentStatus == ProblemTag.completed) ...[
-                      // เสร็จสิ้นแล้ว - ไม่สามารถเปลี่ยนได้
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.green[50],
+                    // ปุ่มลบปัญหา
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: _deleteProblem,
+                      icon: const Icon(Icons.delete_outline, size: 20),
+                      label: const Text('ลบปัญหานี้'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red, width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.green[200]!),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.lock_outline,
-                              color: Colors.green[700],
-                              size: 24,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'เรื่องนี้เสร็จสิ้นแล้ว',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green[700],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'ไม่สามารถเปลี่ยนแปลงสถานะได้อีก',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.green[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),
