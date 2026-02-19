@@ -273,7 +273,7 @@ class MapSubmitWidget extends MapWidget {
     super.key,
     this.onPlacemarkChanged,
     this.selectedPlace,
-  }) : super(mapPadding: const EdgeInsets.only(top: 100, bottom: 200));
+  }) : super(mapPadding: const EdgeInsets.only(top: 80, bottom: 200));
 
   final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
   final CmuPlaceEntity? selectedPlace;

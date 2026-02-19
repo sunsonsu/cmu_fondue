@@ -117,14 +117,19 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                     // Map
                     Positioned.fill(
                       child: MapSubmitWidget(
-                        center: const LatLng(18.808310458255793, 98.95468245511799),
                         onPlacemarkChanged: (placemark) =>
                             _placemarkNotifier.value = placemark,
+                        selectedPlace:
+                            _placemarkNotifier.value?.isNotEmpty == true
+                            ? _placemarkNotifier.value!.first
+                            : null,
                       ),
                     ),
 
                     // Bottom Sheet
-                    SubmitLocationBottomSheet(locationNotifier: _placemarkNotifier),
+                    SubmitLocationBottomSheet(
+                      locationNotifier: _placemarkNotifier,
+                    ),
                   ],
                 ),
               ),
@@ -153,40 +158,27 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
-                          style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
                     ),
 
                     // Location Search Widget
                     LocationSearchWidget(
-                      locations: _cmuPlaces,
+                      locations: _cmuPlaces.map((e) => e.name).toList(),
                       onLocationSelected: _onLocationSelected,
                     ),
 
-          const SizedBox(height: 8),
-
-          // Main Content - Map
-          Expanded(
-            child: Stack(
-              children: [
-                // Map
-                Positioned.fill(
-                  child: MapSubmitWidget(
-                    onPlacemarkChanged: (placemark) =>
-                        _placemarkNotifier.value = placemark,
-                    selectedPlace: _placemarkNotifier.value?.isNotEmpty == true
-                        ? _placemarkNotifier.value!.first
-                        : null,
-                  ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
-
-                // Bottom Sheet
-                SubmitLocationBottomSheet(locationNotifier: _placemarkNotifier),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
