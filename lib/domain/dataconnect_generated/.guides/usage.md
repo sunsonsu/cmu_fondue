@@ -9,8 +9,8 @@ ConnectorConnector.instance.insertUser(insertUserVariables).execute();
 ConnectorConnector.instance.CreateProblemImage(createProblemImageVariables).execute();
 ConnectorConnector.instance.UpdateProblemImage(updateProblemImageVariables).execute();
 ConnectorConnector.instance.DeleteProblemImage(deleteProblemImageVariables).execute();
+ConnectorConnector.instance.UpdateFcmToken(updateFcmTokenVariables).execute();
 ConnectorConnector.instance.ListProblems().execute();
-ConnectorConnector.instance.ListProblemTypes().execute();
 
 ```
 

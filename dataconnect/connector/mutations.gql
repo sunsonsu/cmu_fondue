@@ -105,3 +105,11 @@ mutation UpdateProblemImage
 mutation DeleteProblemImage($problemImageId: UUID!) @auth(level: PUBLIC insecureReason: "change to USER when production") {
   problemImage_delete(key: { problemImageId: $problemImageId })
 }
+
+# Komsan
+mutation UpdateFcmToken($userId: String!, $fcmToken: String!) @auth(level: USER) {
+  user_update(
+    key: { userId: $userId },
+    data: { fcmToken: $fcmToken }
+  )
+}

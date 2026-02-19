@@ -19,6 +19,8 @@ part 'update_problem_image.dart';
 
 part 'delete_problem_image.dart';
 
+part 'update_fcm_token.dart';
+
 part 'list_problems.dart';
 
 part 'list_problem_types.dart';
@@ -77,6 +79,11 @@ class ConnectorConnector {
   
   DeleteProblemImageVariablesBuilder deleteProblemImage ({required String problemImageId, }) {
     return DeleteProblemImageVariablesBuilder(dataConnect, problemImageId: problemImageId,);
+  }
+  
+  
+  UpdateFcmTokenVariablesBuilder updateFcmToken ({required String userId, required String fcmToken, }) {
+    return UpdateFcmTokenVariablesBuilder(dataConnect, userId: userId,fcmToken: fcmToken,);
   }
   
   
