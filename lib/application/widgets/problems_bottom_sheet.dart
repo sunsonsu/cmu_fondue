@@ -90,6 +90,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Color(0xFF5D3891),
                             ),
                           ),
                         ),
