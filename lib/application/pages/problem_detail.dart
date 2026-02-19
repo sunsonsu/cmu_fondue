@@ -66,28 +66,57 @@ class ProblemDetailPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Status Badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: problem.tagName.getStatusColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: problem.tagName.getStatusColor.withOpacity(0.3),
-                            width: 1,
+                      // Tags Row
+                      Row(
+                        children: [
+                          // Status Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: problem.tagName.getStatusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: problem.tagName.getStatusColor.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              problem.tagName.labelTh,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: problem.tagName.getStatusColor,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          problem.tagName.labelTh,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: problem.tagName.getStatusColor,
+                          const SizedBox(width: 8),
+                          // Category Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF5D3891).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: const Color(0xFF5D3891).withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              problem.typeName.labelTh,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF5D3891),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
