@@ -1,7 +1,9 @@
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
+import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
 import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
@@ -37,17 +39,30 @@ void main() async {
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
   }
 
+  // create dependency for Authentacation Provider
   final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
   final authRepository = AuthRepositoryImpl(
     authDataSource,
     ConnectorConnector.instance,
   );
+
+  // create dependency for Problem Provider
   final problemRepository = ProblemRepoImpl(
     connector: ConnectorConnector.instance,
   );
-  final getProblemsUseCase = GetProblemsUseCase(problemRepository);
-  final createProblemUseCase = CreateProblemUseCase(problemRepository);
+  final problemImageRepository = ProblemImageRepoImpl(
+    connector: ConnectorConnector.instance,
+  );
+  final storageService = FirebaseStorageService();
 
+  final getProblemsUseCase = GetProblemsUseCase(problemRepository);
+  final createProblemUseCase = CreateProblemUseCase(
+    problemRepository: problemRepository,
+    problemImageRepository: problemImageRepository,
+    storageService: storageService,
+  );
+
+  // injection provider to app
   runApp(
     MultiProvider(
       providers: [
@@ -61,7 +76,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AppAuthProvider(authRepository)),
 
         ChangeNotifierProvider(
-          // ส่งทั้ง get และ create usecase เข้าไปใน ProblemProvider
           create: (_) =>
               ProblemProvider(getProblemsUseCase, createProblemUseCase),
         ),

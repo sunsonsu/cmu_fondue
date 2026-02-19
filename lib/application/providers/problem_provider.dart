@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
@@ -20,7 +21,6 @@ class ProblemProvider with ChangeNotifier {
     notifyListeners();
     try {
       _problems = await _getProblemsUseCase();
-      print('------------problems_length:${_problems.length}-----------------');
     } catch (e, stacktrace) {
       print('Fetch Error: $e');
       print('Stacktrace: $stacktrace');
@@ -39,6 +39,7 @@ class ProblemProvider with ChangeNotifier {
     required String reporterId,
     required String typeId,
     required String tagId,
+    required File imageFile,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -52,6 +53,7 @@ class ProblemProvider with ChangeNotifier {
         reporterId: reporterId,
         typeId: typeId,
         tagId: tagId,
+        imageFile: imageFile
       );
       await fetchProblems(); // รีเฟรชข้อมูลหน้ารายการใหม่หลังจากสร้างสำเร็จ
     } catch (e) {
