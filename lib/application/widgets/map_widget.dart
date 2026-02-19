@@ -290,21 +290,25 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedPlace != null &&
         widget.selectedPlace != oldWidget.selectedPlace) {
-      try {
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(
-                widget.selectedPlace!.lat,
-                widget.selectedPlace!.lng,
-              ),
-              zoom: 18.0,
+      _animateToSelectedPlace();
+    }
+  }
+
+  Future<void> _animateToSelectedPlace() async {
+    try {
+      await mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              widget.selectedPlace!.lat,
+              widget.selectedPlace!.lng,
             ),
+            zoom: 18.0,
           ),
-        );
-      } catch (e) {
-        debugPrint("Error moving camera: $e");
-      }
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error moving camera: $e");
     }
   }
 
@@ -353,7 +357,7 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
     // เลื่อน camera ขึ้นหลัง map โหลดเสร็จ
     Future.delayed(const Duration(milliseconds: 300), () {
       controller.animateCamera(
-        CameraUpdate.scrollBy(0, 100), // ค่าบวก = เลื่อนแผนที่ลง = camera ขึ้น
+        CameraUpdate.scrollBy(0, 60), // (bottom_padding - top_padding) / 2
       );
     });
   }
@@ -365,6 +369,7 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
       children: [
         super.build(context),
         Positioned.fill(
+          top: widget.mapPadding.top,
           bottom: bottomPadding,
           child: Align(
             alignment: Alignment.center,
