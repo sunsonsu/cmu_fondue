@@ -6,7 +6,7 @@ class ProblemEntity {
   final String detail;
   final double lat;
   final double lng;
-  final int upvoteCount;
+  int upvoteCount;
   final DateTime createdAt;
   final String reporterEmail;
   final ProblemType typeName;
@@ -42,7 +42,7 @@ class ProblemEntity {
       detail: data.detail,
       lat: data.problemLat.toDouble(),
       lng: data.problemLng.toDouble(),
-      upvoteCount: data.upvoteCount,
+      upvoteCount: data.userUpvotes_on_problem.length,
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
 

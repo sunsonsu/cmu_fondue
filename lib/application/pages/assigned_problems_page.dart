@@ -1,19 +1,29 @@
-import 'package:cmu_fondue/domain/entities/problem_entity.dart';
-import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/application/pages/create_report_page.dart';
+import 'package:provider/provider.dart';
 
-class AssignedProblemsPage extends StatelessWidget {
+class AssignedProblemsPage extends StatefulWidget {
   final String location;
 
   const AssignedProblemsPage({super.key, required this.location});
 
   @override
-  Widget build(BuildContext context) {
-    // Mock data - ปัญหาที่เคยถูกแจ้ง
-    final getProblemsUseCase = GetProblemsNearbyUseCase();
+  State<AssignedProblemsPage> createState() => _AssignedProblemsPageState();
+}
 
+class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProblemProvider>(context, listen: false).fetchProblems();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -56,7 +66,7 @@ class AssignedProblemsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  location,
+                  widget.location,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -70,23 +80,13 @@ class AssignedProblemsPage extends StatelessWidget {
 
           // Problems List
           Expanded(
-            child: FutureBuilder<List<ProblemEntity>>(
-              future: getProblemsUseCase
-                  .call(), // เรียก UseCase (คืนค่าเป็น Future)
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+            child: Consumer<ProblemProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('เกิดข้อผิดพลาดในการโหลดข้อมูล'),
-                  );
-                }
-
-                final problems = snapshot.data ?? [];
-
-                if (problems.isEmpty) {
+                if (provider.problems.isEmpty) {
                   return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
                 }
 
@@ -95,10 +95,9 @@ class AssignedProblemsPage extends StatelessWidget {
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  itemCount: problems.length,
+                  itemCount: provider.problems.length,
                   itemBuilder: (context, index) {
-                    // ส่งปัญหาทั้ง Entity เข้าไปใน Card ตัวใหม่ของคุณ
-                    return ProblemCard(problem: problems[index]);
+                    return ProblemCard(problem: provider.problems[index]);
                   },
                 );
               },
@@ -129,7 +128,7 @@ class AssignedProblemsPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                CreateReportPage(location: location),
+                                CreateReportPage(location: widget.location),
                           ),
                         );
                       },

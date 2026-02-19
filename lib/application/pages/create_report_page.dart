@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
 import 'package:cmu_fondue/application/pages/history_page.dart';
+import 'package:provider/provider.dart';
 
 class CreateReportPage extends StatefulWidget {
   final String location;
@@ -178,9 +181,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('ไม่สามารถเข้าถึงกล้อง'),
-              content: const Text(
-                'กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ',
-              ),
+              content: const Text('กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
@@ -200,6 +201,12 @@ class _CreateReportPageState extends State<CreateReportPage> {
         }
       }
     }
+  }
+
+  bool _isFormValid() {
+    return _titleController.text.isNotEmpty &&
+        _selectedCategory != null &&
+        _descriptionController.text.isNotEmpty;
   }
 
   @override
@@ -258,18 +265,62 @@ class _CreateReportPageState extends State<CreateReportPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _titleController.text.isNotEmpty &&
-                          _selectedCategory != null &&
-                          _descriptionController.text.isNotEmpty
-                      ? () {
-                          Navigator.push(
+                  onPressed: _isFormValid()
+                      ? () async {
+                          // ดึง Provider แบบ listen: false เพราะเรียกใช้ในฟังก์ชันกดปุ่ม
+                          final probProvider = Provider.of<ProblemProvider>(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Scaffold(body: const HistoryPage()),
-                            ),
+                            listen: false,
                           );
+                          final authProvider = Provider.of<AppAuthProvider>(
+                            context,
+                            listen: false,
+                          );
+
+                          // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
+                          if (authProvider.user?.id == "") {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา'),
+                              ),
+                            );
+                            return;
+                          }
+
+                          try {
+                            // เรียกใช้ฟังก์ชันใน Provider ที่เราเตรียม UseCase ไว้แล้ว
+                            await probProvider.createProblem(
+                              title: _titleController.text,
+                              detail: _descriptionController.text,
+                              locationName:
+                                  widget.location, // ใช้ค่าจากตัวแปรที่รับมา
+                              lat: 18.8001, // ในอนาคตควรดึงจาก GPS จริง
+                              lng: 98.9502,
+                              reporterId: authProvider.user.id
+                                  "",
+                              typeId:
+                                  _selectedCategory!, // ส่ง ID ของ Category ไป
+                              tagId:
+                                  "519a08f6-ee74-4b2b-870e-b35c951c8ee8", // ID 'ยังไม่ได้แก้ไข' จาก Seed
+                            );
+
+                            if (context.mounted) {
+                              // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HistoryPage(),
+                                ),
+                                (route) => false,
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("สร้างไม่สำเร็จ: $e")),
+                              );
+                            }
+                          }
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
