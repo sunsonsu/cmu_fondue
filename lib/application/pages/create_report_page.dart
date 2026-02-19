@@ -3,9 +3,8 @@ import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
-import 'package:cmu_fondue/application/pages/history_page.dart';
+import 'package:cmu_fondue/application/pages/app_page.dart';
 import 'package:provider/provider.dart';
 
 class CreateReportPage extends StatefulWidget {
@@ -39,166 +38,91 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    // Check current permission status
-    final currentStatus = await Permission.photos.status;
-
-    // Show dialog if permission not granted
-    if (!currentStatus.isGranted && !currentStatus.isLimited) {
-      final shouldRequest = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('ขออนุญาตเข้าถึงคลังรูปภาพ'),
-            content: const Text(
-              'แอปต้องการเข้าถึงคลังรูปภาพของคุณเพื่อเลือกรูปภาพสำหรับรายงานปัญหา',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('ยกเลิก'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('อนุญาต'),
-              ),
-            ],
-          );
-        },
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
       );
 
-      if (shouldRequest != true) return;
-    }
-
-    // Request photo library permission
-    final status = await Permission.photos.request();
-
-    if (status.isGranted || status.isLimited) {
-      try {
-        final XFile? image = await _picker.pickImage(
-          source: ImageSource.gallery,
-          imageQuality: 80,
-        );
-
-        if (image != null) {
-          setState(() {
-            _selectedImage = File(image.path);
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
-        }
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
       }
-    } else if (status.isDenied || status.isPermanentlyDenied) {
+    } catch (e) {
       if (mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('ไม่สามารถเข้าถึงคลังรูปภาพ'),
-              content: const Text(
-                'กรุณาอนุญาตการเข้าถึงคลังรูปภาพในการตั้งค่าระบบ',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('ยกเลิก'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('ไปที่การตั้งค่า'),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'เกิดข้อผิดพลาด: $e',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
-            );
-          },
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
+            width: 280,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         );
-
-        if (goToSettings == true) {
-          await openAppSettings();
-        }
       }
     }
   }
 
   Future<void> _takePicture() async {
-    // Check current permission status
-    final currentStatus = await Permission.camera.status;
-
-    // Show dialog if permission not granted
-    if (!currentStatus.isGranted) {
-      final shouldRequest = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('ขออนุญาตเข้าถึงกล้อง'),
-            content: const Text(
-              'แอปต้องการเข้าถึงกล้องของคุณเพื่อถ่ายรูปภาพสำหรับรายงานปัญหา',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('ยกเลิก'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('อนุญาต'),
-              ),
-            ],
-          );
-        },
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
       );
 
-      if (shouldRequest != true) return;
-    }
-
-    final status = await Permission.camera.request();
-
-    if (status.isGranted) {
-      try {
-        final XFile? image = await _picker.pickImage(
-          source: ImageSource.camera,
-          imageQuality: 80,
-        );
-
-        if (image != null) {
-          setState(() {
-            _selectedImage = File(image.path);
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: $e')));
-        }
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
       }
-    } else if (status.isDenied || status.isPermanentlyDenied) {
+    } catch (e) {
       if (mounted) {
-        final goToSettings = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('ไม่สามารถเข้าถึงกล้อง'),
-              content: const Text('กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('ยกเลิก'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('ไปที่การตั้งค่า'),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'เกิดข้อผิดพลาด: $e',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
-            );
-          },
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
+            width: 280,
+            duration: const Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         );
-
-        if (goToSettings == true) {
-          await openAppSettings();
-        }
       }
     }
   }
@@ -332,7 +256,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     ),
                   ),
                   child: Text(
-                    'ถัดไป',
+                    'สร้างรายงาน',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

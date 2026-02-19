@@ -1,13 +1,20 @@
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
-import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_status_tag.dart';
 import 'package:cmu_fondue/application/widgets/problem_category_tag.dart';
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
+import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
+import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
+import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class ProblemCard extends StatefulWidget {
   final ProblemEntity problem;
+  final VoidCallback? onDeleted;
 
-  const ProblemCard({super.key, required this.problem});
+  const ProblemCard({super.key, required this.problem, this.onDeleted,});
 
   @override
   State<ProblemCard> createState() => _ProblemCardState();
@@ -28,6 +35,10 @@ class _ProblemCardState extends State<ProblemCard> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AppAuthProvider>();
+    final isAdmin = authProvider.user?.isAdmin ?? false;
+    final formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(problem.createdAt);
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -37,109 +48,112 @@ class _ProblemCardState extends State<ProblemCard> {
           ),
         );
       },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  widget.problem.imageUrl!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 40,
-                        color: Colors.grey[600],
-                      ),
-                    );
-                  },
-                ),
-              ),
+      child: Stack(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
             ),
-
-            const SizedBox(width: 12),
-
-            // Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.problem.title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Thumbnail
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  const SizedBox(height: 4),
-
-                  // Date and Location
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'แจ้งเมื่อ: ${{widget.problem.createdAt}}',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 14,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          widget.problem.locationName,
-                          style: TextStyle(
-                            fontSize: 12,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      problem.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Icon(
+                            Icons.image,
+                            size: 40,
                             color: Colors.grey[600],
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                        );
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 8),
+                ),
 
-                  // Tags
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
+                const SizedBox(width: 12),
+
+                // Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProblemStatusTag(status: widget.problem.tagName),
-                      ProblemCategoryTag(category: widget.problem.typeName),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
+                      // Title
+                      Text(
+                        problem.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+
+                      // Date and Location
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'แจ้งเมื่อ: $formattedDate',
+                            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              problem.locationName,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Status and Category Tags
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          ProblemStatusTag(status: problem.tagName),
+                          ProblemCategoryTag(category: problem.typeName),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
 
                   // Description
                   Text(
