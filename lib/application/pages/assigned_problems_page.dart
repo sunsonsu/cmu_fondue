@@ -26,34 +26,46 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF5D3891)),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'ปัญหาที่เคยถูกแจ้งบริเวณนี้',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5D3891),
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Description
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: Text(
-              'ตรวจสอบว่าปัญหาที่คุณต้องการแจ้ง มีคนแจ้งแล้วหรือยัง ถ้ามีการแจ้งแล้วสามารถกด Upvote ได้ แต่ถ้ายังสามารถกดแจ้งปัญหาได้',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-                height: 1.4,
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Description
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+              child: Text(
+                'ตรวจสอบว่าปัญหาที่คุณต้องการแจ้ง มีคนแจ้งแล้วหรือยัง ถ้ามีการแจ้งแล้วสามารถกด Upvote ได้ แต่ถ้ายังสามารถกดแจ้งปัญหาได้',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                  height: 1.4,
+                ),
               ),
             ),
-          ),
 
           // Location Section
           Padding(
@@ -102,11 +114,11 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                   },
                 );
               },
+              ),
             ),
-          ),
 
-          // Bottom Buttons
-          Container(
+            // Bottom Buttons
+            Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -177,9 +189,10 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                   ),
                 ],
               ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -237,27 +237,21 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // --- ส่วนหัว: ชื่อปัญหาและสถานะ ---
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ชื่อปัญหา
-                      Text(
-                        widget.problem.title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          height: 1.3,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                // ชื่อปัญหา
+                Text(
+                  widget.problem.title,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
                       // Tags Row
                       Row(
                         children: [
@@ -308,27 +302,24 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      // แสดงวันที่อัปเดตสถานะ
-                      if (_statusUpdatedAt != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'อัปเดตเมื่อ ${_formatThaiDate(_statusUpdatedAt!)} โดย Admin',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
                       ],
+                    ),
+                    // แสดงวันที่อัปเดตสถานะ
+                    if (_statusUpdatedAt != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'อัปเดตเมื่อ ${_formatThaiDate(_statusUpdatedAt!)} โดย Admin',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
                     ],
-                  ),
-                ),
 
-            const SizedBox(height: 4),
+                const SizedBox(height: 16),
 
-            // --- ข้อมูล: วันที่และสถานที่ ---
-            Container(
+                // --- ข้อมูล: วันที่และสถานที่ ---
+                Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
