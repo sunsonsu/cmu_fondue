@@ -28,6 +28,7 @@ class ListProblemsProblems {
   final Timestamp createdAt;
   final double problemLat;
   final double problemLng;
+  final int upvoteCount;
   final List<ListProblemsProblemsUserUpvotesOnProblem> userUpvotes_on_problem;
   final List<ListProblemsProblemsProblemImagesOnProblem> problemImages_on_problem;
   ListProblemsProblems.fromJson(dynamic json):
@@ -42,6 +43,7 @@ class ListProblemsProblems {
   createdAt = Timestamp.fromJson(json['createdAt']),
   problemLat = nativeFromJson<double>(json['problemLat']),
   problemLng = nativeFromJson<double>(json['problemLng']),
+  upvoteCount = nativeFromJson<int>(json['upvoteCount']),
   userUpvotes_on_problem = (json['userUpvotes_on_problem'] as List<dynamic>)
         .map((e) => ListProblemsProblemsUserUpvotesOnProblem.fromJson(e))
         .toList(),
@@ -68,12 +70,13 @@ class ListProblemsProblems {
     createdAt == otherTyped.createdAt && 
     problemLat == otherTyped.problemLat && 
     problemLng == otherTyped.problemLng && 
+    upvoteCount == otherTyped.upvoteCount && 
     userUpvotes_on_problem == otherTyped.userUpvotes_on_problem && 
     problemImages_on_problem == otherTyped.problemImages_on_problem;
     
   }
   @override
-  int get hashCode => Object.hashAll([problemId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, userUpvotes_on_problem.hashCode, problemImages_on_problem.hashCode]);
+  int get hashCode => Object.hashAll([problemId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, upvoteCount.hashCode, userUpvotes_on_problem.hashCode, problemImages_on_problem.hashCode]);
   
 
   Map<String, dynamic> toJson() {
@@ -88,6 +91,7 @@ class ListProblemsProblems {
     json['createdAt'] = createdAt.toJson();
     json['problemLat'] = nativeToJson<double>(problemLat);
     json['problemLng'] = nativeToJson<double>(problemLng);
+    json['upvoteCount'] = nativeToJson<int>(upvoteCount);
     json['userUpvotes_on_problem'] = userUpvotes_on_problem.map((e) => e.toJson()).toList();
     json['problemImages_on_problem'] = problemImages_on_problem.map((e) => e.toJson()).toList();
     return json;
@@ -104,6 +108,7 @@ class ListProblemsProblems {
     required this.createdAt,
     required this.problemLat,
     required this.problemLng,
+    required this.upvoteCount,
     required this.userUpvotes_on_problem,
     required this.problemImages_on_problem,
   });

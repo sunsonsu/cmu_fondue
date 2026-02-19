@@ -7,6 +7,7 @@ import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
 import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,6 +62,8 @@ void main() async {
     problemImageRepository: problemImageRepository,
     storageService: storageService,
   );
+  final UpdateProblemUpvoteUseCase updateProblemUpvoteUseCase =
+      UpdateProblemUpvoteUseCase(problemRepository);
 
   // injection provider to app
   runApp(
@@ -77,7 +80,7 @@ void main() async {
 
         ChangeNotifierProvider(
           create: (_) =>
-              ProblemProvider(getProblemsUseCase, createProblemUseCase),
+              ProblemProvider(getProblemsUseCase, createProblemUseCase, updateProblemUpvoteUseCase),
         ),
       ],
       child: const MyApp(),

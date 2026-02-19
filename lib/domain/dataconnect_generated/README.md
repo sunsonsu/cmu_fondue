@@ -761,3 +761,87 @@ final ref = ConnectorConnector.instance.deleteProblemImage(
 ref.execute();
 ```
 
+
+### AddUpvote
+#### Required Arguments
+```dart
+String problemId = ...;
+ConnectorConnector.instance.addUpvote(
+  problemId: problemId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<AddUpvoteData, AddUpvoteVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.addUpvote(
+  problemId: problemId,
+);
+AddUpvoteData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String problemId = ...;
+
+final ref = ConnectorConnector.instance.addUpvote(
+  problemId: problemId,
+).ref();
+ref.execute();
+```
+
+
+### RemoveUpvote
+#### Required Arguments
+```dart
+String problemId = ...;
+ConnectorConnector.instance.removeUpvote(
+  problemId: problemId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `OperationResult<RemoveUpvoteData, RemoveUpvoteVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+final result = await ConnectorConnector.instance.removeUpvote(
+  problemId: problemId,
+);
+RemoveUpvoteData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String problemId = ...;
+
+final ref = ConnectorConnector.instance.removeUpvote(
+  problemId: problemId,
+).ref();
+ref.execute();
+```
+

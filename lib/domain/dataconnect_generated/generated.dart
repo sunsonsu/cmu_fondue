@@ -19,6 +19,10 @@ part 'update_problem_image.dart';
 
 part 'delete_problem_image.dart';
 
+part 'add_upvote.dart';
+
+part 'remove_upvote.dart';
+
 part 'list_problems.dart';
 
 part 'list_problem_types.dart';
@@ -77,6 +81,16 @@ class ConnectorConnector {
   
   DeleteProblemImageVariablesBuilder deleteProblemImage ({required String problemImageId, }) {
     return DeleteProblemImageVariablesBuilder(dataConnect, problemImageId: problemImageId,);
+  }
+  
+  
+  AddUpvoteVariablesBuilder addUpvote ({required String problemId, }) {
+    return AddUpvoteVariablesBuilder(dataConnect, problemId: problemId,);
+  }
+  
+  
+  RemoveUpvoteVariablesBuilder removeUpvote ({required String problemId, }) {
+    return RemoveUpvoteVariablesBuilder(dataConnect, problemId: problemId,);
   }
   
   
