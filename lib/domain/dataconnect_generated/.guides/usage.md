@@ -1,16 +1,16 @@
 # Basic Usage
 
 ```dart
-ConnectorConnector.instance.ListProblems().execute();
-ConnectorConnector.instance.ListProblemTypes().execute();
-ConnectorConnector.instance.ListProblemTags().execute();
-ConnectorConnector.instance.ProblemTypesQuery().execute();
-ConnectorConnector.instance.ProblemImageByProblemId(problemImageByProblemIdVariables).execute();
-ConnectorConnector.instance.ProblemsByTag(problemsByTagVariables).execute();
 ConnectorConnector.instance.CreateProblem(createProblemVariables).execute();
 ConnectorConnector.instance.UpdateProblem(updateProblemVariables).execute();
 ConnectorConnector.instance.DeleteProblem(deleteProblemVariables).execute();
 ConnectorConnector.instance.insertProblemType(insertProblemTypeVariables).execute();
+ConnectorConnector.instance.insertUser(insertUserVariables).execute();
+ConnectorConnector.instance.CreateProblemImage(createProblemImageVariables).execute();
+ConnectorConnector.instance.UpdateProblemImage(updateProblemImageVariables).execute();
+ConnectorConnector.instance.DeleteProblemImage(deleteProblemImageVariables).execute();
+ConnectorConnector.instance.ListProblems().execute();
+ConnectorConnector.instance.ListProblemTypes().execute();
 
 ```
 

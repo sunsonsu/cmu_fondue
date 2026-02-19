@@ -3,18 +3,6 @@ import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
-part 'list_problems.dart';
-
-part 'list_problem_types.dart';
-
-part 'list_problem_tags.dart';
-
-part 'problem_types_query.dart';
-
-part 'problem_image_by_problem_id.dart';
-
-part 'problems_by_tag.dart';
-
 part 'create_problem.dart';
 
 part 'update_problem.dart';
@@ -31,6 +19,18 @@ part 'update_problem_image.dart';
 
 part 'delete_problem_image.dart';
 
+part 'list_problems.dart';
+
+part 'list_problem_types.dart';
+
+part 'list_problem_tags.dart';
+
+part 'problem_types_query.dart';
+
+part 'problem_image_by_problem_id.dart';
+
+part 'problems_by_tag.dart';
+
 
 
 
@@ -38,36 +38,6 @@ part 'delete_problem_image.dart';
 
 
 class ConnectorConnector {
-  
-  
-  ListProblemsVariablesBuilder listProblems () {
-    return ListProblemsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTypesVariablesBuilder listProblemTypes () {
-    return ListProblemTypesVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTagsVariablesBuilder listProblemTags () {
-    return ListProblemTagsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
-    return ProblemTypesQueryVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
-    return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
-  }
-  
-  
-  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
-    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
-  }
   
   
   CreateProblemVariablesBuilder createProblem ({required String title, required String detail, required String locationName, required double lat, required double lng, required String reporterId, required String typeId, required String tagId, }) {
@@ -107,6 +77,36 @@ class ConnectorConnector {
   
   DeleteProblemImageVariablesBuilder deleteProblemImage ({required String problemImageId, }) {
     return DeleteProblemImageVariablesBuilder(dataConnect, problemImageId: problemImageId,);
+  }
+  
+  
+  ListProblemsVariablesBuilder listProblems () {
+    return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTypesVariablesBuilder listProblemTypes () {
+    return ListProblemTypesVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTagsVariablesBuilder listProblemTags () {
+    return ListProblemTagsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
+    return ProblemTypesQueryVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
+    return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
+  }
+  
+  
+  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
+    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
   }
   
 
