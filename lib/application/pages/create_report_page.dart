@@ -5,11 +5,12 @@ import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
-import 'package:cmu_fondue/application/pages/app_page.dart';
+import 'package:cmu_fondue/application/pages/history_page.dart';
 import 'package:provider/provider.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
 class CreateReportPage extends StatefulWidget {
-  final String location;
+  final CmuPlaceEntity location;
 
   const CreateReportPage({super.key, required this.location});
 
@@ -74,10 +75,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } catch (e) {
       if (mounted) {
-        CustomSnackBar.showError(
-          context: context,
-          message: 'ถ่ายรูปไม่สำเร็จ',
-        );
+        CustomSnackBar.showError(context: context, message: 'ถ่ายรูปไม่สำเร็จ');
       }
     }
   }
@@ -123,7 +121,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
               child: ReportingForm(
-                location: widget.location,
+                location: widget.location.formattedAddress,
                 titleController: _titleController,
                 descriptionController: _descriptionController,
                 selectedCategory: _selectedCategory,
@@ -199,7 +197,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                           //       context: context,
                           //       message: 'สร้างรายงานสำเร็จ',
                           //     );
-                          //     
+                          //
                           //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
                           //     await Future.delayed(const Duration(milliseconds: 500));
                           //     if (context.mounted) {

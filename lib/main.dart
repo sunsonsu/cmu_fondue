@@ -4,6 +4,7 @@ import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
 import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
+import 'package:cmu_fondue/domain/cache/cache_service.dart';
 import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
@@ -25,7 +26,7 @@ import 'package:cmu_fondue/application/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-// import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
+final cache = CacheService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ void main() async {
 
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
   }
+  await cache.init();
 
   // create dependency for Authentacation Provider
   final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
