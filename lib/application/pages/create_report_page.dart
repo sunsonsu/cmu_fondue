@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
@@ -51,32 +52,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $e',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 280,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        CustomSnackBar.showError(
+          context: context,
+          message: 'เลือกรูปภาพไม่สำเร็จ',
         );
       }
     }
@@ -96,32 +74,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $e',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 280,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        CustomSnackBar.showError(
+          context: context,
+          message: 'ถ่ายรูปไม่สำเร็จ',
         );
       }
     }
@@ -203,10 +158,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
                           // // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
                           // if (authProvider.user?.id == "") {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     const SnackBar(
-                          //       content: Text('กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา'),
-                          //     ),
+                          //   CustomSnackBar.showWarning(
+                          //     context: context,
+                          //     message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
                           //   );
                           //   return;
                           // }
@@ -229,19 +183,28 @@ class _CreateReportPageState extends State<CreateReportPage> {
                           //   );
 
                           //   if (context.mounted) {
-                          //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
-                          //     Navigator.pushAndRemoveUntil(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => const HistoryPage(),
-                          //       ),
-                          //       (route) => false,
+                          //     CustomSnackBar.showSuccess(
+                          //       context: context,
+                          //       message: 'สร้างรายงานสำเร็จ',
                           //     );
+                          //     
+                          //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
+                          //     await Future.delayed(const Duration(milliseconds: 500));
+                          //     if (context.mounted) {
+                          //       Navigator.pushAndRemoveUntil(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //           builder: (context) => const HistoryPage(),
+                          //         ),
+                          //         (route) => false,
+                          //       );
+                          //     }
                           //   }
                           // } catch (e) {
                           //   if (context.mounted) {
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       SnackBar(content: Text("สร้างไม่สำเร็จ: $e")),
+                          //     CustomSnackBar.showError(
+                          //       context: context,
+                          //       message: 'ไม่สามารถสร้างรายงานได้',
                           //     );
                           //   }
                           // }

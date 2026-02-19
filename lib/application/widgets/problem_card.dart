@@ -3,6 +3,7 @@ import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/application/widgets/problem_status_tag.dart';
 import 'package:cmu_fondue/application/widgets/problem_category_tag.dart';
 import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
@@ -319,27 +320,9 @@ class _ProblemCardState extends State<ProblemCard> {
 
       // แสดง SnackBar แจ้งผลลัพธ์
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text(
-                  'ลบปัญหาสำเร็จ',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 280,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        CustomSnackBar.showSuccess(
+          context: context,
+          message: 'ลบปัญหาสำเร็จ',
         );
       }
 
@@ -353,32 +336,9 @@ class _ProblemCardState extends State<ProblemCard> {
 
       // แสดงข้อความ error
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $e',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 300,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        CustomSnackBar.showError(
+          context: context,
+          message: 'ลบปัญหาไม่สำเร็จ',
         );
       }
     }

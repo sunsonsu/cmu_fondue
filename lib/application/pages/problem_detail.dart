@@ -5,6 +5,7 @@ import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
 import 'package:cmu_fondue/application/widgets/admin_status_management.dart';
 import 'package:cmu_fondue/application/widgets/problem_location_map.dart';
 import 'package:cmu_fondue/application/widgets/photo_upload.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -68,25 +69,43 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
               children: [
                 PhotoUploadWidget(
                   onUploadPressed: () async {
-                    final XFile? image = await _picker.pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 80,
-                    );
-                    if (image != null) {
-                      setDialogState(() {
-                        _tempImage = File(image.path);
-                      });
+                    try {
+                      final XFile? image = await _picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 80,
+                      );
+                      if (image != null) {
+                        setDialogState(() {
+                          _tempImage = File(image.path);
+                        });
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        CustomSnackBar.showError(
+                          context: context,
+                          message: 'เลือกรูปภาพไม่สำเร็จ',
+                        );
+                      }
                     }
                   },
                   onTakePhotoPressed: () async {
-                    final XFile? image = await _picker.pickImage(
-                      source: ImageSource.camera,
-                      imageQuality: 80,
-                    );
-                    if (image != null) {
-                      setDialogState(() {
-                        _tempImage = File(image.path);
-                      });
+                    try {
+                      final XFile? image = await _picker.pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 80,
+                      );
+                      if (image != null) {
+                        setDialogState(() {
+                          _tempImage = File(image.path);
+                        });
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        CustomSnackBar.showError(
+                          context: context,
+                          message: 'ถ่ายรูปไม่สำเร็จ',
+                        );
+                      }
                     }
                   },
                   selectedImage: _tempImage,
@@ -136,73 +155,48 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     );
 
     if (confirmed == true && mounted) {
-      // TODO: Implement actual delete logic with backend
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.check_circle, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Flexible(
-                child: Text('ลบปัญหาเรียบร้อยแล้ว'),
-              ),
-            ],
-          ),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: MediaQuery.of(context).size.width * 0.3,
-            right: 16,
-          ),
-          duration: const Duration(seconds: 2),
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      // Navigate back after deletion
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) Navigator.pop(context);
+      try {
+        // TODO: Implement actual delete logic with backend
+        // await problemService.deleteProblem(widget.problem.id);
+        
+        CustomSnackBar.showSuccess(
+          context: context,
+          message: 'ลบปัญหาเรียบร้อยแล้ว',
+        );
+        // Navigate back after deletion
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          CustomSnackBar.showError(
+            context: context,
+            message: 'ลบปัญหาไม่สำเร็จ',
+          );
+        }
+      }
     }
   }
 
   void _changeStatus(ProblemTag newStatus) {
-    // TODO: Implement actual status change logic with backend
-    setState(() {
-      _currentStatus = newStatus;
-      _statusUpdatedAt = DateTime.now();
-    });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white, size: 20),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text('เปลี่ยนเป็น "${newStatus.labelTh}"'),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 10,
-          left: MediaQuery.of(context).size.width * 0.3,
-          right: 16,
-          bottom: MediaQuery.of(context).padding.bottom + 708,
-        ),
-        duration: const Duration(seconds: 2),
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
+    try {
+      // TODO: Implement actual status change logic with backend
+      setState(() {
+        _currentStatus = newStatus;
+        _statusUpdatedAt = DateTime.now();
+      });
+      
+      CustomSnackBar.showSuccess(
+        context: context,
+        message: 'เปลี่ยนเป็น "${newStatus.labelTh}"',
+      );
+    } catch (e) {
+      if (mounted) {
+        CustomSnackBar.showError(
+          context: context,
+          message: 'เปลี่ยนสถานะไม่สำเร็จ',
+        );
+      }
+    }
   }
 
   @override
