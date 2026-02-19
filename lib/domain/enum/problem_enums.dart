@@ -21,7 +21,7 @@ extension ProblemTagX on ProblemTag {
       case ProblemTag.pending:
         return const Color(0xFFE53935); // แดง
       case ProblemTag.received:
-        return const Color(0xFF5D3891); // ม่วง
+        return const Color(0xFF1976D2); // น้ำเงิน
       case ProblemTag.inProgress:
         return const Color(0xFFFF8604); // ส้ม
       case ProblemTag.completed:
