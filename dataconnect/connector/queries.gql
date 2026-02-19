@@ -7,6 +7,7 @@ query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when prod
     }
     title
     detail
+    locationName
     problemType {
       typeName
       typeThaiName
@@ -19,6 +20,11 @@ query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when prod
     problemLat
     problemLng
     upvoteCount
+    problemImages_on_problem {
+      imageUrl
+      fileName
+      imageType
+    }
   }
 }
 
@@ -44,3 +50,20 @@ query ProblemTypesQuery @auth(level: PUBLIC, insecureReason: "This operation is 
     typeThaiName
   }
 }
+
+query ProblemImageByProblemId($problemId: UUID!) @auth(level: PUBLIC insecureReason: "change to USER when production") {
+  problemImages(where: {problemId: {eq: $problemId}}) {
+    problemImageId
+    problemId
+    imageUrl
+    fileName
+    imageType
+    createdAt
+  }
+}
+query ProblemsByTag($TagId: UUID!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(where: { currentTags: { problemTagId: { eq: $TagId } } }) {
+    problemId
+  }
+}
+

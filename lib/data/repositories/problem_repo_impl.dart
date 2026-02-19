@@ -6,7 +6,8 @@ class ProblemRepoImpl implements ProblemRepo {
   final ConnectorConnector connector;
   ProblemRepoImpl({required this.connector});
 
-  //Read
+  // Read
+  // Komsan
   @override
   Future<List<ProblemEntity>> getProblems() async {
     try {
@@ -22,12 +23,14 @@ class ProblemRepoImpl implements ProblemRepo {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาได้: $e");
     }
   }
-
-  //Create
+ 
+  // Create
+  // Komsan
   @override
   Future<String> createProblem({
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String reporterId,
@@ -38,6 +41,7 @@ class ProblemRepoImpl implements ProblemRepo {
         .createProblem(
           title: title,
           detail: detail,
+          locationName: locationName,
           lat: lat,
           lng: lng,
           reporterId: reporterId,
@@ -49,35 +53,38 @@ class ProblemRepoImpl implements ProblemRepo {
     return result.data.problem_insert.problemId;
   }
 
-  //Update
+  // Update
+  // Komsan
   @override
   Future<void> updateProblem({
     required String id,
-    required String title,
-    required String detail,
-    required double lat,
-    required double lng,
-    required String typeId,
-    required String tagId,
+     String? title,
+     String? detail,
+     String? locationName,
+     double? lat,
+     double? lng,
+     String? typeId,
+     String? tagId,
   }) async {
     try {
-      await connector
-          .updateProblem(
-            id: id,
-            title: title,
-            detail: detail,
-            lat: lat,
-            lng: lng,
-            typeId: typeId,
-            tagId: tagId,
-          )
-          .execute();
+      var mutation = connector.updateProblem(id: id);
+      
+      if (title != null) mutation = mutation.title(title);
+      if (detail != null) mutation = mutation.detail(detail);
+      if (locationName != null) mutation = mutation.locationName(locationName);
+      if (lat != null) mutation = mutation.lat(lat);
+      if (lng != null) mutation = mutation.lng(lng);
+      if (typeId != null) mutation = mutation.typeId(typeId);
+      if (tagId != null) mutation = mutation.tagId(tagId);
+      
+      await mutation.execute();
     } catch (e) {
       throw Exception("ไม่สามารถแก้ไขข้อมูลได้: $e");
     }
   }
 
-  //Delete
+  // Delete
+  // Komsan
   @override
   Future<void> deleteProblem(String id) async {
     try {
@@ -86,4 +93,15 @@ class ProblemRepoImpl implements ProblemRepo {
       throw Exception("ไม่สามารถลบข้อมูลได้: $e");
     }
   }
+
+  @override
+  Future<int> countProblemsByTag({required String currentTagId}) async {
+    try {
+      final result = await connector.problemsByTag(TagId: currentTagId).execute();
+      return result.data.problems.length;
+    } catch (e) {
+      throw Exception("ไม่สามารถนับจำนวนปัญหาตามแท็กได้: $e");
+    }
+  }
+
 }

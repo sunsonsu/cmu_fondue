@@ -6,7 +6,7 @@ extension ProblemTagX on ProblemTag {
   String get labelTh {
     switch (this) {
       case ProblemTag.pending:
-        return 'รอรับเรื่อง';
+        return 'รอดำเนินการ';
       case ProblemTag.received:
         return 'รับเรื่องแล้ว';
       case ProblemTag.inProgress:

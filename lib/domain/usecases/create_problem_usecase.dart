@@ -1,5 +1,6 @@
 import '../repositories/problem_repo.dart';
 
+// Komsan
 class CreateProblemUseCase {
   final ProblemRepo repository;
 
@@ -8,6 +9,7 @@ class CreateProblemUseCase {
   Future<String> call({
     required String title,
     required String detail,
+    required String locationName,
     required double lat,
     required double lng,
     required String reporterId,
@@ -17,6 +19,7 @@ class CreateProblemUseCase {
     return await repository.createProblem(
       title: title,
       detail: detail,
+      locationName: locationName,
       lat: lat,
       lng: lng,
       reporterId: reporterId,

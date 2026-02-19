@@ -1,6 +1,8 @@
+#Komsan
 mutation CreateProblem(
   $title: String!, 
-  $detail: String!, 
+  $detail: String!,
+  $locationName: String!,
   $lat: Float!, 
   $lng: Float!,
   $reporterId: String!,
@@ -10,6 +12,7 @@ mutation CreateProblem(
   problem_insert(data: {
     title: $title,
     detail: $detail,
+    locationName: $locationName,
     problemLat: $lat,
     problemLng: $lng,
     reporterId: $reporterId,
@@ -18,20 +21,23 @@ mutation CreateProblem(
   })
 }
 
+# Komsan
 mutation UpdateProblem(
   $id: UUID!,
-  $title: String!, 
-  $detail: String!, 
-  $lat: Float!, 
-  $lng: Float!,
-  $typeId: UUID!,
-  $tagId: UUID!
+  $title: String, 
+  $detail: String, 
+  $locationName: String,
+  $lat: Float, 
+  $lng: Float,
+  $typeId: UUID,
+  $tagId: UUID
 ) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
   problem_update(
     key: { problemId: $id }, 
     data: {
       title: $title,
       detail: $detail,
+      locationName: $locationName,
       problemLat: $lat,
       problemLng: $lng,
       problemTypeId: $typeId,
@@ -42,4 +48,60 @@ mutation UpdateProblem(
 
 mutation DeleteProblem($id: UUID!) @auth(level: PUBLIC insecureReason: "change to USER when production" ) {
   problem_delete(key: { problemId: $id })
+}
+
+# G
+mutation insertProblemType($name: String!, $description: String!) @auth(level: USER, insecureReason: "This operation allows administrators to add new problem types. It is safe for all logged in users to initiate this action as additional backend logic will verify if the user is an administrator.") {
+  problemType_insert(
+    data: {typeName: $name, typeThaiName: $description}
+  )
+}
+
+# Apivit Suppaluk
+mutation insertUser($email: String!, $isAdmin: Boolean!) @auth(level: USER) {
+  user_insert(
+    data: {email: $email, isAdmin: $isAdmin}
+  )
+}
+
+# Komsan
+mutation CreateProblemImage
+(
+  $problemId: UUID!,
+  $imageUrl: String!,
+  $fileName: String!,
+  $imageType: String!
+) @auth(level: PUBLIC insecureReason: "change to USER when production") {
+  problemImage_insert(
+    data: {
+      problemId: $problemId,
+      imageUrl: $imageUrl,
+      fileName: $fileName,
+      imageType: $imageType
+    }
+  )
+}
+
+# Komsan
+mutation UpdateProblemImage
+(
+  $problemImageId: UUID!, 
+  $problemId: UUID!,          
+  $imageUrl: String,          
+  $fileName: String,          
+  $imageType: String          
+) @auth(level: PUBLIC insecureReason: "change to USER when production") {
+  problemImage_update(
+    key: { problemImageId: $problemImageId },
+    data: {
+      problemId: $problemId,
+      imageUrl: $imageUrl,
+      fileName: $fileName,
+      imageType: $imageType
+    }
+  )
+}
+# Komsan
+mutation DeleteProblemImage($problemImageId: UUID!) @auth(level: PUBLIC insecureReason: "change to USER when production") {
+  problemImage_delete(key: { problemImageId: $problemImageId })
 }
