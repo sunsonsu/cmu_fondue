@@ -3,9 +3,10 @@ import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/application/pages/create_report_page.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
 class AssignedProblemsPage extends StatelessWidget {
-  final String location;
+  final CmuPlaceEntity location;
 
   const AssignedProblemsPage({super.key, required this.location});
 
@@ -56,7 +57,7 @@ class AssignedProblemsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  location,
+                  location.formattedAddress,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

@@ -1,9 +1,10 @@
 import 'package:cmu_fondue/application/widgets/submit_location_bottom_sheet.dart';
+import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
+import 'package:cmu_fondue/domain/usecases/cmu_place_usecase.dart';
 import 'package:flutter/material.dart';
-import 'package:cmu_fondue/application/pages/assigned_problems_page.dart';
 import 'package:cmu_fondue/application/widgets/location_search.dart';
 import 'package:cmu_fondue/application/widgets/map_widget.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
 class SelectPlaceBottomSheet extends StatefulWidget {
@@ -15,39 +16,70 @@ class SelectPlaceBottomSheet extends StatefulWidget {
 
 class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   String? _selectedPlace;
-  final ValueNotifier<List<Placemark>?> _placemarkNotifier = ValueNotifier(
+
+  late CmuPlaceUsecase _cmuPlaceUsecase;
+
+  List<CmuPlaceEntity> _cmuPlaces = [];
+  bool _isLoading = true;
+
+  final ValueNotifier<List<CmuPlaceEntity>?> _placemarkNotifier = ValueNotifier(
     null,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _initDependencies();
+    _refreshData();
+  }
+
+  void _initDependencies() {
+    final repo = CmuPlaceRepoImpl();
+    _cmuPlaceUsecase = CmuPlaceUsecase(repo);
+  }
+
+  Future<void> _refreshData() async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await _cmuPlaceUsecase.getCmuPlaces();
+      setState(() {
+        _cmuPlaces = result;
+      });
+    } catch (e) {
+      _showErrorSnackBar("โหลดข้อมูลไม่สำเร็จ: $e");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   void dispose() {
     _placemarkNotifier.dispose();
     super.dispose();
   }
 
-  // Mock data - สถานที่ในมช.
-  final List<String> _cmuPlaces = [
-    'หอสมุดกลาง มหาวิทยาลัยเชียงใหม่',
-    'คณะวิศวกรรมศาสตร์',
-    'คณะวิทยาศาสตร์',
-    'คณะมนุษยศาสตร์',
-    'คณะสังคมศาสตร์',
-    'คณะแพทยศาสตร์',
-    'คณะเกษตรศาสตร์',
-    'คณะบริหารธุรกิจ',
-    'คณะครุศาสตร์',
-    'โรงอาหารกลาง',
-    'สนามกีฬากลาง 700 ปี',
-    'อาคารเรียนรวม',
-    'หอประชุม มช.',
-    'Computer Science Building',
-    'Computer Engineering Building',
-    'Department of Computer Science Building',
-  ];
-
-  void _onLocationSelected(String place) {
+  void _onLocationSelected(Placemark place) {
     setState(() {
-      _selectedPlace = place.isEmpty ? null : place;
+      _selectedPlace = place.name;
+      print("This is a selected place: $_selectedPlace");
     });
+
+    if (place.name != null) {
+      try {
+        final selectedEntity = _cmuPlaces.firstWhere(
+          (element) => element.name == place.name,
+        );
+        _placemarkNotifier.value = [selectedEntity];
+      } catch (e) {
+        print("Place not found: ${place.name}");
+      }
+    }
   }
 
   @override
@@ -78,7 +110,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
 
           // Location Search Widget
           LocationSearchWidget(
-            locations: _cmuPlaces,
+            locations: _cmuPlaces.map((e) => e.name).toList(),
             onLocationSelected: _onLocationSelected,
           ),
 
@@ -93,6 +125,9 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                   child: MapSubmitWidget(
                     onPlacemarkChanged: (placemark) =>
                         _placemarkNotifier.value = placemark,
+                    selectedPlace: _placemarkNotifier.value?.isNotEmpty == true
+                        ? _placemarkNotifier.value!.first
+                        : null,
                   ),
                 ),
 

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,7 +10,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
+
+  final EdgeInsets mapPadding;
 
   @override
   State<MapWidget> createState() => MapWidgetState();
@@ -67,6 +70,7 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
               children: [
                 Expanded(
                   child: GoogleMap(
+                    padding: widget.mapPadding,
                     onMapCreated: onMapCreated,
                     initialCameraPosition: CameraPosition(
                       target: target,
@@ -75,6 +79,8 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
                     markers: markers,
                     onCameraMove: onCameraMove,
                     onCameraIdle: onCameraIdle,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
                   ),
                 ),
               ],
@@ -248,9 +254,6 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
         // But the previous code had it.
         setState(() {});
       }
-      if (placemarks.isNotEmpty) {
-        print(placemarks[0]);
-      }
     } catch (e) {
       debugPrint('Error loading placemarks: $e');
     }
@@ -258,9 +261,14 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 }
 
 class MapSubmitWidget extends MapWidget {
-  const MapSubmitWidget({super.key, this.onPlacemarkChanged});
+  const MapSubmitWidget({
+    super.key,
+    this.onPlacemarkChanged,
+    this.selectedPlace,
+  }) : super(mapPadding: const EdgeInsets.only(top: 100, bottom: 200));
 
-  final ValueChanged<List<Placemark>>? onPlacemarkChanged;
+  final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
+  final CmuPlaceEntity? selectedPlace;
 
   @override
   State<MapSubmitWidget> createState() => _MapSubmitWidgetState();
@@ -268,6 +276,30 @@ class MapSubmitWidget extends MapWidget {
 
 class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
   CameraPosition? userLastPosition;
+
+  @override
+  void didUpdateWidget(MapSubmitWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedPlace != null &&
+        widget.selectedPlace != oldWidget.selectedPlace) {
+      try {
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(
+                widget.selectedPlace!.lat,
+                widget.selectedPlace!.lng,
+              ),
+              zoom: 18.0,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint("Error moving camera: $e");
+      }
+    }
+  }
+
   @override
   void onCameraMove(CameraPosition position) {
     userLastPosition = position;
@@ -275,22 +307,32 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
 
   @override
   Future<void> onCameraIdle() async {
-    // If user hasn't moved yet, we might want to use the initial center or wait.
-    // userLastPosition is null initially.
-    final target =
-        userLastPosition?.target ??
-        LatLng(18.808310458255793, 98.95468245511799);
+    LatLng target;
+    if (userLastPosition != null) {
+      target = userLastPosition!.target;
+    } else {
+      try {
+        final position = await _userLocationFuture;
+        target = LatLng(position.latitude, position.longitude);
+      } catch (e) {
+        target = LatLng(18.808310458255793, 98.95468245511799);
+      }
+    }
 
     List<Placemark> placemarks = [];
+    List<CmuPlaceEntity> cmuPlaces = [];
     try {
       await setLocaleIdentifier("th_TH");
       placemarks = await placemarkFromCoordinates(
         target.latitude,
         target.longitude,
       );
-
       if (placemarks.isNotEmpty) {
-        widget.onPlacemarkChanged?.call(placemarks);
+        for (var placemark in placemarks) {
+          cmuPlaces.add(CmuPlaceEntity.fromPlacemark(placemark, target));
+        }
+        placemarks.clear();
+        widget.onPlacemarkChanged?.call(cmuPlaces);
       }
     } catch (e) {
       debugPrint('Error loading placemarks: $e');
@@ -298,14 +340,30 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
   }
 
   @override
+  void onMapCreated(GoogleMapController controller) {
+    super.onMapCreated(controller);
+    // เลื่อน camera ขึ้นหลัง map โหลดเสร็จ
+    Future.delayed(const Duration(milliseconds: 300), () {
+      controller.animateCamera(
+        CameraUpdate.scrollBy(0, 100), // ค่าบวก = เลื่อนแผนที่ลง = camera ขึ้น
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bottomPadding = widget.mapPadding.bottom; // 200
     return Stack(
       children: [
         super.build(context),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 35), // Adjust for pin tip
-            child: Icon(Icons.location_on, size: 50, color: Colors.red),
+        Positioned.fill(
+          bottom: bottomPadding,
+          child: Align(
+            alignment: Alignment.center,
+            child: Transform.translate(
+              offset: const Offset(0, -25),
+              child: const Icon(Icons.location_on, size: 50, color: Colors.red),
+            ),
           ),
         ),
       ],

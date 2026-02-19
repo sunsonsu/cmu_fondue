@@ -1,5 +1,6 @@
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
+import 'package:cmu_fondue/domain/cache/cache_service.dart';
 import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +20,7 @@ import 'package:cmu_fondue/application/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-// import 'package:cmu_fondue/application/pages/dataconnect_test_querie_page.dart';
+final cache = CacheService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ void main() async {
 
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
   }
+  await cache.init();
 
   final authDataSource = FirebaseAuthDataSource(FirebaseAuth.instance);
   final authRepository = AuthRepositoryImpl(

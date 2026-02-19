@@ -3,6 +3,14 @@ import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
+part 'list_problems.dart';
+
+part 'list_problem_types.dart';
+
+part 'list_problem_tags.dart';
+
+part 'problem_types_query.dart';
+
 part 'insert_problem_type.dart';
 
 part 'insert_user.dart';
@@ -13,14 +21,6 @@ part 'update_problem.dart';
 
 part 'delete_problem.dart';
 
-part 'list_problems.dart';
-
-part 'list_problem_types.dart';
-
-part 'list_problem_tags.dart';
-
-part 'problem_types_query.dart';
-
 
 
 
@@ -28,6 +28,26 @@ part 'problem_types_query.dart';
 
 
 class ConnectorConnector {
+  
+  
+  ListProblemsVariablesBuilder listProblems () {
+    return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTypesVariablesBuilder listProblemTypes () {
+    return ListProblemTypesVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTagsVariablesBuilder listProblemTags () {
+    return ListProblemTagsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
+    return ProblemTypesQueryVariablesBuilder(dataConnect, );
+  }
   
   
   InsertProblemTypeVariablesBuilder insertProblemType ({required String name, required String description, }) {
@@ -52,26 +72,6 @@ class ConnectorConnector {
   
   DeleteProblemVariablesBuilder deleteProblem ({required String id, }) {
     return DeleteProblemVariablesBuilder(dataConnect, id: id,);
-  }
-  
-  
-  ListProblemsVariablesBuilder listProblems () {
-    return ListProblemsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTypesVariablesBuilder listProblemTypes () {
-    return ListProblemTypesVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTagsVariablesBuilder listProblemTags () {
-    return ListProblemTagsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
-    return ProblemTypesQueryVariablesBuilder(dataConnect, );
   }
   
 

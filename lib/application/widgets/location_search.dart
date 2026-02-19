@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationSearchWidget extends StatefulWidget {
   final List<String> locations;
-  final Function(String) onLocationSelected;
+  final Function(Placemark) onLocationSelected;
 
   const LocationSearchWidget({
     super.key,
@@ -48,9 +49,9 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
     });
   }
 
-  void _selectPlace(String place) {
+  void _selectPlace(Placemark place) {
     setState(() {
-      _searchController.text = place;
+      _searchController.text = place.name!;
       _filteredPlaces = [];
       _searchFocusNode.unfocus();
     });
@@ -59,7 +60,7 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
 
   void _clearSearch() {
     _searchController.clear();
-    widget.onLocationSelected('');
+    widget.onLocationSelected(Placemark());
   }
 
   @override
@@ -69,7 +70,7 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
     final isSmallScreen = screenWidth < 360;
     final horizontalPadding = screenWidth * 0.04; // 4% ของความกว้าง
     final borderRadius = screenWidth * 0.03; // 3% ของความกว้าง
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -90,16 +91,10 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
             decoration: InputDecoration(
               hintText: 'ค้นหาสถานที่ในมช. เช่น หอสมุด, คณะวิทยาศาสตร์',
               hintStyle: TextStyle(fontSize: isSmallScreen ? 12 : 14),
-              prefixIcon: Icon(
-                Icons.search,
-                size: isSmallScreen ? 20 : 24,
-              ),
+              prefixIcon: Icon(Icons.search, size: isSmallScreen ? 20 : 24),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        size: isSmallScreen ? 20 : 24,
-                      ),
+                      icon: Icon(Icons.clear, size: isSmallScreen ? 20 : 24),
                       onPressed: _clearSearch,
                     )
                   : null,
@@ -124,7 +119,9 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
               constraints: BoxConstraints(
-                maxHeight: isSmallScreen ? 96 : 144, // แสดงได้สูงสุด 2 รายการ (48px/72px ต่อรายการ)
+                maxHeight: isSmallScreen
+                    ? 96
+                    : 144, // แสดงได้สูงสุด 2 รายการ (48px/72px ต่อรายการ)
               ),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
@@ -167,9 +164,11 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
                         place,
                         style: TextStyle(fontSize: isSmallScreen ? 13 : 15),
                       ),
-                      onTap: () => _selectPlace(place),
+                      onTap: () => _selectPlace(Placemark(name: place)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(borderRadius * 0.67),
+                        borderRadius: BorderRadius.circular(
+                          borderRadius * 0.67,
+                        ),
                       ),
                     );
                   },

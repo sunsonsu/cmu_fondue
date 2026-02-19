@@ -4,9 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
 import 'package:cmu_fondue/application/pages/history_page.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
 class CreateReportPage extends StatefulWidget {
-  final String location;
+  final CmuPlaceEntity location;
 
   const CreateReportPage({super.key, required this.location});
 
@@ -178,9 +179,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('ไม่สามารถเข้าถึงกล้อง'),
-              content: const Text(
-                'กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ',
-              ),
+              content: const Text('กรุณาอนุญาตการเข้าถึงกล้องในการตั้งค่าระบบ'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
@@ -225,7 +224,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: ReportingForm(
-                location: widget.location,
+                location: widget.location.formattedAddress,
                 titleController: _titleController,
                 descriptionController: _descriptionController,
                 selectedCategory: _selectedCategory,
