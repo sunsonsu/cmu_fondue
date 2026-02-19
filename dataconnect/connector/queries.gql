@@ -19,7 +19,9 @@ query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when prod
     createdAt
     problemLat
     problemLng
-    upvoteCount
+    userUpvotes_on_problem {
+      userId
+    }
     problemImages_on_problem {
       imageUrl
       fileName

@@ -1,5 +1,4 @@
 import 'package:cmu_fondue/application/widgets/map_widget.dart';
-import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problems_bottom_sheet.dart';
 
@@ -8,8 +7,6 @@ class MapViewerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final problemRepo = ProblemRepoImpl();
-    final getProblemsUseCase = GetProblemsNearbyUseCase();
 
     return Stack(
       children: [
@@ -17,7 +14,7 @@ class MapViewerPage extends StatelessWidget {
         const MapViewerWidget(),
 
         // Draggable Problems Bottom Sheet
-        ProblemsBottomSheet(getProblemsNearby: getProblemsUseCase),
+        ProblemsBottomSheet(),
       ],
     );
   }

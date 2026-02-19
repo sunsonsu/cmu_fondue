@@ -1,8 +1,12 @@
 import 'dart:io';
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
 import 'package:cmu_fondue/application/pages/history_page.dart';
+import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
 class CreateReportPage extends StatefulWidget {
@@ -49,32 +53,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $e',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 280,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+        CustomSnackBar.showError(
+          context: context,
+          message: 'เลือกรูปภาพไม่สำเร็จ',
         );
       }
     }
@@ -94,35 +75,15 @@ class _CreateReportPageState extends State<CreateReportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'เกิดข้อผิดพลาด: $e',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.fromLTRB(80, 50, 20, 0),
-            width: 280,
-            duration: const Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
+        CustomSnackBar.showError(context: context, message: 'ถ่ายรูปไม่สำเร็จ');
       }
     }
+  }
+
+  bool _isFormValid() {
+    return _titleController.text.isNotEmpty &&
+        _selectedCategory != null &&
+        _descriptionController.text.isNotEmpty;
   }
 
   @override
@@ -181,97 +142,70 @@ class _CreateReportPageState extends State<CreateReportPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _titleController.text.isNotEmpty &&
-                          _selectedCategory != null &&
-                          _descriptionController.text.isNotEmpty
+                  onPressed: _isFormValid()
                       ? () async {
-                          try {
-                            // Show success snackbar in top right corner
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check_circle,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(width: 12),
-                                      Text(
-                                        'สร้างรายงานสำเร็จ',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.green,
-                                  behavior: SnackBarBehavior.floating,
-                                  margin: const EdgeInsets.fromLTRB(
-                                    80,
-                                    50,
-                                    20,
-                                    0,
-                                  ),
-                                  width: 280,
-                                  duration: const Duration(seconds: 2),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              );
+                          // ดึง Provider แบบ listen: false เพราะเรียกใช้ในฟังก์ชันกดปุ่ม
+                          // final probProvider = Provider.of<ProblemProvider>(
+                          //   context,
+                          //   listen: false,
+                          // );
+                          // final authProvider = Provider.of<AppAuthProvider>(
+                          //   context,
+                          //   listen: false,
+                          // );
 
-                              // Navigate back to HomePage with History tab selected
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HomePage(initialIndex: 2),
-                                ),
-                                (route) => false,
-                              );
-                            }
-                          } catch (e) {
-                            // Show error snackbar in top right corner
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.error,
-                                        color: Colors.white,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Text(
-                                          'เกิดข้อผิดพลาด: $e',
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.red,
-                                  behavior: SnackBarBehavior.floating,
-                                  margin: const EdgeInsets.fromLTRB(
-                                    80,
-                                    50,
-                                    20,
-                                    0,
-                                  ),
-                                  width: 300,
-                                  duration: const Duration(seconds: 3),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              );
-                            }
-                          }
+                          // // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
+                          // if (authProvider.user?.id == "") {
+                          //   CustomSnackBar.showWarning(
+                          //     context: context,
+                          //     message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
+                          //   );
+                          //   return;
+                          // }
+
+                          // try {
+                          //   // เรียกใช้ฟังก์ชันใน Provider ที่เราเตรียม UseCase ไว้แล้ว
+                          //   await probProvider.createProblem(
+                          //     title: _titleController.text,
+                          //     detail: _descriptionController.text,
+                          //     locationName:
+                          //         widget.location, // ใช้ค่าจากตัวแปรที่รับมา
+                          //     lat: 18.8001, // ในอนาคตควรดึงจาก GPS จริง
+                          //     lng: 98.9502,
+                          //     reporterId: authProvider.user.id
+                          //         "",
+                          //     typeId:
+                          //         _selectedCategory!, // ส่ง ID ของ Category ไป
+                          //     tagId:
+                          //         "519a08f6-ee74-4b2b-870e-b35c951c8ee8", // ID 'ยังไม่ได้แก้ไข' จาก Seed
+                          //   );
+
+                          //   if (context.mounted) {
+                          //     CustomSnackBar.showSuccess(
+                          //       context: context,
+                          //       message: 'สร้างรายงานสำเร็จ',
+                          //     );
+                          //
+                          //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
+                          //     await Future.delayed(const Duration(milliseconds: 500));
+                          //     if (context.mounted) {
+                          //       Navigator.pushAndRemoveUntil(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //           builder: (context) => const HistoryPage(),
+                          //         ),
+                          //         (route) => false,
+                          //       );
+                          //     }
+                          //   }
+                          // } catch (e) {
+                          //   if (context.mounted) {
+                          //     CustomSnackBar.showError(
+                          //       context: context,
+                          //       message: 'ไม่สามารถสร้างรายงานได้',
+                          //     );
+                          //   }
+                          // }
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

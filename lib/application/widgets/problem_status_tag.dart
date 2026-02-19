@@ -11,16 +11,19 @@ class ProblemStatusTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: status.getStatusColor, width: 2),
+        color: status.getStatusColor.withOpacity(0.1),
+        border: Border.all(
+          color: status.getStatusColor.withOpacity(0.3),
+          width: 1,
+        ),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         status.labelTh,
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 14,
           color: status.getStatusColor,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

@@ -21,7 +21,7 @@ class PhotoUploadWidget extends StatelessWidget {
       children: [
         RichText(
           text: TextSpan(
-            text: 'อัพโหลดรูปภาพ',
+            text: 'อัปโหลดรูปภาพ',
             style: GoogleFonts.kanit(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -129,7 +129,7 @@ class PhotoUploadWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'อัพโหลดรูปภาพ',
+                          'อัปโหลดรูปภาพ',
                           style: GoogleFonts.kanit(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

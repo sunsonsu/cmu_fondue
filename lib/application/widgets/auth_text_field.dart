@@ -6,6 +6,8 @@ class AuthTextField extends StatefulWidget {
   final String? errorText;
   final bool isPassword;
   final ValueChanged<String>? onChanged;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
 
   const AuthTextField({
     super.key,
@@ -14,6 +16,8 @@ class AuthTextField extends StatefulWidget {
     this.errorText,
     this.isPassword = false,
     this.onChanged,
+    this.keyboardType,
+    this.textInputAction,
   });
 
   @override
@@ -33,6 +37,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
       obscureText: widget.isPassword ? _obscureText : false,
       onChanged: widget.onChanged,
       decoration: InputDecoration(
@@ -47,7 +53,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
         focusedErrorBorder: _border(Colors.red),
         suffixIcon: widget.isPassword
             ? IconButton(
-                icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
                 onPressed: () => setState(() => _obscureText = !_obscureText),
               )
             : null,

@@ -1,0 +1,28 @@
+
+# This is a file for you to write an un-named query.
+# Only one un-named query is allowed per file.
+query {
+  problems{
+    reporter {
+      userId
+      email
+      isAdmin
+    }
+    reporterId
+    title
+    detail
+    problemType {
+      typeName
+      typeThaiName
+    }
+    currentTags {
+      tagName
+      tagThaiName
+    }
+    createdAt
+    locationName
+    problemLat
+    problemLng
+    upvoteCount
+  }
+}

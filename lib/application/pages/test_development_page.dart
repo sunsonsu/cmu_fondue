@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_type_entity.dart';
@@ -9,17 +12,18 @@ import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/data/repositories/problem_type_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
+import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_tag_repo_impl.dart';
-import 'package:cmu_fondue/domain/entities/problem_tag_entity.dart';
+import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
 
-class CreateProblemPage extends StatefulWidget {
-  const CreateProblemPage({super.key});
+class TestDevelopmentPage extends StatefulWidget {
+  const TestDevelopmentPage({super.key});
 
   @override
-  State<CreateProblemPage> createState() => _CreateProblemPageState();
+  State<TestDevelopmentPage> createState() => _TestDevelopmentPageState();
 }
 
-class _CreateProblemPageState extends State<CreateProblemPage> {
+class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   final _formKey = GlobalKey<FormState>();
 
   // --- UseCases ---
@@ -35,9 +39,12 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
 
   String? _selectedTypeId;
   String? _editingProblemId; // ถ้าเป็น null = โหมดสร้าง, ถ้ามีค่า = โหมดแก้ไข
+  File? _selectedImage; // รูปภาพที่เลือก
 
   bool _isLoading = true;
   bool _isSubmitting = false;
+
+  final ImagePicker _imagePicker = ImagePicker();
 
   // --- Controllers ---
   final _titleController = TextEditingController();
@@ -53,10 +60,9 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
   final _lngController = TextEditingController(
     text: "98.9520",
   ); // ต้องดึงจากตำแหน่งจริง ๆ ในอนาคต หรือให้ผู้ใช้เลือกบนแผนที่
-  final String mockReporterId =
-      "11111111-2222-3333-4444-555555555555"; // อนาคตให้ดึงค่าจริง ๆ จาก state
-  final String mockTagId =
-      "d74d3f00-e2fb-4b71-9d06-1f4b336c56b7"; // "รับเรื่องแล้ว" จริง ๆ ควร Fix ไว้ สำหรับขา Create เลย
+  
+  // ใช้ userId ที่มีอยู่ในระบบจริง (จาก seed data)
+  final String mockReporterId = "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"; // admin@test.com
 
   @override
   void initState() {
@@ -69,24 +75,27 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
     final connector = ConnectorConnector.instance;
     final typeRepo = ProblemTypeRepoImpl(connector: connector);
     final problemRepo = ProblemRepoImpl(connector: connector);
-    final tagRepo = ProblemTagRepoImpl(connector: connector);
+    final problemImageRepo = ProblemImageRepoImpl(connector: connector);
+    final storageService = FirebaseStorageService();
 
     _getProblemTypesUseCase = GetProblemTypesUseCase(typeRepo);
-    _createProblemUseCase = CreateProblemUseCase(problemRepo);
+    _createProblemUseCase = CreateProblemUseCase(
+      problemRepository: problemRepo,
+      problemImageRepository: problemImageRepo,
+      storageService: storageService,
+    );
     _getProblemsUseCase = GetProblemsUseCase(problemRepo);
     _updateProblemUseCase = UpdateProblemUseCase(problemRepo);
     _deleteProblemUseCase = DeleteProblemUseCase(problemRepo);
   }
 
-  /// ดึงข้อมูลใหม่จาก Server ทั้ง Types, Problems, และ Tags
+  /// ดึงข้อมูลใหม่จาก Server ทั้ง Types และ Problems
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
     try {
-      final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
       final results = await Future.wait([
         _getProblemTypesUseCase.call(),
         _getProblemsUseCase.call(),
-        tagRepo.getAllProblemTags(),
       ]);
       setState(() {
         _problemTypes = results[0] as List<ProblemTypeEntity>;
@@ -97,9 +106,6 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
           _selectedTypeId = _problemTypes.first.problemTypeId;
         }
       });
-      
-      // โหลดจำนวนปัญหาแต่ละแท็ก
-      await _loadTagCounts();
     } catch (e) {
       _showErrorSnackBar("โหลดข้อมูลไม่สำเร็จ: $e");
     } finally {
@@ -107,24 +113,61 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
     }
   }
 
-  /// ดึงจำนวนปัญหาในแต่ละแท็ก
-  Future<void> _loadTagCounts() async {
-    final counts = <String, int>{};
-    for (var tag in _problemTags) {
-      try {
-        final count = await _getProblemsUseCase.countByTag(tag.problemTagId);
-        counts[tag.problemTagId] = count;
-      } catch (e) {
-        counts[tag.problemTagId] = 0;
+  /// เลือกรูปภาพจาก Gallery หรือ Camera
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
       }
+    } catch (e) {
+      _showErrorSnackBar("ไม่สามารถเลือกรูปภาพได้: $e");
     }
-    setState(() => _tagCounts = counts);
+  }
+
+  /// แสดง Dialog เลือกแหล่งที่มาของรูปภาพ
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('เลือกจากคลังรูปภาพ'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('ถ่ายรูปใหม่'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// ล้างฟอร์มกลับเป็นค่าว่าง (สำหรับยกเลิกการแก้ไขหรือหลังส่งข้อมูล)
   void _clearForm() {
     setState(() {
       _editingProblemId = null;
+      _selectedImage = null;
       _titleController.clear();
       _detailController.clear();
       _latController.text = "18.7961";
@@ -155,11 +198,28 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
   /// จัดการการส่งข้อมูล (ทั้ง Create และ Update)
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate() || _selectedTypeId == null) return;
+    
+    // ตรวจสอบว่ามีรูปภาพหรือไม่ (สำหรับโหมดสร้างใหม่)
+    if (_editingProblemId == null && _selectedImage == null) {
+      _showErrorSnackBar("กรุณาเลือกรูปภาพ");
+      return;
+    }
+    
     setState(() => _isSubmitting = true);
 
     try {
       if (_editingProblemId == null) {
-        // --- โหมดสร้างใหม่ ---
+        // ดึง Tag "pending" ที่มีอยู่จริงจากระบบ
+        final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
+        final allTags = await tagRepo.getAllProblemTags();
+        
+        // หา tag ที่ชื่อว่า "pending" หรือใช้ tag แรกถ้าไม่เจอ
+        final defaultTag = allTags.firstWhere(
+          (tag) => tag.tagName.toLowerCase() == 'pending',
+          orElse: () => allTags.first,
+        );
+
+        // --- โหมดสร้างใหม่ (ต้องมีรูปภาพ) ---
         await _createProblemUseCase.call(
           title: _titleController.text,
           detail: _detailController.text,
@@ -167,8 +227,9 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
           lat: double.parse(_latController.text),
           lng: double.parse(_lngController.text),
           reporterId: mockReporterId,
-          typeId: _selectedTypeId!,
-          tagId: mockTagId,
+          typeId: _selectedTypeId!, // ใช้ ID จาก dropdown ที่ดึงมาจากระบบจริง
+          tagId: defaultTag.problemTagId, // ใช้ tag ID ที่มีอยู่จริง
+          imageFile: _selectedImage!,
         );
       } else {
         // --- โหมดอัปเดต ---
@@ -180,7 +241,7 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
           lat: double.parse(_latController.text),
           lng: double.parse(_lngController.text),
           typeId: _selectedTypeId!,
-          tagId: mockTagId,
+          tagId: null, // ไม่เปลี่ยน tag เมื่ออัปเดต (ต้องให้ admin เปลี่ยน)
         );
       }
 
@@ -230,15 +291,17 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
 
   void _showSuccessSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
+    CustomSnackBar.showSuccess(
+      context: context,
+      message: message,
     );
   }
 
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    CustomSnackBar.showError(
+      context: context,
+      message: message,
     );
   }
 
@@ -320,6 +383,88 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                           maxLines: 2,
                         ),
                         const SizedBox(height: 15),
+                        
+                        // --- ส่วนแสดงและเลือกรูปภาพ ---
+                        if (_editingProblemId == null) ...[
+                          Container(
+                            width: double.infinity,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: _selectedImage == null
+                                ? InkWell(
+                                    onTap: _showImageSourceDialog,
+                                    child: const Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_photo_alternate,
+                                          size: 64,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'แตะเพื่อเลือกรูปภาพ',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.file(
+                                          _selectedImage!,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _selectedImage = null;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      if (_selectedImage != null)
+                                        Positioned(
+                                          bottom: 8,
+                                          right: 8,
+                                          child: ElevatedButton.icon(
+                                            onPressed: _showImageSourceDialog,
+                                            icon: const Icon(Icons.edit, size: 18),
+                                            label: const Text('เปลี่ยนรูป'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white.withOpacity(0.9),
+                                              foregroundColor: Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                          ),
+                          const SizedBox(height: 15),
+                        ],
+                        
                         ElevatedButton(
                           onPressed: _isSubmitting ? null : _submitData,
                           style: ElevatedButton.styleFrom(
@@ -361,8 +506,8 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                       itemCount: _existingProblems.length,
                       itemBuilder: (context, index) {
                         final p = _existingProblems[index];
-                        final imageUrl = p.imageUrl; 
-                        
+                        final imageUrl = p.imageUrl;
+
                         return Card(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -377,21 +522,27 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                                       width: 56,
                                       height: 56,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const CircleAvatar(
-                                          child: Icon(Icons.location_on),
-                                        );
-                                      },
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return const SizedBox(
-                                          width: 56,
-                                          height: 56,
-                                          child: Center(
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                        );
-                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const CircleAvatar(
+                                              child: Icon(Icons.location_on),
+                                            );
+                                          },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return const SizedBox(
+                                              width: 56,
+                                              height: 56,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                              ),
+                                            );
+                                          },
                                     ),
                                   )
                                 : const CircleAvatar(

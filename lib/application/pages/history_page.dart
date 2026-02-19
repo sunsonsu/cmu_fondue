@@ -54,7 +54,11 @@ class _HistoryPageState extends State<HistoryPage> {
             padding: EdgeInsets.all(16.0),
             child: Text(
               'ประวัติการแจ้งเรื่อง',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF5D3891),
+              ),
             ),
           ),
 
