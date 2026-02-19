@@ -268,59 +268,59 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   onPressed: _isFormValid()
                       ? () async {
                           // ดึง Provider แบบ listen: false เพราะเรียกใช้ในฟังก์ชันกดปุ่ม
-                          final probProvider = Provider.of<ProblemProvider>(
-                            context,
-                            listen: false,
-                          );
-                          final authProvider = Provider.of<AppAuthProvider>(
-                            context,
-                            listen: false,
-                          );
+                          // final probProvider = Provider.of<ProblemProvider>(
+                          //   context,
+                          //   listen: false,
+                          // );
+                          // final authProvider = Provider.of<AppAuthProvider>(
+                          //   context,
+                          //   listen: false,
+                          // );
 
-                          // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
-                          if (authProvider.user?.id == "") {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา'),
-                              ),
-                            );
-                            return;
-                          }
+                          // // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
+                          // if (authProvider.user?.id == "") {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text('กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา'),
+                          //     ),
+                          //   );
+                          //   return;
+                          // }
 
-                          try {
-                            // เรียกใช้ฟังก์ชันใน Provider ที่เราเตรียม UseCase ไว้แล้ว
-                            await probProvider.createProblem(
-                              title: _titleController.text,
-                              detail: _descriptionController.text,
-                              locationName:
-                                  widget.location, // ใช้ค่าจากตัวแปรที่รับมา
-                              lat: 18.8001, // ในอนาคตควรดึงจาก GPS จริง
-                              lng: 98.9502,
-                              reporterId: authProvider.user.id
-                                  "",
-                              typeId:
-                                  _selectedCategory!, // ส่ง ID ของ Category ไป
-                              tagId:
-                                  "519a08f6-ee74-4b2b-870e-b35c951c8ee8", // ID 'ยังไม่ได้แก้ไข' จาก Seed
-                            );
+                          // try {
+                          //   // เรียกใช้ฟังก์ชันใน Provider ที่เราเตรียม UseCase ไว้แล้ว
+                          //   await probProvider.createProblem(
+                          //     title: _titleController.text,
+                          //     detail: _descriptionController.text,
+                          //     locationName:
+                          //         widget.location, // ใช้ค่าจากตัวแปรที่รับมา
+                          //     lat: 18.8001, // ในอนาคตควรดึงจาก GPS จริง
+                          //     lng: 98.9502,
+                          //     reporterId: authProvider.user.id
+                          //         "",
+                          //     typeId:
+                          //         _selectedCategory!, // ส่ง ID ของ Category ไป
+                          //     tagId:
+                          //         "519a08f6-ee74-4b2b-870e-b35c951c8ee8", // ID 'ยังไม่ได้แก้ไข' จาก Seed
+                          //   );
 
-                            if (context.mounted) {
-                              // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HistoryPage(),
-                                ),
-                                (route) => false,
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("สร้างไม่สำเร็จ: $e")),
-                              );
-                            }
-                          }
+                          //   if (context.mounted) {
+                          //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
+                          //     Navigator.pushAndRemoveUntil(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => const HistoryPage(),
+                          //       ),
+                          //       (route) => false,
+                          //     );
+                          //   }
+                          // } catch (e) {
+                          //   if (context.mounted) {
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(content: Text("สร้างไม่สำเร็จ: $e")),
+                          //     );
+                          //   }
+                          // }
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

@@ -98,7 +98,7 @@ class ProblemDetailPage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                problem.imageUrl,
+                problem.imageUrl!,
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,

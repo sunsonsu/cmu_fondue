@@ -82,7 +82,9 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
     try {
-      final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
+      final tagRepo = ProblemTagRepoImpl(
+        connector: ConnectorConnector.instance,
+      );
       final results = await Future.wait([
         _getProblemTypesUseCase.call(),
         _getProblemsUseCase.call(),
@@ -97,28 +99,14 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
           _selectedTypeId = _problemTypes.first.problemTypeId;
         }
       });
-      
+
       // โหลดจำนวนปัญหาแต่ละแท็ก
-      await _loadTagCounts();
+      
     } catch (e) {
       _showErrorSnackBar("โหลดข้อมูลไม่สำเร็จ: $e");
     } finally {
       setState(() => _isLoading = false);
     }
-  }
-
-  /// ดึงจำนวนปัญหาในแต่ละแท็ก
-  Future<void> _loadTagCounts() async {
-    final counts = <String, int>{};
-    for (var tag in _problemTags) {
-      try {
-        final count = await _getProblemsUseCase.countByTag(tag.problemTagId);
-        counts[tag.problemTagId] = count;
-      } catch (e) {
-        counts[tag.problemTagId] = 0;
-      }
-    }
-    setState(() => _tagCounts = counts);
   }
 
   /// ล้างฟอร์มกลับเป็นค่าว่าง (สำหรับยกเลิกการแก้ไขหรือหลังส่งข้อมูล)
@@ -361,8 +349,8 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                       itemCount: _existingProblems.length,
                       itemBuilder: (context, index) {
                         final p = _existingProblems[index];
-                        final imageUrl = p.imageUrl; 
-                        
+                        final imageUrl = p.imageUrl;
+
                         return Card(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -377,21 +365,27 @@ class _CreateProblemPageState extends State<CreateProblemPage> {
                                       width: 56,
                                       height: 56,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const CircleAvatar(
-                                          child: Icon(Icons.location_on),
-                                        );
-                                      },
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return const SizedBox(
-                                          width: 56,
-                                          height: 56,
-                                          child: Center(
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                        );
-                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const CircleAvatar(
+                                              child: Icon(Icons.location_on),
+                                            );
+                                          },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return const SizedBox(
+                                              width: 56,
+                                              height: 56,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                              ),
+                                            );
+                                          },
                                     ),
                                   )
                                 : const CircleAvatar(

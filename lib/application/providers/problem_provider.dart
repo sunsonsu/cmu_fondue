@@ -20,8 +20,10 @@ class ProblemProvider with ChangeNotifier {
     notifyListeners();
     try {
       _problems = await _getProblemsUseCase();
-    } catch (e) {
-      // Handle error
+      print('------------problems_length:${_problems.length}-----------------');
+    } catch (e, stacktrace) {
+      print('Fetch Error: $e');
+      print('Stacktrace: $stacktrace');
     } finally {
       _isLoading = false;
       notifyListeners();

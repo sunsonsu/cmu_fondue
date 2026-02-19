@@ -36,9 +36,9 @@ extension ProblemTypeX on ProblemType {
   String get labelTh {
     switch (this) {
       case ProblemType.road:
-        return 'ถนน';
+        return 'ถนน/ทางเท้า';
       case ProblemType.electricity:
-        return 'ไฟฟ้า';
+        return 'ไฟฟ้า/แสงสว่าง';
       case ProblemType.water:
         return 'น้ำ';
       case ProblemType.garbage:

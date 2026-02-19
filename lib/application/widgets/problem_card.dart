@@ -58,7 +58,7 @@ class _ProblemCardState extends State<ProblemCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  widget.problem.imageUrl,
+                  widget.problem.imageUrl!,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Center(

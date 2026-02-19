@@ -36,6 +36,9 @@ class ProblemEntity {
       firstImageUrl = data.problemImages_on_problem[0].imageUrl;
     }
 
+    print('${data.problemType.typeThaiName}');
+    print('${data.currentTags.tagThaiName}');
+
     return ProblemEntity(
       id: data.problemId,
       title: data.title,
@@ -49,19 +52,19 @@ class ProblemEntity {
       // Rachata
       // แปลง String เป็น ProblemType
       typeName: ProblemType.values.firstWhere(
-        (e) => e.name == data.problemType.typeName,
+        (e) => e.labelTh == data.problemType.typeThaiName,
         orElse: () => ProblemType.other,
       ),
 
       // แปลง String เป็น ProblemTag (Status)
       // สมมติว่า data.currentTags.tagName คือ "pending", "inProgress" ฯลฯ
       tagName: ProblemTag.values.firstWhere(
-        (e) => e.name == data.currentTags.tagName,
+        (e) => e.labelTh == data.currentTags.tagThaiName,
         orElse: () => ProblemTag.pending,
       ),
 
       locationName: data.locationName,
-      imageUrl: firstImageUrl,
+      imageUrl: firstImageUrl ?? '',
     );
   }
 }

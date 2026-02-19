@@ -108,6 +108,8 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                       return const Center(child: CircularProgressIndicator());
                     }
 
+                    print('-----------------UI bottom sheet: ${provider.problems.length}-------------------');
+
                     if (provider.problems.isEmpty) {
                       return const Center(
                         child: Text('ไม่พบข้อมูลในบริเวณนี้'),
