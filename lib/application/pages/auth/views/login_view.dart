@@ -90,6 +90,8 @@ class _LoginViewState extends State<LoginView> {
             controller: _emailController,
             label: 'Email',
             errorText: _emailError,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
             onChanged: (_) => setState(() => _emailError = null),
           ),
           const SizedBox(height: 32),

@@ -7,6 +7,8 @@ class AppAuthProvider extends ChangeNotifier {
   UserEntity? _user;
   bool _isLoading = true;
 
+  bool get isAdmin => _user?.isAdmin ?? false;
+
   AppAuthProvider(this._authRepository) {
     // ติดตามสถานะการ Login ทันที
     _authRepository.authStateChanges().listen((user) {

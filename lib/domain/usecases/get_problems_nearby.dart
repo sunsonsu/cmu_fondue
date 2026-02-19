@@ -1,5 +1,6 @@
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 // import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 
 class GetProblemsNearbyUseCase {

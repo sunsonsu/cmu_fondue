@@ -7,7 +7,9 @@ class GetProblemsUseCase {
   GetProblemsUseCase(this.repository);
 
   Future<List<ProblemEntity>> call() async {
-    return await repository.getProblems();
+    List<ProblemEntity> list_problems = await repository.getProblems();
+    print('=============${list_problems.length}================');
+    return list_problems;
   }
 
   Future<int> countByTag(String currentTagId) async {
