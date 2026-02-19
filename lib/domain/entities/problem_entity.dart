@@ -64,7 +64,7 @@ class ProblemEntity {
       ),
 
       locationName: data.locationName,
-      imageUrl: firstImageUrl ?? '',
+      imageUrl: firstImageUrl,
     );
   }
 }
