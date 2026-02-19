@@ -1,12 +1,11 @@
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
-import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
+import 'package:provider/provider.dart';
 
 class ProblemsBottomSheet extends StatefulWidget {
-  final GetProblemsNearbyUseCase getProblemsNearby;
-
-  const ProblemsBottomSheet({super.key, required this.getProblemsNearby});
+  const ProblemsBottomSheet({super.key});
 
   @override
   State<ProblemsBottomSheet> createState() => _ProblemsBottomSheetState();
@@ -16,12 +15,12 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
 
-  late Future<List<ProblemEntity>> _future;
-
   @override
   void initState() {
     super.initState();
-    _future = widget.getProblemsNearby();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProblemProvider>(context, listen: false).fetchProblems();
+    });
   }
 
   @override
@@ -104,24 +103,29 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: FutureBuilder<List<ProblemEntity>>(
-                  future: _future,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                child: Consumer<ProblemProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    if (snapshot.hasError) {
-                      return const Center(child: Text('เกิดข้อผิดพลาด'));
-                    }
+                    print('-----------------UI bottom sheet: ${provider.problems.length}-------------------');
 
-                    final problems = snapshot.data!;
+                    if (provider.problems.isEmpty) {
+                      return const Center(
+                        child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                      );
+                    }
 
                     return ListView.builder(
                       controller: scrollController,
-                      itemCount: problems.length,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      itemCount: provider.problems.length,
                       itemBuilder: (context, index) {
-                        return ProblemCard(problem: problems[index]);
+                        return ProblemCard(problem: provider.problems[index]);
                       },
                     );
                   },

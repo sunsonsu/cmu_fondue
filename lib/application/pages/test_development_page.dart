@@ -503,8 +503,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                       itemCount: _existingProblems.length,
                       itemBuilder: (context, index) {
                         final p = _existingProblems[index];
-                        final imageUrl = p.imageUrl; 
-                        
+                        final imageUrl = p.imageUrl;
+
                         return Card(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -519,21 +519,27 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                                       width: 56,
                                       height: 56,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const CircleAvatar(
-                                          child: Icon(Icons.location_on),
-                                        );
-                                      },
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return const SizedBox(
-                                          width: 56,
-                                          height: 56,
-                                          child: Center(
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                        );
-                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const CircleAvatar(
+                                              child: Icon(Icons.location_on),
+                                            );
+                                          },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return const SizedBox(
+                                              width: 56,
+                                              height: 56,
+                                              child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                              ),
+                                            );
+                                          },
                                     ),
                                   )
                                 : const CircleAvatar(

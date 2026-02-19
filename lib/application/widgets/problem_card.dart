@@ -10,28 +10,43 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class ProblemCard extends StatelessWidget {
+class ProblemCard extends StatefulWidget {
   final ProblemEntity problem;
   final VoidCallback? onDeleted;
 
-  const ProblemCard({
-    super.key,
-    required this.problem,
-    this.onDeleted,
-  });
+  const ProblemCard({super.key, required this.problem, this.onDeleted});
+
+  @override
+  State<ProblemCard> createState() => _ProblemCardState();
+}
+
+class _ProblemCardState extends State<ProblemCard> {
+  // สร้างสถานะภายใน Widget เพื่อใช้ในการ Toggle สี
+  bool isUpvoted = false;
+  final Color activeColor = const Color(0xFF6750A4);
+  late int localUpvoteCount; // สร้างตัวแปรใหม่ไว้ที่นี่
+
+  @override
+  void initState() {
+    super.initState();
+    // ดึงค่าเริ่มต้นมาจาก Entity
+    localUpvoteCount = widget.problem.upvoteCount;
+  }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AppAuthProvider>();
     final isAdmin = authProvider.user?.isAdmin ?? false;
-    final formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(problem.createdAt);
+    final formattedDate = DateFormat(
+      'dd/MM/yyyy HH:mm',
+    ).format(widget.problem.createdAt);
 
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProblemDetailPage(problem: problem),
+            builder: (context) => ProblemDetailPage(problem: widget.problem),
           ),
         );
       },
@@ -57,19 +72,18 @@ class ProblemCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      problem.imageUrl ?? '',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Icon(
-                            Icons.image,
-                            size: 40,
-                            color: Colors.grey[600],
-                          ),
-                        );
-                      },
-                    ),
+                    child:
+                        (widget.problem.imageUrl != null &&
+                            widget.problem.imageUrl!.isNotEmpty)
+                        ? Image.network(
+                            widget.problem.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.broken_image),
+                          )
+                        : const Icon(
+                            Icons.image_not_supported,
+                          ), // แสดง icon ถ้าไม่มี URL
                   ),
                 ),
 
@@ -82,7 +96,7 @@ class ProblemCard extends StatelessWidget {
                     children: [
                       // Title
                       Text(
-                        problem.title,
+                        widget.problem.title,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -103,7 +117,10 @@ class ProblemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             'แจ้งเมื่อ: $formattedDate',
-                            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
                           ),
                         ],
                       ),
@@ -118,7 +135,7 @@ class ProblemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              problem.locationName,
+                              widget.problem.locationName,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[700],
@@ -136,19 +153,108 @@ class ProblemCard extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 4,
                         children: [
-                          ProblemStatusTag(status: problem.tagName),
-                          ProblemCategoryTag(category: problem.typeName),
+                          ProblemStatusTag(status: widget.problem.tagName),
+                          ProblemCategoryTag(category: widget.problem.typeName),
                         ],
                       ),
                       const SizedBox(height: 8),
 
                       // Description
                       Text(
-                        problem.detail,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                        widget.problem.detail,
+                        style: TextStyle(fontSize: 13, color: Colors.grey[800]),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        softWrap: true,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Upvote Button
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Material(
+                          // เพิ่ม Material เพื่อให้ InkWell แสดง Ripple Effect บน Container
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                isUpvoted = !isUpvoted;
+                                // แก้ไขค่าใน Entity (หมายเหตุ: ในแอปจริงควรจัดการผ่าน Repository/Provider)
+                                localUpvoteCount += isUpvoted ? 1 : -1;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              decoration: BoxDecoration(
+                                color: isUpvoted
+                                    ? activeColor
+                                    : Colors.transparent,
+                                border: Border.all(color: activeColor),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            isUpvoted
+                                                ? Icons.thumb_up_alt
+                                                : Icons.thumb_up_alt_outlined,
+                                            size: 16,
+                                            color: isUpvoted
+                                                ? Colors.white
+                                                : activeColor,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Upvote',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: isUpvoted
+                                                  ? Colors.white
+                                                  : activeColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    VerticalDivider(
+                                      width: 1,
+                                      thickness: 1,
+                                      color: isUpvoted
+                                          ? Colors.white.withOpacity(0.5)
+                                          : activeColor,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      child: Text(
+                                        '$localUpvoteCount',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: isUpvoted
+                                              ? Colors.white
+                                              : activeColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -156,8 +262,6 @@ class ProblemCard extends StatelessWidget {
               ],
             ),
           ),
-
-          // Admin Delete Button - แสดงเฉพาะเมื่อเป็น admin
           if (isAdmin)
             Positioned(
               top: 4,
@@ -189,22 +293,19 @@ class ProblemCard extends StatelessWidget {
           ),
           title: const Text(
             'ต้องการลบรายงานปัญหานี้หรือไม่ ?',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           content: const Text(
             'หากยืนยัน จะไม่สามารถกู้คืนรายงานนี้ได้',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.center,
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
           actions: [
             Column(
               children: [
@@ -225,7 +326,10 @@ class ProblemCard extends StatelessWidget {
                     ),
                     child: const Text(
                       'ยืนยัน',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -244,7 +348,10 @@ class ProblemCard extends StatelessWidget {
                     ),
                     child: const Text(
                       'ยกเลิก',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -263,9 +370,7 @@ class ProblemCard extends StatelessWidget {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         },
       );
 
@@ -273,7 +378,7 @@ class ProblemCard extends StatelessWidget {
       final ProblemRepo repo = ProblemRepoImpl(
         connector: ConnectorConnector.instance,
       );
-      await repo.deleteProblem(problem.id);
+      await repo.deleteProblem(widget.problem.id);
 
       // ปิด loading
       if (context.mounted) {
@@ -290,10 +395,7 @@ class ProblemCard extends StatelessWidget {
                 SizedBox(width: 12),
                 Text(
                   'ลบปัญหาสำเร็จ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -310,7 +412,7 @@ class ProblemCard extends StatelessWidget {
       }
 
       // เรียก callback เพื่อให้ parent refresh ข้อมูล
-      onDeleted?.call();
+      widget.onDeleted?.call();
     } catch (e) {
       // ปิด loading
       if (context.mounted) {
