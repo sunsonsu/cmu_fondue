@@ -91,25 +91,37 @@ class _CreateReportPageState extends State<CreateReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF5D3891)),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'แจ้งปัญหา',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5D3891),
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Form Section
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Form Section
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
               child: ReportingForm(
                 location: widget.location,
                 titleController: _titleController,
@@ -123,12 +135,12 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 },
                 onPickImageFromGallery: _pickImageFromGallery,
                 onTakePicture: _takePicture,
+                ),
               ),
             ),
-          ),
 
-          // Next Button
-          Container(
+            // Next Button
+            Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -232,10 +244,11 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     ),
                   ),
                 ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

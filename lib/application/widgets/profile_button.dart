@@ -1,8 +1,8 @@
 import 'package:cmu_fondue/application/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
-class AdminLogoutButton extends StatelessWidget {
-  const AdminLogoutButton({super.key});
+class ProfileButton extends StatelessWidget {
+  const ProfileButton({super.key});
 
   void _navigateToProfile(BuildContext context) {
     Navigator.push(

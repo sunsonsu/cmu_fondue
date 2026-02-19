@@ -1,3 +1,4 @@
+import 'package:cmu_fondue/application/widgets/app_title_bar.dart';
 import 'package:cmu_fondue/application/widgets/map_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problems_bottom_sheet.dart';
@@ -8,7 +9,6 @@ class MapViewerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: [
         // Map Section (Full Screen)
@@ -16,6 +16,9 @@ class MapViewerPage extends StatelessWidget {
 
         // Draggable Problems Bottom Sheet
         ProblemsBottomSheet(),
+
+        // Title Bar at Top
+        const AppTitleBar(),
       ],
     );
   }

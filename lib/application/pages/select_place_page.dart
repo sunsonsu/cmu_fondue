@@ -53,60 +53,92 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
         title: const Text(
           'เลือกตำแหน่ง',
           style: TextStyle(
             fontSize: 24,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
             color: Color(0xFF5D3891),
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Description text
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
-                style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Main Content - Map (Full height)
+            Positioned.fill(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Stack(
+                  children: [
+                    // Map
+                    Positioned.fill(
+                      child: MapSubmitWidget(
+                        center: const LatLng(18.808310458255793, 98.95468245511799),
+                        onPlacemarkChanged: (placemark) =>
+                            _placemarkNotifier.value = placemark,
+                      ),
+                    ),
+
+                    // Bottom Sheet
+                    SubmitLocationBottomSheet(locationNotifier: _placemarkNotifier),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Location Search Widget
-          LocationSearchWidget(
-            locations: _cmuPlaces,
-            onLocationSelected: _onLocationSelected,
-          ),
-
-          const SizedBox(height: 8),
-
-          // Main Content - Map
-          Expanded(
-            child: Stack(
-              children: [
-                // Map
-                Positioned.fill(
-                  child: MapSubmitWidget(
-                    center: const LatLng(18.808310458255793, 98.95468245511799),
-                    onPlacemarkChanged: (placemark) =>
-                        _placemarkNotifier.value = placemark,
+            // Floating Search Section (On top)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
                 ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Description text
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
+                          style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                        ),
+                      ),
+                    ),
 
-                // Bottom Sheet
-                SubmitLocationBottomSheet(locationNotifier: _placemarkNotifier),
-              ],
+                    // Location Search Widget
+                    LocationSearchWidget(
+                      locations: _cmuPlaces,
+                      onLocationSelected: _onLocationSelected,
+                    ),
+
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
