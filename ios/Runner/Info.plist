@@ -53,5 +53,7 @@
 	<string>แอปพลิเคชันต้องการเข้าถึงคลังรูปเพื่อเลือกรูปภาพปัญหาที่จะแจ้ง</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>แอปพลิเคชันต้องการเข้าถึงไมโครโฟนสำหรับการบันทึกวิดีโอ</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>ต้องการตำแหน่งเพื่อแสดงแผนที่</string>
 </dict>
 </plist>

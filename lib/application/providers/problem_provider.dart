@@ -2,13 +2,19 @@ import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/material.dart';
 
 class ProblemProvider with ChangeNotifier {
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
+  final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
 
-  ProblemProvider(this._getProblemsUseCase, this._createProblemUseCase);
+  ProblemProvider(
+    this._getProblemsUseCase,
+    this._createProblemUseCase,
+    this._updateProblemUpvoteUseCase,
+  );
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -53,14 +59,57 @@ class ProblemProvider with ChangeNotifier {
         reporterId: reporterId,
         typeId: typeId,
         tagId: tagId,
-        imageFile: imageFile
+        imageFile: imageFile,
       );
       await fetchProblems(); // รีเฟรชข้อมูลหน้ารายการใหม่หลังจากสร้างสำเร็จ
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print('Create Error: $e');
+      print('Stacktrace: $stacktrace');
       rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
+
+  Future<void> toggleUpvote({
+    required String problemId,
+    required bool isUpvoted,
+  }) async {
+    try {
+      await _updateProblemUpvoteUseCase(
+        problemId: problemId,
+        isUpvoted: isUpvoted,
+      );
+      // สำคัญ: อัปเดตข้อมูลใน List ของ Provider ด้วย!
+      final index = _problems.indexWhere((p) => p.id == problemId);
+      if (index != -1) {
+        final oldProblem = _problems[index];
+        _problems[index] = ProblemEntity(
+          id: oldProblem.id,
+          title: oldProblem.title,
+          detail: oldProblem.detail,
+          lat: oldProblem.lat,
+          lng: oldProblem.lng,
+          upvoteCount: isUpvoted
+              ? oldProblem.upvoteCount + 1
+              : oldProblem.upvoteCount - 1,
+          createdAt: oldProblem.createdAt,
+          reporterEmail: oldProblem.reporterEmail,
+          typeName: oldProblem.typeName,
+          tagName: oldProblem.tagName,
+          locationName: oldProblem.locationName,
+          isUpvotedByMe: isUpvoted,
+          imageUrl: oldProblem.imageUrl,
+        );
+        notifyListeners(); // แจ้งทุกหน้าจอที่ฟังอยู่ให้วาดใหม่
+      }
+    } catch (e, stacktrace) {
+      print('Toggle Upvote Error: $e');
+      print('Stacktrace: $stacktrace');
+      rethrow;
+    }
+  }
+
+  
 }

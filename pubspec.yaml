@@ -37,8 +37,8 @@ dependencies:
   http: ^1.6.0
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
+  firebase_app_check: ^0.4.1+4
   firebase_data_connect: ^0.2.2+2
-  cloud_firestore: ^6.1.2
   provider: ^6.1.5+1
   firebase_ui_auth: ^3.0.1
   google_fonts: ^6.2.1
@@ -50,6 +50,11 @@ dependencies:
   flutter_dotenv: ^6.0.0
   firebase_storage: ^13.0.6
   path: ^1.9.1
+  firebase_messaging: ^16.1.1
+  flutter_local_notifications: ^18.0.1
+  cloud_functions: ^6.0.6
+  geolocator: ^14.0.2
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/application/widgets/problem_status_tag.dart';
 import 'package:cmu_fondue/application/widgets/problem_category_tag.dart';
@@ -23,16 +24,28 @@ class ProblemCard extends StatefulWidget {
 }
 
 class _ProblemCardState extends State<ProblemCard> {
-  // สร้างสถานะภายใน Widget เพื่อใช้ในการ Toggle สี
-  bool isUpvoted = false;
   final Color activeColor = const Color(0xFF6750A4);
-  late int localUpvoteCount; // สร้างตัวแปรใหม่ไว้ที่นี่
+  late int localUpvoteCount;
+  late bool isUpvoted;
 
   @override
   void initState() {
     super.initState();
-    // ดึงค่าเริ่มต้นมาจาก Entity
+    isUpvoted = widget.problem.isUpvotedByMe;
     localUpvoteCount = widget.problem.upvoteCount;
+  }
+
+  @override
+  void didUpdateWidget(covariant ProblemCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // ถ้าข้อมูล ID เดียวกันแต่ค่า upvote หรือสถานะเปลี่ยน ให้ update local state ตาม
+    if (widget.problem.upvoteCount != oldWidget.problem.upvoteCount ||
+        widget.problem.isUpvotedByMe != oldWidget.problem.isUpvotedByMe) {
+      setState(() {
+        isUpvoted = widget.problem.isUpvotedByMe;
+        localUpvoteCount = widget.problem.upvoteCount;
+      });
+    }
   }
 
   @override
@@ -177,13 +190,7 @@ class _ProblemCardState extends State<ProblemCard> {
                           // เพิ่ม Material เพื่อให้ InkWell แสดง Ripple Effect บน Container
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                isUpvoted = !isUpvoted;
-                                // แก้ไขค่าใน Entity (หมายเหตุ: ในแอปจริงควรจัดการผ่าน Repository/Provider)
-                                localUpvoteCount += isUpvoted ? 1 : -1;
-                              });
-                            },
+                            onTap: () => handleUpvote(),
                             borderRadius: BorderRadius.circular(20),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
@@ -341,6 +348,41 @@ class _ProblemCardState extends State<ProblemCard> {
           message: 'ลบปัญหาไม่สำเร็จ',
         );
       }
+    }
+  }
+
+  Future<void> handleUpvote() async {
+    final previousIsUpvoted = isUpvoted;
+    final previousCount = localUpvoteCount;
+
+    final problemProvider = context.read<ProblemProvider>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    setState(() {
+      isUpvoted = !isUpvoted;
+      localUpvoteCount += isUpvoted ? 1 : -1;
+    });
+
+    try {
+      await problemProvider.toggleUpvote(
+        problemId: widget.problem.id,
+        isUpvoted: isUpvoted,
+      );
+
+      if (!mounted) return;
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isUpvoted = previousIsUpvoted;
+        localUpvoteCount = previousCount;
+      });
+
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Failed to update upvote. Please try again.'),
+        ),
+      );
     }
   }
 }
