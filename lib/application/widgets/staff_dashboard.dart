@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/application/pages/area_problems_map_page.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -39,15 +40,31 @@ class _StaffDashboardState extends State<StaffDashboard> {
     });
   }
 
-  void _applyFilters() {
+  Future<void> _applyFilters() async {
+    final provider = Provider.of<ProblemProvider>(context, listen: false);
+    List<ProblemEntity> results;
+
+    if (_selectedTag != null && _selectedCategory != null) {
+      // Both filters — query by tag and type
+      results = await provider.fetchProblemsByTagAndType(
+        tagId: _selectedTag!.tagId,
+        typeId: _selectedCategory!.typeId,
+      );
+    } else if (_selectedTag != null) {
+      // Tag only
+      results = await provider.fetchProblemsByTag(tagId: _selectedTag!.tagId);
+    } else if (_selectedCategory != null) {
+      // Type only
+      results = await provider.fetchProblemsByType(
+        typeId: _selectedCategory!.typeId,
+      );
+    } else {
+      // No filters — show all
+      results = _allProblems;
+    }
+
     setState(() {
-      _filteredProblems = _allProblems.where((problem) {
-        bool matchesTag =
-            _selectedTag == null || problem.tagName == _selectedTag;
-        bool matchesCategory =
-            _selectedCategory == null || problem.typeName == _selectedCategory;
-        return matchesTag && matchesCategory;
-      }).toList();
+      _filteredProblems = results;
     });
   }
 

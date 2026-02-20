@@ -1,6 +1,7 @@
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
 import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/user_repo_impl.dart';
@@ -37,12 +38,12 @@ final cache = CacheService();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+
   await dotenv.load(fileName: ".env");
-  
+
   // Initialize Notification Service
   await NotificationService().initialize();
-  
+
   if (kDebugMode) {
     // Development mode: Configure Firebase Emulators
     String host = defaultTargetPlatform == TargetPlatform.android
@@ -53,13 +54,13 @@ void main() async {
     // FirebaseAuth.instance.useAuthEmulator(host, 9099); // ปิดเพื่อใช้ Auth จริง
     ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
     FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
-    
+
     // App Check with debug provider - required for Cloud Functions
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.debug,
       appleProvider: AppleProvider.debug,
     );
-    
+
     print('🔧 Emulators: $host (Functions:5001, DataConnect:9399)');
     print('✅ Using production Firebase Auth');
   } else {
@@ -78,9 +79,7 @@ void main() async {
     ConnectorConnector.instance,
   );
 
-  final userRepository = UserRepoImpl(
-    connector: ConnectorConnector.instance,
-  );
+  final userRepository = UserRepoImpl(connector: ConnectorConnector.instance);
 
   // create dependency for Notification Setup
   final notificationService = NotificationService();
@@ -119,12 +118,23 @@ void main() async {
           update: (_, repo, _) => RegisterUseCase(repo),
         ),
         ChangeNotifierProvider(
-          create: (_) => AppAuthProvider(authRepository, setupNotificationsUseCase),
+          create: (_) =>
+              AppAuthProvider(authRepository, setupNotificationsUseCase),
         ),
 
         ChangeNotifierProvider(
-          create: (_) =>
-              ProblemProvider(getProblemsUseCase, createProblemUseCase, updateProblemUpvoteUseCase),
+          create: (_) => ProblemProvider(
+            getProblemsUseCase,
+            createProblemUseCase,
+            updateProblemUpvoteUseCase,
+          ),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => MapProblemProvider(
+            getProblemsUseCase,
+            updateProblemUpvoteUseCase,
+          ),
         ),
       ],
       child: const MyApp(),
@@ -151,7 +161,7 @@ class MyApp extends StatelessWidget {
           if (auth.isAuthenticated) {
             return const HomePage();
           }
-          
+
           return AuthPage(
             loginUseCase: context.read<LoginUseCase>(),
             registerUseCase: context.read<RegisterUseCase>(),

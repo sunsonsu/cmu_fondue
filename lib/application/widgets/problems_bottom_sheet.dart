@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +94,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: Consumer<ProblemProvider>(
+                child: Consumer<MapProblemProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());

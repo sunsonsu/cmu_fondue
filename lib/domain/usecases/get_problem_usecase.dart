@@ -19,4 +19,24 @@ class GetProblemsUseCase {
   Future<int> countByTag(String currentTagId) async {
     return await repository.countProblemsByTag(currentTagId: currentTagId);
   }
+
+  Future<List<ProblemEntity>> getProblemsByTagAndType({
+    required String tagId,
+    required String typeId,
+  }) async {
+    return await repository.getProblemsByTagAndType(
+      tagId: tagId,
+      typeId: typeId,
+    );
+  }
+
+  Future<List<ProblemEntity>> getProblemsByTag({required String tagId}) async {
+    return await repository.getProblemsByTag(tagId: tagId);
+  }
+
+  Future<List<ProblemEntity>> getProblemsByType({
+    required String typeId,
+  }) async {
+    return await repository.getProblemsByType(typeId: typeId);
+  }
 }

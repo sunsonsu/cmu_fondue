@@ -39,6 +39,12 @@ part 'problem_image_by_problem_id.dart';
 
 part 'problems_by_tag.dart';
 
+part 'problems_by_tag_and_type.dart';
+
+part 'problems_by_tag_full.dart';
+
+part 'problems_by_type_full.dart';
+
 
 
 
@@ -135,6 +141,21 @@ class ConnectorConnector {
   
   ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
     return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
+  }
+  
+  
+  ProblemsByTagAndTypeVariablesBuilder problemsByTagAndType ({required String TagId, required String TypeId, }) {
+    return ProblemsByTagAndTypeVariablesBuilder(dataConnect, TagId: TagId,TypeId: TypeId,);
+  }
+  
+  
+  ProblemsByTagFullVariablesBuilder problemsByTagFull ({required String TagId, }) {
+    return ProblemsByTagFullVariablesBuilder(dataConnect, TagId: TagId,);
+  }
+  
+  
+  ProblemsByTypeFullVariablesBuilder problemsByTypeFull ({required String TypeId, }) {
+    return ProblemsByTypeFullVariablesBuilder(dataConnect, TypeId: TypeId,);
   }
   
 

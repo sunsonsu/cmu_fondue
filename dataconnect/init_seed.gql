@@ -10,6 +10,14 @@ mutation SeedInitialData @auth(level: PUBLIC) {
   )
 
   # 2. สร้าง/อัปเดตประเภทปัญหา (ProblemTypes)
+
+  type0: problemType_upsert(
+    data: {
+      problemTypeId: "11111111-2222-3333-4444-555555555555"
+      typeName: "Water"
+      typeThaiName: "น้ำ"
+    }
+  )
   type1: problemType_upsert(
     data: {
       problemTypeId: "22222222-3333-4444-5555-666666666666"

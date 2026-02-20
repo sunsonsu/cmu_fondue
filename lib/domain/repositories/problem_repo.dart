@@ -35,6 +35,15 @@ abstract class ProblemRepo {
 
   Future<int> countProblemsByTag({required String currentTagId});
 
+  Future<List<ProblemEntity>> getProblemsByTagAndType({
+    required String tagId,
+    required String typeId,
+  });
+
+  Future<List<ProblemEntity>> getProblemsByTag({required String tagId});
+
+  Future<List<ProblemEntity>> getProblemsByType({required String typeId});
+
   // Insert upvote
   Future<void> addUpvote({required String id});
 
