@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
           if (auth.isAuthenticated) {
             return const HomePage();
           }
-
+          
           return AuthPage(
             loginUseCase: context.read<LoginUseCase>(),
             registerUseCase: context.read<RegisterUseCase>(),

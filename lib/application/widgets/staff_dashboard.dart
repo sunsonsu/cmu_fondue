@@ -1,3 +1,4 @@
+import 'package:cmu_fondue/application/pages/area_problems_map_page.dart';
 import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -64,31 +65,52 @@ class _StaffDashboardState extends State<StaffDashboard> {
     };
   }
 
-  String _getMostReportedArea() {
-    if (_allProblems.isEmpty) return 'ไม่มีข้อมูล';
-    
-    // Count problems by location
-    Map<String, int> locationCounts = {};
-    for (var problem in _allProblems) {
-      locationCounts[problem.locationName] = (locationCounts[problem.locationName] ?? 0) + 1;
+  Map<String, dynamic> _getMostReportedAreaData() {
+    if (_allProblems.isEmpty) {
+      return {
+        'location': 'ไม่มีข้อมูล',
+        'problems': <ProblemEntity>[],
+        'upvotes': 0,
+      };
     }
     
-    // Find location with max count
+    // Group problems by location
+    Map<String, List<ProblemEntity>> locationProblems = {};
+    for (var problem in _allProblems) {
+      if (!locationProblems.containsKey(problem.locationName)) {
+        locationProblems[problem.locationName] = [];
+      }
+      locationProblems[problem.locationName]!.add(problem);
+    }
+    
+    // Find location with max total upvotes
     String mostReported = '';
-    int maxCount = 0;
-    locationCounts.forEach((location, count) {
-      if (count > maxCount) {
-        maxCount = count;
+    List<ProblemEntity> mostReportedProblems = [];
+    int maxUpvoteCount = 0;
+    locationProblems.forEach((location, problems) {
+      // Calculate total upvotes for this location
+      int totalUpvotes = problems.fold(0, (sum, problem) => sum + problem.upvoteCount);
+      if (totalUpvotes > maxUpvoteCount) {
+        maxUpvoteCount = totalUpvotes;
         mostReported = location;
+        mostReportedProblems = problems;
       }
     });
     
-    return mostReported;
+    return {
+      'location': mostReported,
+      'problems': mostReportedProblems,
+      'upvotes': maxUpvoteCount,
+    };
   }
 
   @override
   Widget build(BuildContext context) {
     final stats = _getStatistics();
+    final mostReportedData = _getMostReportedAreaData();
+    final mostReportedLocation = mostReportedData['location'] as String;
+    final mostReportedProblems = mostReportedData['problems'] as List<ProblemEntity>;
+    final mostReportedUpvotes = mostReportedData['upvotes'] as int;
     
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -103,65 +125,97 @@ class _StaffDashboardState extends State<StaffDashboard> {
               child: Column(
                 children: [
                   // Most Report Area Section
-                  Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Most Report Area',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  color: Colors.white,
-                                  size: 20,
+                  GestureDetector(
+                    onTap: mostReportedProblems.isNotEmpty
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AreaProblemsMapPage(
+                                  areaName: mostReportedLocation,
+                                  problems: mostReportedProblems,
                                 ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    _getMostReportedArea(),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }
+                        : null,
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'พื้นที่ที่ส่งผลกระทบมากที่สุด',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        mostReportedLocation,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (mostReportedProblems.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${mostReportedProblems.length} รายการ • ${mostReportedUpvotes} upvotes • แตะเพื่อดูแผนที่',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          const Icon(
+                            Icons.trending_up,
+                            color: Colors.white,
+                            size: 48,
+                          ),
+                        ],
                       ),
-                      const Icon(
-                        Icons.trending_up,
-                        color: Colors.white,
-                        size: 48,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
 
                 // Statistics Cards
                 Padding(

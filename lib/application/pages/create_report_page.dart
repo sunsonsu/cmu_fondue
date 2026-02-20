@@ -158,68 +158,69 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 child: ElevatedButton(
                   onPressed: _isFormValid()
                       ? () async {
-                          // ดึง Provider แบบ listen: false เพราะเรียกใช้ในฟังก์ชันกดปุ่ม
-                          // final probProvider = Provider.of<ProblemProvider>(
-                          //   context,
-                          //   listen: false,
-                          // );
-                          // final authProvider = Provider.of<AppAuthProvider>(
-                          //   context,
-                          //   listen: false,
-                          // );
+                          final probProvider = Provider.of<ProblemProvider>(
+                            context,
+                            listen: false,
+                          );
+                          final authProvider = Provider.of<AppAuthProvider>(
+                            context,
+                            listen: false,
+                          );
 
-                          // // ตรวจสอบว่ามี UserId หรือยัง (กรณีใช้ Firebase Auth)
-                          // if (authProvider.user?.id == "") {
-                          //   CustomSnackBar.showWarning(
-                          //     context: context,
-                          //     message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
-                          //   );
-                          //   return;
-                          // }
+                          if (authProvider.user?.id == "") {
+                            CustomSnackBar.showWarning(
+                              context: context,
+                              message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
+                            );
+                            return;
+                          }
 
-                          // try {
-                          //   // เรียกใช้ฟังก์ชันใน Provider ที่เราเตรียม UseCase ไว้แล้ว
-                          //   await probProvider.createProblem(
-                          //     title: _titleController.text,
-                          //     detail: _descriptionController.text,
-                          //     locationName:
-                          //         widget.location, // ใช้ค่าจากตัวแปรที่รับมา
-                          //     lat: 18.8001, // ในอนาคตควรดึงจาก GPS จริง
-                          //     lng: 98.9502,
-                          //     reporterId: authProvider.user.id
-                          //         "",
-                          //     typeId:
-                          //         _selectedCategory!, // ส่ง ID ของ Category ไป
-                          //     tagId:
-                          //         "519a08f6-ee74-4b2b-870e-b35c951c8ee8", // ID 'ยังไม่ได้แก้ไข' จาก Seed
-                          //   );
+                          if (_selectedImage == null) {
+                            CustomSnackBar.showError(
+                              context: context,
+                              message: 'กรุณาเลือกรูปภาพ',
+                            );
+                            return;
+                          }
 
-                          //   if (context.mounted) {
-                          //     CustomSnackBar.showSuccess(
-                          //       context: context,
-                          //       message: 'สร้างรายงานสำเร็จ',
-                          //     );
-                          //     
-                          //     // เมื่อสำเร็จ ให้ไปหน้า History โดยล้าง Stack เดิมทิ้ง
-                          //     await Future.delayed(const Duration(milliseconds: 500));
-                          //     if (context.mounted) {
-                          //       Navigator.pushAndRemoveUntil(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //           builder: (context) => const HistoryPage(),
-                          //         ),
-                          //         (route) => false,
-                          //       );
-                          //     }
-                          //   }
-                          // } catch (e) {
-                          //   if (context.mounted) {
-                          //     CustomSnackBar.showError(
-                          //       context: context,
-                          //       message: 'ไม่สามารถสร้างรายงานได้',
-                          //     );
-                          //   }
-                          // }
+                          try {
+                            await probProvider.createProblem(
+                              title: _titleController.text,
+                              detail: _descriptionController.text,
+                              locationName: widget.location,
+                              lat: 18.8001,
+                              lng: 98.9502,
+                              reporterId: authProvider.user!.id,
+                              typeId: _selectedCategory!,
+                              tagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8",
+                              imageFile: _selectedImage!,
+                            );
+
+                            if (context.mounted) {
+                              CustomSnackBar.showSuccess(
+                                context: context,
+                                message: 'สร้างรายงานสำเร็จ',
+                              );
+
+                              await Future.delayed(const Duration(milliseconds: 500));
+                              if (context.mounted) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(initialIndex: 1),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              CustomSnackBar.showError(
+                                context: context,
+                                message: 'ไม่สามารถสร้างรายงานได้',
+                              );
+                            }
+                          }
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
