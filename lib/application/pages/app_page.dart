@@ -1,4 +1,3 @@
-import 'package:cmu_fondue/application/pages/reporting_location_page.dart';
 import 'package:cmu_fondue/application/pages/profile_page.dart';
 import 'package:cmu_fondue/application/pages/admin_page.dart';
 import 'package:cmu_fondue/application/pages/select_place_page.dart';
