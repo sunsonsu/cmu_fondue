@@ -24,6 +24,18 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
+  @override
+  Future<List<ProblemEntity>> getNotCompletedProblems() async {
+    try {
+      final result = await connector.listNotCompletedProblems().execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาที่ยังไม่เสร็จสิ้นได้: $e");
+    }
+  }
+
   // Create
   // Komsan
   @override

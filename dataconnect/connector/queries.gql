@@ -1,5 +1,4 @@
-query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
-  problems{
+fragment ProblemFields on Problem {
     problemId
     reporter {
       email
@@ -28,6 +27,17 @@ query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when prod
       fileName
       imageType
     }
+}
+
+query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems{
+    ...ProblemFields
+  }
+}
+
+query ListNotCompletedProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(where: { currentTags: { tagName: { ne: "Completed" } } }) {
+    ...ProblemFields
   }
 }
 
@@ -69,4 +79,3 @@ query ProblemsByTag($TagId: UUID!) @auth(level: PUBLIC insecureReason: "Change t
     problemId
   }
 }
-

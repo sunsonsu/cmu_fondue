@@ -27,6 +27,8 @@ part 'remove_upvote.dart';
 
 part 'list_problems.dart';
 
+part 'list_not_completed_problems.dart';
+
 part 'list_problem_types.dart';
 
 part 'list_problem_tags.dart';
@@ -103,6 +105,11 @@ class ConnectorConnector {
   
   ListProblemsVariablesBuilder listProblems () {
     return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListNotCompletedProblemsVariablesBuilder listNotCompletedProblems () {
+    return ListNotCompletedProblemsVariablesBuilder(dataConnect, );
   }
   
   

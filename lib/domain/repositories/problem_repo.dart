@@ -4,6 +4,8 @@ abstract class ProblemRepo {
   //List all problems
   Future<List<ProblemEntity>> getProblems();
 
+  Future<List<ProblemEntity>> getNotCompletedProblems();
+
   //Create a new problem
   Future<String> createProblem({
     required String title,
@@ -31,9 +33,7 @@ abstract class ProblemRepo {
   //Delete a problem
   Future<void> deleteProblem(String id);
 
-  Future<int> countProblemsByTag({
-    required String currentTagId,
-  });
+  Future<int> countProblemsByTag({required String currentTagId});
 
   // Insert upvote
   Future<void> addUpvote({required String id});

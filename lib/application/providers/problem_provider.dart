@@ -36,6 +36,20 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchNotCompletedProblems() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _problems = await _getProblemsUseCase.getNotCompletedProblems();
+    } catch (e, stacktrace) {
+      print('Fetch Error: $e');
+      print('Stacktrace: $stacktrace');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> createProblem({
     required String title,
     required String detail,

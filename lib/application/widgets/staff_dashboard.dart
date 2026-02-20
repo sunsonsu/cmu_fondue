@@ -3,8 +3,8 @@ import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
@@ -14,11 +14,10 @@ class StaffDashboard extends StatefulWidget {
 }
 
 class _StaffDashboardState extends State<StaffDashboard> {
-  final GetProblemsNearbyUseCase _getProblemsUseCase = GetProblemsNearbyUseCase();
   List<ProblemEntity> _allProblems = [];
   List<ProblemEntity> _filteredProblems = [];
   bool _isLoading = true;
-  
+
   ProblemTag? _selectedTag;
   ProblemType? _selectedCategory;
 
@@ -29,35 +28,40 @@ class _StaffDashboardState extends State<StaffDashboard> {
   }
 
   Future<void> _loadProblems() async {
-    setState(() => _isLoading = true);
-    
-    try {
-      final problems = await _getProblemsUseCase();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
+      await provider.fetchProblems();
       setState(() {
-        _allProblems = problems;
-        _filteredProblems = problems;
+        _allProblems = provider.problems;
+        _filteredProblems = provider.problems;
         _isLoading = false;
       });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
+    });
   }
 
   void _applyFilters() {
     setState(() {
       _filteredProblems = _allProblems.where((problem) {
-        bool matchesTag = _selectedTag == null || problem.tagName == _selectedTag;
-        bool matchesCategory = _selectedCategory == null || problem.typeName == _selectedCategory;
+        bool matchesTag =
+            _selectedTag == null || problem.tagName == _selectedTag;
+        bool matchesCategory =
+            _selectedCategory == null || problem.typeName == _selectedCategory;
         return matchesTag && matchesCategory;
       }).toList();
     });
   }
 
   Map<String, int> _getStatistics() {
-    int pending = _allProblems.where((p) => p.tagName == ProblemTag.pending).length;
-    int inProgress = _allProblems.where((p) => p.tagName == ProblemTag.inProgress).length;
-    int completed = _allProblems.where((p) => p.tagName == ProblemTag.completed).length;
-    
+    int pending = _allProblems
+        .where((p) => p.tagName == ProblemTag.pending)
+        .length;
+    int inProgress = _allProblems
+        .where((p) => p.tagName == ProblemTag.inProgress)
+        .length;
+    int completed = _allProblems
+        .where((p) => p.tagName == ProblemTag.completed)
+        .length;
+
     return {
       'pending': pending,
       'inProgress': inProgress,
@@ -73,7 +77,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
         'upvotes': 0,
       };
     }
-    
+
     // Group problems by location
     Map<String, List<ProblemEntity>> locationProblems = {};
     for (var problem in _allProblems) {
@@ -82,21 +86,24 @@ class _StaffDashboardState extends State<StaffDashboard> {
       }
       locationProblems[problem.locationName]!.add(problem);
     }
-    
+
     // Find location with max total upvotes
     String mostReported = '';
     List<ProblemEntity> mostReportedProblems = [];
     int maxUpvoteCount = 0;
     locationProblems.forEach((location, problems) {
       // Calculate total upvotes for this location
-      int totalUpvotes = problems.fold(0, (sum, problem) => sum + problem.upvoteCount);
+      int totalUpvotes = problems.fold(
+        0,
+        (sum, problem) => sum + problem.upvoteCount,
+      );
       if (totalUpvotes > maxUpvoteCount) {
         maxUpvoteCount = totalUpvotes;
         mostReported = location;
         mostReportedProblems = problems;
       }
     });
-    
+
     return {
       'location': mostReported,
       'problems': mostReportedProblems,
@@ -109,113 +116,114 @@ class _StaffDashboardState extends State<StaffDashboard> {
     final stats = _getStatistics();
     final mostReportedData = _getMostReportedAreaData();
     final mostReportedLocation = mostReportedData['location'] as String;
-    final mostReportedProblems = mostReportedData['problems'] as List<ProblemEntity>;
+    final mostReportedProblems =
+        mostReportedData['problems'] as List<ProblemEntity>;
     final mostReportedUpvotes = mostReportedData['upvotes'] as int;
-    
+
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(41),
-                  topRight: Radius.circular(41),
-                ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(41),
+                topRight: Radius.circular(41),
               ),
-              child: Column(
-                children: [
-                  // Most Report Area Section
-                  GestureDetector(
-                    onTap: mostReportedProblems.isNotEmpty
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AreaProblemsMapPage(
-                                  areaName: mostReportedLocation,
-                                  problems: mostReportedProblems,
+            ),
+            child: Column(
+              children: [
+                // Most Report Area Section
+                GestureDetector(
+                  onTap: mostReportedProblems.isNotEmpty
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AreaProblemsMapPage(
+                                areaName: mostReportedLocation,
+                                problems: mostReportedProblems,
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'พื้นที่ที่ส่งผลกระทบมากที่สุด',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            );
-                          }
-                        : null,
-                    child: Container(
-                      margin: const EdgeInsets.all(16),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'พื้นที่ที่ส่งผลกระทบมากที่สุด',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
                                     color: Colors.white,
+                                    size: 20,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: Text(
-                                        mostReportedLocation,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      mostReportedLocation,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                if (mostReportedProblems.isNotEmpty) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${mostReportedProblems.length} รายการ • ${mostReportedUpvotes} upvotes • แตะเพื่อดูแผนที่',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white.withOpacity(0.8),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
+                              ),
+                              if (mostReportedProblems.isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${mostReportedProblems.length} รายการ • ${mostReportedUpvotes} upvotes • แตะเพื่อดูแผนที่',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
                               ],
-                            ),
+                            ],
                           ),
-                          const Icon(
-                            Icons.trending_up,
-                            color: Colors.white,
-                            size: 48,
-                          ),
-                        ],
-                      ),
+                        ),
+                        const Icon(
+                          Icons.trending_up,
+                          color: Colors.white,
+                          size: 48,
+                        ),
+                      ],
                     ),
                   ),
+                ),
 
                 // Statistics Cards
                 Padding(
@@ -275,10 +283,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
                       ? const Center(
                           child: Text(
                             'ไม่พบข้อมูล',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         )
                       : ListView.builder(
