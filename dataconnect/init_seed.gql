@@ -21,14 +21,14 @@ mutation SeedInitialData @auth(level: PUBLIC) {
     data: {
       problemTypeId: "33333333-4444-5555-6666-777777777777"
       typeName: "Electricity"
-      typeThaiName: "ไฟฟ้า/แสงสว่าง"
+      typeThaiName: "ไฟฟ้า"
     }
   )
   type3: problemType_upsert(
     data: {
       problemTypeId: "44444444-5555-6666-7777-888888888888"
       typeName: "Roads"
-      typeThaiName: "ถนน/ทางเท้า"
+      typeThaiName: "ถนน"
     }
   )
   type4: problemType_upsert(

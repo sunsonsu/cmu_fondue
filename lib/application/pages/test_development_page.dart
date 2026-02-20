@@ -10,11 +10,14 @@ import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/notify_problem_status_changed_usecase.dart';
 import 'package:cmu_fondue/data/repositories/problem_type_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_tag_repo_impl.dart';
 import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
+import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
+import 'package:cmu_fondue/data/services/notification_service.dart';
 
 class TestDevelopmentPage extends StatefulWidget {
   const TestDevelopmentPage({super.key});
@@ -32,6 +35,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   late GetProblemsUseCase _getProblemsUseCase;
   late UpdateProblemUseCase _updateProblemUseCase;
   late DeleteProblemUseCase _deleteProblemUseCase;
+  late NotifyProblemStatusChangedUseCase _notifyUseCase;
 
   // --- States ---
   List<ProblemTypeEntity> _problemTypes = [];
@@ -77,6 +81,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     final problemRepo = ProblemRepoImpl(connector: connector);
     final problemImageRepo = ProblemImageRepoImpl(connector: connector);
     final storageService = FirebaseStorageService();
+    final cloudFunctionsService = CloudFunctionsService();
 
     _getProblemTypesUseCase = GetProblemTypesUseCase(typeRepo);
     _createProblemUseCase = CreateProblemUseCase(
@@ -87,6 +92,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     _getProblemsUseCase = GetProblemsUseCase(problemRepo);
     _updateProblemUseCase = UpdateProblemUseCase(problemRepo);
     _deleteProblemUseCase = DeleteProblemUseCase(problemRepo);
+    _notifyUseCase = NotifyProblemStatusChangedUseCase(cloudFunctionsService);
   }
 
   /// ดึงข้อมูลใหม่จาก Server ทั้ง Types และ Problems
@@ -285,6 +291,54 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
         _showErrorDialog("ลบไม่สำเร็จ: $e");
       } finally {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  /// ทดสอบส่ง Push Notification
+  Future<void> _testSendNotification(ProblemEntity problem) async {
+    // ดึง FCM Token ของตัวเอง (เพื่อทดสอบ)
+    final notificationService = NotificationService();
+    final fcmToken = await notificationService.getFcmToken();
+
+    if (fcmToken == null || fcmToken.isEmpty) {
+      _showErrorSnackBar("ไม่พบ FCM Token กรุณาตรวจสอบการตั้งค่า");
+      return;
+    }
+
+    // แสดง loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      await _notifyUseCase.execute(
+        problemId: problem.id,
+        problemTitle: problem.title,
+        newTagName: "กำลังดำเนินการ (ทดสอบ)",
+        fcmToken: fcmToken,
+      );
+      
+      if (mounted) Navigator.pop(context); // ปิด loading dialog
+      _showSuccessSnackBar("ส่ง Notification สำเร็จ! ตรวจสอบที่เครื่องของคุณ");
+    } catch (e) {
+      if (mounted) Navigator.pop(context); // ปิด loading dialog
+      
+      // ตรวจสอบ error type
+      final errorMessage = e.toString();
+      if (errorMessage.contains('unauthenticated') || 
+          errorMessage.contains('UNAUTHENTICATED')) {
+        _showErrorDialog(
+          "กรุณา Login ก่อน\n\n"
+          "Firebase Functions ต้องการให้คุณเข้าสู่ระบบก่อนส่ง notification\n\n"
+          "กรุณา logout และ login อีกครั้ง หรือรีสตาร์ท app"
+        );
+      } else {
+        _showErrorDialog("ส่ง Notification ไม่สำเร็จ: $e");
       }
     }
   }
@@ -561,6 +615,14 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.notifications_active,
+                                    color: Colors.blue,
+                                  ),
+                                  tooltip: "ทดสอบส่ง Notification",
+                                  onPressed: () => _testSendNotification(p),
+                                ),
                                 IconButton(
                                   icon: const Icon(
                                     Icons.edit,
