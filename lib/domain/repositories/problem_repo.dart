@@ -4,7 +4,7 @@ abstract class ProblemRepo {
   //List all problems
   Future<List<ProblemEntity>> getProblems();
 
-  Future<List<ProblemEntity>> getNotDoneProblems();
+  Future<List<ProblemEntity>> getNotCompletedProblems();
 
   //Create a new problem
   Future<String> createProblem({

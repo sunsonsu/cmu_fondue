@@ -34,7 +34,7 @@ query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when prod
   }
 }
 
-query ListNotDoneProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+query ListNotCompletedProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
   problems(where: { currentTags: { tagName: { ne: "Completed" } } }) {
     ...ProblemFields
   }

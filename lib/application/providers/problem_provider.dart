@@ -30,11 +30,11 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchNotDoneProblems() async {
+  Future<void> fetchNotCompletedProblems() async {
     _isLoading = true;
     notifyListeners();
     try {
-      _problems = await _getProblemsUseCase.getNotDoneProblems();
+      _problems = await _getProblemsUseCase.getNotCompletedProblems();
     } catch (e, stacktrace) {
       print('Fetch Error: $e');
       print('Stacktrace: $stacktrace');

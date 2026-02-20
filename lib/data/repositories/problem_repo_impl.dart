@@ -25,9 +25,9 @@ class ProblemRepoImpl implements ProblemRepo {
   }
 
   @override
-  Future<List<ProblemEntity>> getNotDoneProblems() async {
+  Future<List<ProblemEntity>> getNotCompletedProblems() async {
     try {
-      final result = await connector.listNotDoneProblems().execute();
+      final result = await connector.listNotCompletedProblems().execute();
       return result.data.problems.map((e) {
         return ProblemEntity.fromGenerated(e);
       }).toList();

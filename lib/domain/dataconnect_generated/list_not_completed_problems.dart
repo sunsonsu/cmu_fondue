@@ -1,52 +1,52 @@
 part of 'generated.dart';
 
-class ListNotDoneProblemsVariablesBuilder {
+class ListNotCompletedProblemsVariablesBuilder {
   
   final FirebaseDataConnect _dataConnect;
-  ListNotDoneProblemsVariablesBuilder(this._dataConnect, );
-  Deserializer<ListNotDoneProblemsData> dataDeserializer = (dynamic json)  => ListNotDoneProblemsData.fromJson(jsonDecode(json));
+  ListNotCompletedProblemsVariablesBuilder(this._dataConnect, );
+  Deserializer<ListNotCompletedProblemsData> dataDeserializer = (dynamic json)  => ListNotCompletedProblemsData.fromJson(jsonDecode(json));
   
-  Future<QueryResult<ListNotDoneProblemsData, void>> execute() {
+  Future<QueryResult<ListNotCompletedProblemsData, void>> execute() {
     return ref().execute();
   }
 
-  QueryRef<ListNotDoneProblemsData, void> ref() {
+  QueryRef<ListNotCompletedProblemsData, void> ref() {
     
-    return _dataConnect.query("ListNotDoneProblems", dataDeserializer, emptySerializer, null);
+    return _dataConnect.query("ListNotCompletedProblems", dataDeserializer, emptySerializer, null);
   }
 }
 
 @immutable
-class ListNotDoneProblemsProblems {
+class ListNotCompletedProblemsProblems {
   final String problemId;
-  final ListNotDoneProblemsProblemsReporter reporter;
+  final ListNotCompletedProblemsProblemsReporter reporter;
   final String title;
   final String detail;
   final String locationName;
-  final ListNotDoneProblemsProblemsProblemType problemType;
-  final ListNotDoneProblemsProblemsCurrentTags currentTags;
+  final ListNotCompletedProblemsProblemsProblemType problemType;
+  final ListNotCompletedProblemsProblemsCurrentTags currentTags;
   final Timestamp createdAt;
   final double problemLat;
   final double problemLng;
-  final List<ListNotDoneProblemsProblemsUserUpvotesOnProblem> userUpvotes_on_problem;
-  final List<ListNotDoneProblemsProblemsProblemImagesOnProblem> problemImages_on_problem;
-  ListNotDoneProblemsProblems.fromJson(dynamic json):
+  final List<ListNotCompletedProblemsProblemsUserUpvotesOnProblem> userUpvotes_on_problem;
+  final List<ListNotCompletedProblemsProblemsProblemImagesOnProblem> problemImages_on_problem;
+  ListNotCompletedProblemsProblems.fromJson(dynamic json):
   
   problemId = nativeFromJson<String>(json['problemId']),
-  reporter = ListNotDoneProblemsProblemsReporter.fromJson(json['reporter']),
+  reporter = ListNotCompletedProblemsProblemsReporter.fromJson(json['reporter']),
   title = nativeFromJson<String>(json['title']),
   detail = nativeFromJson<String>(json['detail']),
   locationName = nativeFromJson<String>(json['locationName']),
-  problemType = ListNotDoneProblemsProblemsProblemType.fromJson(json['problemType']),
-  currentTags = ListNotDoneProblemsProblemsCurrentTags.fromJson(json['currentTags']),
+  problemType = ListNotCompletedProblemsProblemsProblemType.fromJson(json['problemType']),
+  currentTags = ListNotCompletedProblemsProblemsCurrentTags.fromJson(json['currentTags']),
   createdAt = Timestamp.fromJson(json['createdAt']),
   problemLat = nativeFromJson<double>(json['problemLat']),
   problemLng = nativeFromJson<double>(json['problemLng']),
   userUpvotes_on_problem = (json['userUpvotes_on_problem'] as List<dynamic>)
-        .map((e) => ListNotDoneProblemsProblemsUserUpvotesOnProblem.fromJson(e))
+        .map((e) => ListNotCompletedProblemsProblemsUserUpvotesOnProblem.fromJson(e))
         .toList(),
   problemImages_on_problem = (json['problemImages_on_problem'] as List<dynamic>)
-        .map((e) => ListNotDoneProblemsProblemsProblemImagesOnProblem.fromJson(e))
+        .map((e) => ListNotCompletedProblemsProblemsProblemImagesOnProblem.fromJson(e))
         .toList();
   @override
   bool operator ==(Object other) {
@@ -57,7 +57,7 @@ class ListNotDoneProblemsProblems {
       return false;
     }
 
-    final ListNotDoneProblemsProblems otherTyped = other as ListNotDoneProblemsProblems;
+    final ListNotCompletedProblemsProblems otherTyped = other as ListNotCompletedProblemsProblems;
     return problemId == otherTyped.problemId && 
     reporter == otherTyped.reporter && 
     title == otherTyped.title && 
@@ -93,7 +93,7 @@ class ListNotDoneProblemsProblems {
     return json;
   }
 
-  ListNotDoneProblemsProblems({
+  ListNotCompletedProblemsProblems({
     required this.problemId,
     required this.reporter,
     required this.title,
@@ -110,10 +110,10 @@ class ListNotDoneProblemsProblems {
 }
 
 @immutable
-class ListNotDoneProblemsProblemsReporter {
+class ListNotCompletedProblemsProblemsReporter {
   final String email;
   final bool isAdmin;
-  ListNotDoneProblemsProblemsReporter.fromJson(dynamic json):
+  ListNotCompletedProblemsProblemsReporter.fromJson(dynamic json):
   
   email = nativeFromJson<String>(json['email']),
   isAdmin = nativeFromJson<bool>(json['isAdmin']);
@@ -126,7 +126,7 @@ class ListNotDoneProblemsProblemsReporter {
       return false;
     }
 
-    final ListNotDoneProblemsProblemsReporter otherTyped = other as ListNotDoneProblemsProblemsReporter;
+    final ListNotCompletedProblemsProblemsReporter otherTyped = other as ListNotCompletedProblemsProblemsReporter;
     return email == otherTyped.email && 
     isAdmin == otherTyped.isAdmin;
     
@@ -142,17 +142,17 @@ class ListNotDoneProblemsProblemsReporter {
     return json;
   }
 
-  ListNotDoneProblemsProblemsReporter({
+  ListNotCompletedProblemsProblemsReporter({
     required this.email,
     required this.isAdmin,
   });
 }
 
 @immutable
-class ListNotDoneProblemsProblemsProblemType {
+class ListNotCompletedProblemsProblemsProblemType {
   final String typeName;
   final String typeThaiName;
-  ListNotDoneProblemsProblemsProblemType.fromJson(dynamic json):
+  ListNotCompletedProblemsProblemsProblemType.fromJson(dynamic json):
   
   typeName = nativeFromJson<String>(json['typeName']),
   typeThaiName = nativeFromJson<String>(json['typeThaiName']);
@@ -165,7 +165,7 @@ class ListNotDoneProblemsProblemsProblemType {
       return false;
     }
 
-    final ListNotDoneProblemsProblemsProblemType otherTyped = other as ListNotDoneProblemsProblemsProblemType;
+    final ListNotCompletedProblemsProblemsProblemType otherTyped = other as ListNotCompletedProblemsProblemsProblemType;
     return typeName == otherTyped.typeName && 
     typeThaiName == otherTyped.typeThaiName;
     
@@ -181,17 +181,17 @@ class ListNotDoneProblemsProblemsProblemType {
     return json;
   }
 
-  ListNotDoneProblemsProblemsProblemType({
+  ListNotCompletedProblemsProblemsProblemType({
     required this.typeName,
     required this.typeThaiName,
   });
 }
 
 @immutable
-class ListNotDoneProblemsProblemsCurrentTags {
+class ListNotCompletedProblemsProblemsCurrentTags {
   final String tagName;
   final String tagThaiName;
-  ListNotDoneProblemsProblemsCurrentTags.fromJson(dynamic json):
+  ListNotCompletedProblemsProblemsCurrentTags.fromJson(dynamic json):
   
   tagName = nativeFromJson<String>(json['tagName']),
   tagThaiName = nativeFromJson<String>(json['tagThaiName']);
@@ -204,7 +204,7 @@ class ListNotDoneProblemsProblemsCurrentTags {
       return false;
     }
 
-    final ListNotDoneProblemsProblemsCurrentTags otherTyped = other as ListNotDoneProblemsProblemsCurrentTags;
+    final ListNotCompletedProblemsProblemsCurrentTags otherTyped = other as ListNotCompletedProblemsProblemsCurrentTags;
     return tagName == otherTyped.tagName && 
     tagThaiName == otherTyped.tagThaiName;
     
@@ -220,16 +220,16 @@ class ListNotDoneProblemsProblemsCurrentTags {
     return json;
   }
 
-  ListNotDoneProblemsProblemsCurrentTags({
+  ListNotCompletedProblemsProblemsCurrentTags({
     required this.tagName,
     required this.tagThaiName,
   });
 }
 
 @immutable
-class ListNotDoneProblemsProblemsUserUpvotesOnProblem {
+class ListNotCompletedProblemsProblemsUserUpvotesOnProblem {
   final String userId;
-  ListNotDoneProblemsProblemsUserUpvotesOnProblem.fromJson(dynamic json):
+  ListNotCompletedProblemsProblemsUserUpvotesOnProblem.fromJson(dynamic json):
   
   userId = nativeFromJson<String>(json['userId']);
   @override
@@ -241,7 +241,7 @@ class ListNotDoneProblemsProblemsUserUpvotesOnProblem {
       return false;
     }
 
-    final ListNotDoneProblemsProblemsUserUpvotesOnProblem otherTyped = other as ListNotDoneProblemsProblemsUserUpvotesOnProblem;
+    final ListNotCompletedProblemsProblemsUserUpvotesOnProblem otherTyped = other as ListNotCompletedProblemsProblemsUserUpvotesOnProblem;
     return userId == otherTyped.userId;
     
   }
@@ -255,17 +255,17 @@ class ListNotDoneProblemsProblemsUserUpvotesOnProblem {
     return json;
   }
 
-  ListNotDoneProblemsProblemsUserUpvotesOnProblem({
+  ListNotCompletedProblemsProblemsUserUpvotesOnProblem({
     required this.userId,
   });
 }
 
 @immutable
-class ListNotDoneProblemsProblemsProblemImagesOnProblem {
+class ListNotCompletedProblemsProblemsProblemImagesOnProblem {
   final String imageUrl;
   final String fileName;
   final String imageType;
-  ListNotDoneProblemsProblemsProblemImagesOnProblem.fromJson(dynamic json):
+  ListNotCompletedProblemsProblemsProblemImagesOnProblem.fromJson(dynamic json):
   
   imageUrl = nativeFromJson<String>(json['imageUrl']),
   fileName = nativeFromJson<String>(json['fileName']),
@@ -279,7 +279,7 @@ class ListNotDoneProblemsProblemsProblemImagesOnProblem {
       return false;
     }
 
-    final ListNotDoneProblemsProblemsProblemImagesOnProblem otherTyped = other as ListNotDoneProblemsProblemsProblemImagesOnProblem;
+    final ListNotCompletedProblemsProblemsProblemImagesOnProblem otherTyped = other as ListNotCompletedProblemsProblemsProblemImagesOnProblem;
     return imageUrl == otherTyped.imageUrl && 
     fileName == otherTyped.fileName && 
     imageType == otherTyped.imageType;
@@ -297,7 +297,7 @@ class ListNotDoneProblemsProblemsProblemImagesOnProblem {
     return json;
   }
 
-  ListNotDoneProblemsProblemsProblemImagesOnProblem({
+  ListNotCompletedProblemsProblemsProblemImagesOnProblem({
     required this.imageUrl,
     required this.fileName,
     required this.imageType,
@@ -305,12 +305,12 @@ class ListNotDoneProblemsProblemsProblemImagesOnProblem {
 }
 
 @immutable
-class ListNotDoneProblemsData {
-  final List<ListNotDoneProblemsProblems> problems;
-  ListNotDoneProblemsData.fromJson(dynamic json):
+class ListNotCompletedProblemsData {
+  final List<ListNotCompletedProblemsProblems> problems;
+  ListNotCompletedProblemsData.fromJson(dynamic json):
   
   problems = (json['problems'] as List<dynamic>)
-        .map((e) => ListNotDoneProblemsProblems.fromJson(e))
+        .map((e) => ListNotCompletedProblemsProblems.fromJson(e))
         .toList();
   @override
   bool operator ==(Object other) {
@@ -321,7 +321,7 @@ class ListNotDoneProblemsData {
       return false;
     }
 
-    final ListNotDoneProblemsData otherTyped = other as ListNotDoneProblemsData;
+    final ListNotCompletedProblemsData otherTyped = other as ListNotCompletedProblemsData;
     return problems == otherTyped.problems;
     
   }
@@ -335,7 +335,7 @@ class ListNotDoneProblemsData {
     return json;
   }
 
-  ListNotDoneProblemsData({
+  ListNotCompletedProblemsData({
     required this.problems,
   });
 }

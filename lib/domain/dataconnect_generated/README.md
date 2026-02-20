@@ -62,17 +62,17 @@ ref.subscribe(...);
 ```
 
 
-### ListNotDoneProblems
+### ListNotCompletedProblems
 #### Required Arguments
 ```dart
 // No required arguments
-ConnectorConnector.instance.listNotDoneProblems().execute();
+ConnectorConnector.instance.listNotCompletedProblems().execute();
 ```
 
 
 
 #### Return Type
-`execute()` returns a `QueryResult<ListNotDoneProblemsData, void>`
+`execute()` returns a `QueryResult<ListNotCompletedProblemsData, void>`
 ```dart
 /// Result of an Operation Request (query/mutation).
 class OperationResult<Data, Variables> {
@@ -87,8 +87,8 @@ class QueryResult<Data, Variables> extends OperationResult<Data, Variables> {
   QueryResult(super.dataConnect, super.data, super.ref);
 }
 
-final result = await ConnectorConnector.instance.listNotDoneProblems();
-ListNotDoneProblemsData data = result.data;
+final result = await ConnectorConnector.instance.listNotCompletedProblems();
+ListNotCompletedProblemsData data = result.data;
 final ref = result.ref;
 ```
 
@@ -96,7 +96,7 @@ final ref = result.ref;
 Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
 An example of how to use the `Ref` object is shown below:
 ```dart
-final ref = ConnectorConnector.instance.listNotDoneProblems().ref();
+final ref = ConnectorConnector.instance.listNotCompletedProblems().ref();
 ref.execute();
 
 ref.subscribe(...);
