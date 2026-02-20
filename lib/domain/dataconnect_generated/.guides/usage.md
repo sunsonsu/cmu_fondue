@@ -10,7 +10,7 @@ ConnectorConnector.instance.CreateProblemImage(createProblemImageVariables).exec
 ConnectorConnector.instance.UpdateProblemImage(updateProblemImageVariables).execute();
 ConnectorConnector.instance.DeleteProblemImage(deleteProblemImageVariables).execute();
 ConnectorConnector.instance.UpdateFcmToken(updateFcmTokenVariables).execute();
-ConnectorConnector.instance.ListProblems().execute();
+ConnectorConnector.instance.AddUpvote(addUpvoteVariables).execute();
 
 ```
 
