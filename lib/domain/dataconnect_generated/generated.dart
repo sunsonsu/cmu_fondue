@@ -3,6 +3,26 @@ import 'package:firebase_data_connect/firebase_data_connect.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
+part 'list_problems.dart';
+
+part 'list_not_completed_problems.dart';
+
+part 'list_problem_types.dart';
+
+part 'list_problem_tags.dart';
+
+part 'problem_types_query.dart';
+
+part 'problem_image_by_problem_id.dart';
+
+part 'problems_by_tag.dart';
+
+part 'problems_by_tag_and_type.dart';
+
+part 'problems_by_tag_full.dart';
+
+part 'problems_by_type_full.dart';
+
 part 'create_problem.dart';
 
 part 'update_problem.dart';
@@ -25,26 +45,6 @@ part 'add_upvote.dart';
 
 part 'remove_upvote.dart';
 
-part 'list_problems.dart';
-
-part 'list_not_completed_problems.dart';
-
-part 'list_problem_types.dart';
-
-part 'list_problem_tags.dart';
-
-part 'problem_types_query.dart';
-
-part 'problem_image_by_problem_id.dart';
-
-part 'problems_by_tag.dart';
-
-part 'problems_by_tag_and_type.dart';
-
-part 'problems_by_tag_full.dart';
-
-part 'problems_by_type_full.dart';
-
 
 
 
@@ -52,6 +52,56 @@ part 'problems_by_type_full.dart';
 
 
 class ConnectorConnector {
+  
+  
+  ListProblemsVariablesBuilder listProblems () {
+    return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListNotCompletedProblemsVariablesBuilder listNotCompletedProblems () {
+    return ListNotCompletedProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTypesVariablesBuilder listProblemTypes () {
+    return ListProblemTypesVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemTagsVariablesBuilder listProblemTags () {
+    return ListProblemTagsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
+    return ProblemTypesQueryVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
+    return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
+  }
+  
+  
+  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
+    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
+  }
+  
+  
+  ProblemsByTagAndTypeVariablesBuilder problemsByTagAndType ({required String TagId, required String TypeId, }) {
+    return ProblemsByTagAndTypeVariablesBuilder(dataConnect, TagId: TagId,TypeId: TypeId,);
+  }
+  
+  
+  ProblemsByTagFullVariablesBuilder problemsByTagFull ({required String TagId, }) {
+    return ProblemsByTagFullVariablesBuilder(dataConnect, TagId: TagId,);
+  }
+  
+  
+  ProblemsByTypeFullVariablesBuilder problemsByTypeFull ({required String TypeId, }) {
+    return ProblemsByTypeFullVariablesBuilder(dataConnect, TypeId: TypeId,);
+  }
   
   
   CreateProblemVariablesBuilder createProblem ({required String title, required String detail, required String locationName, required double lat, required double lng, required String reporterId, required String typeId, required String tagId, }) {
@@ -106,56 +156,6 @@ class ConnectorConnector {
   
   RemoveUpvoteVariablesBuilder removeUpvote ({required String problemId, }) {
     return RemoveUpvoteVariablesBuilder(dataConnect, problemId: problemId,);
-  }
-  
-  
-  ListProblemsVariablesBuilder listProblems () {
-    return ListProblemsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListNotCompletedProblemsVariablesBuilder listNotCompletedProblems () {
-    return ListNotCompletedProblemsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTypesVariablesBuilder listProblemTypes () {
-    return ListProblemTypesVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ListProblemTagsVariablesBuilder listProblemTags () {
-    return ListProblemTagsVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ProblemTypesQueryVariablesBuilder problemTypesQuery () {
-    return ProblemTypesQueryVariablesBuilder(dataConnect, );
-  }
-  
-  
-  ProblemImageByProblemIdVariablesBuilder problemImageByProblemId ({required String problemId, }) {
-    return ProblemImageByProblemIdVariablesBuilder(dataConnect, problemId: problemId,);
-  }
-  
-  
-  ProblemsByTagVariablesBuilder problemsByTag ({required String TagId, }) {
-    return ProblemsByTagVariablesBuilder(dataConnect, TagId: TagId,);
-  }
-  
-  
-  ProblemsByTagAndTypeVariablesBuilder problemsByTagAndType ({required String TagId, required String TypeId, }) {
-    return ProblemsByTagAndTypeVariablesBuilder(dataConnect, TagId: TagId,TypeId: TypeId,);
-  }
-  
-  
-  ProblemsByTagFullVariablesBuilder problemsByTagFull ({required String TagId, }) {
-    return ProblemsByTagFullVariablesBuilder(dataConnect, TagId: TagId,);
-  }
-  
-  
-  ProblemsByTypeFullVariablesBuilder problemsByTypeFull ({required String TypeId, }) {
-    return ProblemsByTypeFullVariablesBuilder(dataConnect, TypeId: TypeId,);
   }
   
 
