@@ -1,184 +1,250 @@
-# 🧀 CMU Fondue – Clean Architecture Overview
+# 🧀 CMU Fondue
 
-This project follows a **Clean Architecture–inspired structure** to keep the codebase scalable, testable, and easy to maintain. The architecture is divided into **three main layers**: **Domain**, **Data**, and **Application**.
+<div align="center">
 
----
+**ระบบแจ้งปัญหาภายในมหาวิทยาลัยเชียงใหม่**
 
-## 🧱 1. Core Layers
+*Problem Reporting System for Chiang Mai University*
 
-### 🏛️ Domain Layer (The Heart)
+[![Flutter](https://img.shields.io/badge/Flutter-3.10.7-02569B?logo=flutter)](https://flutter.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-Enabled-FFCA28?logo=firebase)](https://firebase.google.com)
+[![License](https://img.shields.io/badge/License-Private-red)]()
 
-The **Domain layer** is the most important part of the application. It is completely independent from UI frameworks, databases, or external libraries.
-
-**Responsibilities**
-
-* Contains **business logic** and rules
-* Defines **what** the app can do, not **how** it does it
-
-**Components**
-
-* **Entities**
-  Simple Dart classes that represent core data (e.g., `PokemonEntity`).
-
-* **Repositories (Abstract)**
-  Interfaces that define data operations without implementation details.
-
-* **Use Cases**
-  Command-like classes that represent specific business actions (e.g., `GetPokemonList`).
-
-> ⚠️ **Note**
-> Models related to **UI state** (such as `theme_selector_model.dart`) should belong to the **Application layer**, not the Domain layer. Use cases should focus only on business behavior.
+</div>
 
 ---
 
-### 💾 Data Layer (The Infrastructure)
+## 📖 เกี่ยวกับโปรเจค
 
-The **Data layer** is responsible for handling external data sources such as APIs or local storage.
+**CMU Fondue** คือแอปพลิเคชันมือถือสำหรับการแจ้งและติดตามปัญหาต่างๆ ภายในมหาวิทยาลัยเชียงใหม่ ช่วยให้นักศึกษาและบุคลากรสามารถรายงานปัญหา เช่น ความเสียหายของสิ่งของ ปัญหาสาธารณูปโภค และร่วมกันแก้ไขปัญหาได้อย่างรวดเร็วและมีประสิทธิภาพ
 
-**Responsibilities**
+### ✨ ฟีเจอร์หลัก
 
-* Fetch data from APIs or databases
-* Convert raw data (JSON) into domain entities
-
-**Components**
-
-* **Repository Implementations (`_impl`)**
-  Concrete classes that implement domain repository interfaces.
-
-* **Remote / Local Data Sources**
-  Uses libraries like `http` or `dio` to retrieve data.
-
-This layer depends on the **Domain layer**, but never on the UI.
+- 📍 **ระบุตำแหน่งปัญหา** - ใช้ Google Maps เลือกตำแหน่งที่พบปัญหา
+- 📸 **อัพโหลดรูปภาพ** - ถ่ายรูปหรือเลือกจากแกลเลอรี่
+- 🏷️ **จัดหมวดหมู่** - แบ่งประเภทปัญหาตามลักษณะ
+- 👍 **Upvote ปัญหา** - โหวตปัญหาที่สำคัญให้ได้รับความสนใจ
+- 🔔 **ติดตามสถานะ** - ดูความคืบหน้าการแก้ไขปัญหา
+- 👨‍💼 **ระบบ Admin** - จัดการและอัพเดทสถานะปัญหา
+- 📊 **Dashboard สถิติ** - แสดงข้อมูลการแจ้งปัญหาแบบ real-time
 
 ---
 
-### 📱 Application Layer (The UI)
+<!-- ## 👥 ทีมพัฒนา
 
-The **Application layer** is where users interact with the app.
+| ชื่อ | บทบาท | Email | GitHub |
+|------|--------|-------|--------|
+| **ชื่อสมาชิก 1** | Frontend Developer | member1@example.com | [@username1](https://github.com/username1) |
+| **ชื่อสมาชิก 2** | Backend Developer | member2@example.com | [@username2](https://github.com/username2) |
+| **ชื่อสมาชิก 3** | UI/UX Designer | member3@example.com | [@username3](https://github.com/username3) |
+| **ชื่อสมาชิก 4** | Project Manager | member4@example.com | [@username4](https://github.com/username4) | -->
 
-**Responsibilities**
+## 🛠️ Tech Stack
 
-* Display data to the user
-* Handle user interactions
-* Manage UI state
+### Frontend
+- **Flutter 3.10.7** - Cross-platform mobile framework
+- **Dart** - Programming language
+- **Provider** - State management
+- **Google Maps Flutter** - Map integration
 
-**Components**
+### Backend & Services
+- **Firebase Authentication** - User authentication
+- **Cloud Firestore** - NoSQL database
+- **Firebase Storage** - Image storage
+- **Firebase Data Connect** - GraphQL API
 
-* **Pages**
-  Full screens (e.g., `PokemonPage`).
-
-* **Widgets**
-  Reusable UI components (buttons, cards, list items).
-
-This layer depends on **Domain use cases** to perform actions.
+### Tools & Libraries
+- **Geocoding** - Location services
+- **Image Picker** - Photo selection
+- **Flutter Launcher Icons** - App icon generation
 
 ---
 
-## 🔄 2. Implementation Workflow
+## 📱 คู่มือการใช้งาน
 
-To build a feature (for example, **Pokemon List**), follow these steps:
+### 🧑‍🎓 สำหรับผู้ใช้ทั่วไป (นักศึกษา/บุคลากร)
+
+#### 1️⃣ การสมัครสมาชิกและเข้าสู่ระบบ
+
+1. เปิดแอป **CMU Fondue**
+2. คลิก **"สมัครสมาชิก"** (ครั้งแรก) หรือ **"เข้าสู่ระบบ"**
+3. กรอก **อีเมล CMU** และรหัสผ่าน
+4. คลิก **"ยืนยัน"**
+
+#### 2️⃣ การแจ้งปัญหาใหม่
+
+1. ที่หน้าแรก คลิกปุ่ม **"+"** (แจ้งปัญหา)
+2. **เลือกประเภทปัญหา** (ไฟฟ้า, ประปา, ถนน, ฯลฯ)
+3. **เลือกตำแหน่ง** บนแผนที่ หรือค้นหาสถานที่
+4. **ถ่ายรูป** หรือเลือกรูปจากแกลเลอรี่
+5. **กรอกรายละเอียด** ปัญหา
+6. คลิก **"ส่งรายงาน"**
+
+#### 3️⃣ การติดตามปัญหา
+
+1. ไปที่แท็บ **"ประวัติ"**
+2. ดูปัญหาที่คุณแจ้งทั้งหมด
+3. คลิกเพื่อดูสถานะ:
+   - 🟡 **รอดำเนินการ** - ยังไม่มีการรับเรื่อง
+   - 🔵 **กำลังแก้ไข** - อยู่ระหว่างดำเนินการ
+   - 🟢 **เสร็จสิ้น** - แก้ไขเรียบร้อย
+
+#### 4️⃣ การ Upvote ปัญหา
+
+1. เปิดหน้ารายละเอียดปัญหา
+2. คลิกปุ่ม **👍 Upvote**
+3. ปัญหาที่มี upvote สูงจะได้รับการแก้ไขเร็วขึ้น
 
 ---
 
-### 🅰️ Step A: Define the Domain
+### 👨‍💼 สำหรับ Admin/Staff
 
-#### 1️⃣ Create the Entity
+#### 1️⃣ เข้าสู่ระบบ Admin
 
-```dart
-class PokemonEntity {
-  final int id;
-  final String name;
-  final String imageUrl;
+1. เข้าสู่ระบบด้วยบัญชี **Staff/Admin**
+2. ระบบจะแสดงหน้า **ภาพรวมระบบ** โดยอัตโนมัติ
 
-  PokemonEntity({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-  });
-}
+#### 2️⃣ การจัดการปัญหา
+
+1. ที่ **Dashboard** ดูสถิติและปัญหาทั้งหมด
+2. กรองปัญหาตาม:
+   - **สถานะ** (รอดำเนินการ, กำลังแก้ไข, เสร็จสิ้น)
+   - **ประเภท** (ไฟฟ้า, ประปา, ถนน, ฯลฯ)
+   - **พื้นที่** (คณะต่างๆ, อาคาร)
+
+#### 3️⃣ อัพเดทสถานะปัญหา
+
+1. คลิกที่ปัญหาที่ต้องการจัดการ
+2. เปลี่ยนสถานะตาม flow:
+   - **รับเรื่อง** → **กำลังแก้ไข** → **เสร็จสิ้น**
+3. ระบบจะบันทึกเวลาที่อัพเดทสถานะ
+4. อัพโหลดรูปภาพหลังแก้ไข (ถ้ามี)
+
+#### 4️⃣ การลบปัญหา
+
+1. เปิดหน้ารายละเอียดปัญหา
+2. คลิก **"ลบปัญหา"**
+3. ยืนยันการลบ
+4. ระบบจะแสดงการแจ้งเตือนสำเร็จ/ไม่สำเร็จ
+
+---
+
+## 🚀 การติดตั้งและพัฒนา
+
+### ข้อกำหนดเบื้องต้น
+
+- Flutter SDK `3.10.7` หรือสูงกว่า
+- Dart SDK `^3.10.7`
+- Android Studio / Xcode (สำหรับ emulator)
+- Firebase CLI
+- Git
+
+### การติดตั้ง
+
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/your-org/cmu_fondue.git
+   cd cmu_fondue
+   ```
+
+2. **ติดตั้ง dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **ตั้งค่า Firebase**
+   ```bash
+   # ติดตั้ง Firebase CLI
+   npm install -g firebase-tools
+   
+   # Login Firebase
+   firebase login
+   
+   # เริ่ม emulators (สำหรับ development)
+   cd dataconnect
+   firebase emulators:start --project cmu-fondue
+   ```
+
+4. **Run แอพ**
+   ```bash
+   flutter run
+   ```
+
+### โครงสร้าง Project
+
+```
+cmu_fondue/
+├── lib/
+│   ├── application/        # UI Layer (Pages, Widgets, Providers)
+│   │   ├── pages/         # หน้าจอต่างๆ
+│   │   ├── widgets/       # Widget components
+│   │   └── providers/     # State management
+│   ├── data/              # Data Layer (API, Database)
+│   │   └── repositories/  # Repository implementations
+│   ├── domain/            # Domain Layer (Business Logic)
+│   │   ├── entities/      # Business entities
+│   │   ├── repositories/  # Repository interfaces
+│   │   └── usecases/      # Use cases
+│   └── main.dart          # Entry point
+├── assets/                # รูปภาพและ resources
+├── dataconnect/          # Firebase Data Connect (GraphQL)
+├── android/              # Android specific files
+├── ios/                  # iOS specific files
+└── pubspec.yaml          # Dependencies
 ```
 
-#### 2️⃣ Create the Repository Interface
+---
 
-```dart
-abstract class PokemonRepository {
-  Future<List<PokemonEntity>> getPokemons();
-}
-```
+## 🏗️ สถาปัตยกรรม
+
+โปรเจคนี้ใช้ **Clean Architecture** แบ่งเป็น 3 layers:
+
+### 🏛️ Domain Layer
+- **Entities** - โครงสร้างข้อมูลหลัก (Problem, User, Location)
+- **Repositories** - Interface สำหรับการเข้าถึงข้อมูล
+- **Use Cases** - Business logic (CreateProblem, UpdateStatus)
+
+### 💾 Data Layer
+- **Repository Implementations** - เชื่อมต่อ Firebase/API
+- **Data Sources** - Remote (Firestore, Storage) / Local (Cache)
+
+### 📱 Application Layer
+- **Pages** - หน้าจอ UI ทั้งหมด
+- **Widgets** - Components ที่ใช้ซ้ำได้
+- **Providers** - State management ด้วย Provider pattern
 
 ---
 
-### 🅱️ Step B: Implement the Data Layer
+## 🎨 Design System
 
-Create a repository implementation that connects to an API and returns domain entities.
+### สีหลัก
+- **Primary Purple** - `#5D3891` - ปุ่มหลัก, header
+- **Light Purple** - `#EAE5F1` - พื้นหลัง
+- **White** - `#FFFFFF` - Container, cards
+- **Red** - `#FF0000` - ปุ่มลบ, ข้อผิดพลาด
+- **Green** - `#4CAF50` - สำเร็จ, เสร็จสิ้น
+- **Blue** - `#2196F3` - กำลังดำเนินการ
+- **Grey** - `#757575` - ข้อความรอง
 
-```dart
-class PokemonRepositoryImpl implements PokemonRepository {
-  @override
-  Future<List<PokemonEntity>> getPokemons() async {
-    // Call API using http or dio
-    // Parse JSON
-    // Map to PokemonEntity
-  }
-}
-```
-
----
-
-### 🅲 Step C: Build the UI
-
-#### 🎨 Create a Widget
-
-A reusable widget to display a single Pokémon.
-
-```dart
-class PokemonIconWidget extends StatelessWidget {
-  final PokemonEntity pokemon;
-
-  const PokemonIconWidget({required this.pokemon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Image.network(pokemon.imageUrl),
-        Text(pokemon.name),
-      ],
-    );
-  }
-}
-```
-
-#### 📄 Create a Page
-
-Use a `ListView` to display Pokémon data.
-
-```dart
-class PokemonPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pokémon List')),
-      body: ListView.builder(
-        itemCount: pokemons.length,
-        itemBuilder: (context, index) {
-          return PokemonIconWidget(pokemon: pokemons[index]);
-        },
-      ),
-    );
-  }
-}
-```
+### มาตรฐาน UI
+- **Border Radius** - 16-30px (มุมโค้งมน)
+- **Spacing** - 20px margins, 16px padding
+- **Typography** - ตัวหนา 24px (หัวข้อ), ปกติ 14-16px (เนื้อหา)
 
 ---
 
-## ✅ Benefits of This Architecture
+## 📝 License
 
-* Clear separation of concerns
-* Easy to test business logic
-* Scales well for large applications
-* UI can change without affecting core logic
+This project is **private** and for educational purposes only.
+
+Developed for **CMU Software Engineering Course**
 
 ---
 
-✨ *This structure keeps CMU Fondue clean, maintainable, and future-proof.*
+<div align="center">
+
+**Made with ❤️ by CMU Fondue Team**
+
+*Empowering CMU community to solve problems together*
+
+</div>

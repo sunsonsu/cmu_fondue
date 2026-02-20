@@ -1,5 +1,4 @@
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
-import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';

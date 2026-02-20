@@ -2,7 +2,7 @@ type User @table(key: "userId") {
   userId: String! @default(expr: "auth.uid")
   email: String! @col(dataType: "varchar(255)") @unique
   isAdmin: Boolean! @default(expr: "false")
-}
+  fcmToken: String @col(dataType: "text")}
 
 type Problem @table(key: "problemId") {
   problemId: UUID! @default(expr: "uuidV4()")

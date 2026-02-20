@@ -18,7 +18,8 @@ fragment ProblemFields on Problem {
     createdAt
     problemLat
     problemLng
-    userUpvotes_on_problem {
+    upvoteCount
+    userUpvotes_on_problem(where: { userId: { eq_expr: "auth.uid" } }) {
       userId
     }
     problemImages_on_problem {

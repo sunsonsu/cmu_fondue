@@ -117,4 +117,26 @@ class ProblemRepoImpl implements ProblemRepo {
       throw Exception("ไม่สามารถนับจำนวนปัญหาตามแท็กได้: $e");
     }
   }
+
+  // Insert upvote
+  // Rachata
+  @override
+  Future<void> addUpvote({required String id}) async {
+    try {
+      await connector.addUpvote(problemId: id).execute();
+    } catch (e) {
+      throw Exception("ไม่สามารถเพิ่มคะแนนให้ปัญหาได้: $e");
+    }
+  }
+
+  // Delete upvote
+  // Rachata
+  @override
+  Future<void> removeUpvote({required String id}) async {
+    try {
+      await connector.removeUpvote(problemId: id).execute();
+    } catch (e) {
+      throw Exception("ไม่สามารถลบคะแนนให้ปัญหาได้: $e");
+    }
+  }
 }

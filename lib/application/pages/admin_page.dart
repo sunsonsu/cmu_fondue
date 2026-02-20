@@ -11,7 +11,7 @@ class AdminPage extends StatelessWidget {
       backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
         title: const Text(
-          'Staff Dashboard',
+          'ภาพรวมระบบ',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,

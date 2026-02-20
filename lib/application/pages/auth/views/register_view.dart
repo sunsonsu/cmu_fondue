@@ -3,6 +3,7 @@ import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterView extends StatefulWidget {
   final RegisterUseCase registerUseCase;
@@ -154,19 +155,29 @@ class _RegisterViewState extends State<RegisterView> {
                       strokeWidth: 2,
                     ),
                   )
-                : const Text('Sign up', style: TextStyle(fontSize: 18)),
+                : Text(
+                    'Sign up',
+                    style: GoogleFonts.kanit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 20),
           RichText(
             text: TextSpan(
               text: 'You already have an account? ',
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+              style: GoogleFonts.kanit(
+                color: Colors.black,
+                fontSize: 18,
+              ),
               children: [
                 TextSpan(
                   text: 'Login',
-                  style: const TextStyle(
-                    color: Color(0xFF5D3891),
+                  style: GoogleFonts.kanit(
+                    color: const Color(0xFF5D3891),
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),

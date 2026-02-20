@@ -1,6 +1,5 @@
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 // import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 
 class GetProblemsNearbyUseCase {
@@ -18,6 +17,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'student01@cmu.ac.th',
       typeName: ProblemType.road,
       tagName: ProblemTag.pending,
+      isUpvotedByMe: true,
+      imageUrl: 'https://example.com/image1.jpg',
     ),
     ProblemEntity(
       id: '2',
@@ -31,6 +32,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'staff02@cmu.ac.th',
       typeName: ProblemType.electricity,
       tagName: ProblemTag.inProgress,
+      imageUrl: 'https://example.com/image2.jpg',
+      isUpvotedByMe: false,
     ),
     ProblemEntity(
       id: '3',
@@ -44,6 +47,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'user03@gmail.com',
       typeName: ProblemType.water,
       tagName: ProblemTag.pending,
+      imageUrl: 'https://example.com/image3.jpg',
+      isUpvotedByMe: true,
     ),
     ProblemEntity(
       id: '4',
@@ -58,6 +63,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'alumni04@cmu.ac.th',
       typeName: ProblemType.road,
       tagName: ProblemTag.completed,
+      imageUrl: 'https://example.com/image4.jpg',
+      isUpvotedByMe: false,
     ),
     ProblemEntity(
       id: '5',
@@ -71,6 +78,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'green_team@cmu.ac.th',
       typeName: ProblemType.other,
       tagName: ProblemTag.inProgress,
+      imageUrl: 'https://example.com/image5.jpg',
+      isUpvotedByMe: true,
     ),
     ProblemEntity(
       id: '6',
@@ -84,6 +93,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'safety_first@cmu.ac.th',
       typeName: ProblemType.other,
       tagName: ProblemTag.received,
+      imageUrl: 'https://example.com/image6.jpg',
+      isUpvotedByMe: false,
     ),
     ProblemEntity(
       id: '7',
@@ -97,6 +108,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'janitor_cmu@hotmail.com',
       typeName: ProblemType.garbage,
       tagName: ProblemTag.completed,
+      imageUrl: 'https://example.com/image7.jpg',
+      isUpvotedByMe: true,
     ),
     ProblemEntity(
       id: '8',
@@ -110,6 +123,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'security_unit@cmu.ac.th',
       typeName: ProblemType.other,
       tagName: ProblemTag.inProgress,
+      imageUrl: 'https://example.com/image8.jpg',
+      isUpvotedByMe: false,
     ),
     ProblemEntity(
       id: '9',
@@ -123,6 +138,8 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'night_watch@cmu.ac.th',
       typeName: ProblemType.electricity,
       tagName: ProblemTag.pending,
+      imageUrl: 'https://example.com/image9.jpg',
+      isUpvotedByMe: true,
     ),
     ProblemEntity(
       id: '10',
@@ -136,9 +153,11 @@ class GetProblemsNearbyUseCase {
       reporterEmail: 'rider007@gmail.com',
       typeName: ProblemType.road,
       tagName: ProblemTag.pending,
+      imageUrl: 'https://example.com/image10.jpg',
+      isUpvotedByMe: false,
     ),
   ];
-  
+
   GetProblemsNearbyUseCase();
 
   // final ProblemRepository repository;

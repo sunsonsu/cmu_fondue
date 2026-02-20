@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InitView extends StatelessWidget {
   final VoidCallback onLoginTap;
@@ -20,30 +21,40 @@ class InitView extends StatelessWidget {
           const SizedBox(height: 100),
           Image.asset('assets/images/cmu_logo.png', width: 160),
           const SizedBox(height: 36),
-          
+
           ElevatedButton(
             onPressed: onLoginTap,
             style: ButtonStyle(
-              minimumSize: WidgetStateProperty.all(const Size(200, 40)),
-              backgroundColor: WidgetStateProperty.all(const Color(0xFF5D3891)),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
-              shape: WidgetStateProperty.all(
+              minimumSize: MaterialStateProperty.all(const Size(200, 40)),
+              backgroundColor: MaterialStateProperty.all(const Color(0xFF5D3891)),
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+              shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
-            child: const Text('Login', style: TextStyle(fontSize: 18)),
+            child: Text(
+              'Login',
+              style: GoogleFonts.kanit(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
           ),
-          
+
           const SizedBox(height: 30),
           RichText(
             text: TextSpan(
               text: 'Don\'t have an account? ',
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+              style: GoogleFonts.kanit(
+                color: Colors.black,
+                fontSize: 18,
+              ),
               children: [
                 TextSpan(
                   text: 'Sign up',
-                  style: const TextStyle(
-                    color: Color(0xFF5D3891),
+                  style: GoogleFonts.kanit(
+                    color: const Color(0xFF5D3891),
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),

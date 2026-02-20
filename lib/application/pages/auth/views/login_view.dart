@@ -3,6 +3,7 @@ import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
   final LoginUseCase loginUseCase;
@@ -116,19 +117,29 @@ class _LoginViewState extends State<LoginView> {
             ),
             child: _loading
                 ? const CircularProgressIndicator(color: Colors.white)
-                : const Text('Login', style: TextStyle(fontSize: 18)),
+                : Text(
+                    'Login',
+                    style: GoogleFonts.kanit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 20),
           RichText(
             text: TextSpan(
               text: 'Don\'t have an account? ',
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+              style: GoogleFonts.kanit(
+                color: Colors.black,
+                fontSize: 18,
+              ),
               children: [
                 TextSpan(
                   text: 'Sign up',
-                  style: const TextStyle(
-                    color: Color(0xFF5D3891),
+                  style: GoogleFonts.kanit(
+                    color: const Color(0xFF5D3891),
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),

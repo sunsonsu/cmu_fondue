@@ -31,7 +31,12 @@ class _FilterByTagState extends State<FilterByTag> {
   @override
   void initState() {
     super.initState();
+
+    // Set default selected tag to 'pending' immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.selectedTag == null) {
+        widget.onTagSelected(ProblemTag.pending);
+      }
       _updateIndicatorPosition();
     });
   }

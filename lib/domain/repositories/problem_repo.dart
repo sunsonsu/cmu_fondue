@@ -34,4 +34,10 @@ abstract class ProblemRepo {
   Future<void> deleteProblem(String id);
 
   Future<int> countProblemsByTag({required String currentTagId});
+
+  // Insert upvote
+  Future<void> addUpvote({required String id});
+
+  // Delete upvote
+  Future<void> removeUpvote({required String id});
 }
