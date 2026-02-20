@@ -44,37 +44,42 @@ class _HistoryPageState extends State<HistoryPage> {
     final inProgressProblems = _filterByStatus([ProblemTag.inProgress]);
     final completedProblems = _filterByStatus([ProblemTag.completed]);
 
-    return RefreshIndicator(
-      onRefresh: _loadProblems,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'ประวัติการแจ้งเรื่อง',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF5D3891),
-              ),
-            ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFEAE5F1),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'ประวัติการแจ้งเรื่อง',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF5D3891),
           ),
-
-          // Content
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _userProblems.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'ไม่มีประวัติการแจ้งเรื่อง',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        automaticallyImplyLeading: false,
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: RefreshIndicator(
+          onRefresh: _loadProblems,
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _userProblems.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'ไม่มีประวัติการแจ้งเรื่อง',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
                         children: [
                           // รอเคลม Section
                           if (pendingProblems.isNotEmpty) ...[
@@ -105,10 +110,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                 )),
                             const SizedBox(height: 16),
                           ],
-                        ],
-                      ),
-          ),
-        ],
+                      ],
+                    ),
+        ),
       ),
     );
   }

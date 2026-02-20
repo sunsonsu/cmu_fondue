@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/application/pages/assigned_problems_page.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 // import 'package:cmu_fondue/application/pages/nearby_problem_page.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -6,7 +7,7 @@ import 'package:geocoding/geocoding.dart';
 class SubmitLocationBottomSheet extends StatefulWidget {
   const SubmitLocationBottomSheet({super.key, this.locationNotifier});
 
-  final ValueNotifier<List<Placemark>?>? locationNotifier;
+  final ValueNotifier<List<CmuPlaceEntity>?>? locationNotifier;
 
   @override
   State<SubmitLocationBottomSheet> createState() =>
@@ -16,7 +17,7 @@ class SubmitLocationBottomSheet extends StatefulWidget {
 class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
-  Placemark? _selectedPlacemark;
+  CmuPlaceEntity? _selectedPlacemark;
 
   @override
   void initState() {
@@ -45,16 +46,6 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
     widget.locationNotifier?.removeListener(_onPlacemarksChanged);
     _controller.dispose();
     super.dispose();
-  }
-
-  String _getFormattedAddress(Placemark p) {
-    return [
-      p.name,
-      p.street,
-      p.subLocality,
-      p.locality,
-      p.postalCode,
-    ].where((e) => e != null && e.isNotEmpty).toSet().join(' ');
   }
 
   @override
@@ -128,7 +119,7 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
               Expanded(
                 child: widget.locationNotifier == null
                     ? const Center(child: Text('รายการตำแหน่ง'))
-                    : ValueListenableBuilder<List<Placemark>?>(
+                    : ValueListenableBuilder<List<CmuPlaceEntity>?>(
                         valueListenable: widget.locationNotifier!,
                         builder: (context, placemarks, child) {
                           if (placemarks == null || placemarks.isEmpty) {
@@ -137,11 +128,11 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                             );
                           }
 
-                          final uniquePlacemarks = <Placemark>[];
+                          final uniquePlacemarks = <CmuPlaceEntity>[];
                           final seenAddresses = <String>{};
 
                           for (final p in placemarks) {
-                            final address = _getFormattedAddress(p);
+                            final address = p.formattedAddress;
                             if (!seenAddresses.contains(address)) {
                               seenAddresses.add(address);
                               uniquePlacemarks.add(p);
@@ -178,7 +169,7 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                                     });
                                   },
                                   child: Text(
-                                    _getFormattedAddress(p),
+                                    "${p.name}, ${p.formattedAddress}",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: isSelected
@@ -212,8 +203,7 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => AssignedProblemsPage(
-                                    location:
-                                        "${_selectedPlacemark?.name}, ${_selectedPlacemark?.street}",
+                                    location: _selectedPlacemark!,
                                   ),
                                 ),
                               );

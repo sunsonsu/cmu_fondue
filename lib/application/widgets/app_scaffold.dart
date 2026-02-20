@@ -1,4 +1,8 @@
+import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
+import 'package:cmu_fondue/domain/usecases/cmu_place_usecase.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppScaffold extends StatefulWidget {
   final int currentIndex;
@@ -23,6 +27,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   final List<GlobalKey> _navKeys = List.generate(4, (_) => GlobalKey());
   double _indicatorLeft = 0;
   bool _showIndicator = false;
+  bool _isInsideCmu = false;
   static const double _indicatorWidth = 40.0;
 
   @override
@@ -31,6 +36,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateIndicatorPosition();
     });
+    _checkLocation();
   }
 
   @override
@@ -48,17 +54,39 @@ class _AppScaffoldState extends State<AppScaffold> {
     final containerKey = _containerKey;
 
     if (navKey.currentContext != null && containerKey.currentContext != null) {
-      final RenderBox navBox = navKey.currentContext!.findRenderObject() as RenderBox;
-      final RenderBox containerBox = containerKey.currentContext!.findRenderObject() as RenderBox;
-      
+      final RenderBox navBox =
+          navKey.currentContext!.findRenderObject() as RenderBox;
+      final RenderBox containerBox =
+          containerKey.currentContext!.findRenderObject() as RenderBox;
+
       final navPosition = navBox.localToGlobal(Offset.zero);
       final containerPosition = containerBox.localToGlobal(Offset.zero);
       final navWidth = navBox.size.width;
-      
+
       setState(() {
-        _indicatorLeft = (navPosition.dx - containerPosition.dx) + (navWidth - _indicatorWidth) / 2;
+        _indicatorLeft =
+            (navPosition.dx - containerPosition.dx) +
+            (navWidth - _indicatorWidth) / 2;
         _showIndicator = true;
       });
+    }
+  }
+
+  Future<void> _checkLocation() async {
+    try {
+      final repo = CmuPlaceRepoImpl();
+      final usecase = CmuPlaceUsecase(repo);
+
+      final position = await Geolocator.getCurrentPosition();
+      final userLocation = LatLng(position.latitude, position.longitude);
+
+      if (mounted) {
+        setState(() {
+          _isInsideCmu = usecase.isInsideCmu(userLocation);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error checking location: $e");
     }
   }
 
@@ -103,6 +131,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                     index: 1,
                     isCenter: true,
                     navKey: _navKeys[1],
+                    enabled: _isInsideCmu,
                   ),
                   _buildNavItem(
                     icon: Icons.history,
@@ -111,8 +140,8 @@ class _AppScaffoldState extends State<AppScaffold> {
                     navKey: _navKeys[2],
                   ),
                   _buildNavItem(
-                    icon: widget.profileLabel == 'Admin' 
-                        ? Icons.admin_panel_settings 
+                    icon: widget.profileLabel == 'Admin'
+                        ? Icons.admin_panel_settings
                         : Icons.person,
                     label: widget.profileLabel,
                     index: 3,
@@ -149,13 +178,46 @@ class _AppScaffoldState extends State<AppScaffold> {
     required int index,
     required GlobalKey navKey,
     bool isCenter = false,
+    bool enabled = true,
   }) {
     final isSelected = widget.currentIndex == index;
-    final color = isSelected ? const Color(0xFFF99305) : Colors.white;
+    final color = enabled
+        ? (isSelected ? const Color(0xFFF99305) : Colors.white)
+        : Colors.grey;
 
     return InkWell(
       key: navKey,
-      onTap: () => widget.onNavigationChanged?.call(index),
+      onTap: () {
+        if (enabled) {
+          widget.onNavigationChanged?.call(index);
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              icon: const Icon(
+                Icons.error_outline,
+                color: Color(0xFF4D2161),
+                size: 48,
+              ),
+              content: const Text(
+                'ไม่สามารถแจ้งปัญหาได้ เนื่องจากคุณอยู่นอกเขตมหาวิทยาลัยเชียงใหม่',
+                textAlign: TextAlign.center,
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4D2161),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('ตกลง'),
+                ),
+              ],
+            ),
+          );
+        }
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

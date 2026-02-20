@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/application/widgets/admin_logout_button.dart';
+import 'package:cmu_fondue/application/widgets/profile_button.dart';
 import 'package:cmu_fondue/application/widgets/staff_dashboard.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class AdminPage extends StatelessWidget {
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 12),
-            child: AdminLogoutButton(),
+            child: ProfileButton(),
           ),
         ],
       ),

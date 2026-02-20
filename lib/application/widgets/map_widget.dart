@@ -1,22 +1,36 @@
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
+import 'package:cmu_fondue/application/pages/problem_detail.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key, required this.center});
+  const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
 
-  final LatLng center;
+  final EdgeInsets mapPadding;
+
   @override
   State<MapWidget> createState() => MapWidgetState();
 }
 
 class MapWidgetState<T extends MapWidget> extends State<T> {
   late GoogleMapController mapController;
+  late Future<Position> _userLocationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userLocationFuture = getUserCurrentLocation();
+  }
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -38,44 +52,86 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.grey[200],
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: GoogleMap(
-                onMapCreated: onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: widget.center,
-                  zoom: 15.0,
+    return FutureBuilder<Position>(
+      future: _userLocationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        LatLng target = LatLng(18.808310458255793, 98.95468245511799);
+        if (snapshot.hasData) {
+          target = LatLng(snapshot.data!.latitude, snapshot.data!.longitude);
+        }
+
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.grey[200],
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: GoogleMap(
+                    padding: widget.mapPadding,
+                    onMapCreated: onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: target,
+                      zoom: 15.0,
+                    ),
+                    markers: markers,
+                    onCameraMove: onCameraMove,
+                    onCameraIdle: onCameraIdle,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                  ),
                 ),
-                markers: markers,
-                onCameraMove: onCameraMove,
-                onCameraIdle: onCameraIdle,
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  Future<Position> getUserCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 }
 
 class MapViewerWidget extends MapWidget {
-  const MapViewerWidget({super.key, required super.center});
+  const MapViewerWidget({super.key});
 
   @override
   State<MapViewerWidget> createState() => _MapViewerWidgetState();
 }
 
 class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
-  final String cmuLogoUrl =
-      'https://static.wikia.nocookie.net/garfield/images/5/5e/GarfieldNoBackground.png/revision/latest/scale-to-width/360?cb=20250828223330';
-  Uint8List? markerIcon;
+  final Map<String, Uint8List> _markerIcons = {};
 
   late List<Placemark> placemarks;
 
@@ -87,23 +143,33 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   @override
   Set<Marker> get markers {
-    if (markerIcon != null) {
-      return {
-        Marker(
-          markerId: const MarkerId('me'),
-          icon: BitmapDescriptor.bytes(markerIcon!),
-          position: widget.center,
-          infoWindow: const InfoWindow(
-            title: 'การ์ฟิลด์',
-            snippet: 'การ์ฟิลด์นะเนี่ย',
-          ),
-          onTap: () {
-            print("Hello World");
-          },
+    final problems = Provider.of<ProblemProvider>(
+      context,
+      listen: false,
+    ).problems;
+
+    return problems.map((ProblemEntity problem) {
+      final Uint8List? icon = _markerIcons[problem.id];
+      return Marker(
+        markerId: MarkerId(problem.id),
+        icon: icon != null
+            ? BitmapDescriptor.bytes(icon)
+            : BitmapDescriptor.defaultMarker,
+        position: LatLng(problem.lat, problem.lng),
+        infoWindow: InfoWindow(
+          title: problem.title,
+          snippet: problem.locationName,
         ),
-      };
-    }
-    return {};
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProblemDetailPage(problem: problem),
+            ),
+          );
+        },
+      );
+    }).toSet();
   }
 
   Future<Uint8List> getBytesFromUrl(String url, int width) async {
@@ -179,44 +245,38 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     }
   }
 
-  Future<void> loadData() async {
-    try {
-      markerIcon = await getBytesFromUrl(cmuLogoUrl, 50);
-      if (mounted) {
-        setState(() {});
+  Future<void> _loadMarkerIcons(List<ProblemEntity> problems) async {
+    for (final problem in problems) {
+      if (problem.imageUrl != null && problem.imageUrl!.isNotEmpty) {
+        try {
+          final iconBytes = await getBytesFromUrl(problem.imageUrl!, 50);
+          _markerIcons[problem.id] = iconBytes;
+        } catch (e) {
+          debugPrint('Error loading marker icon for ${problem.id}: $e');
+        }
       }
-    } catch (e) {
-      debugPrint('Error loading marker icon: $e');
     }
+    if (mounted) setState(() {});
+  }
 
-    try {
-      await setLocaleIdentifier("th_TH");
-      placemarks = await placemarkFromCoordinates(
-        widget.center.latitude,
-        widget.center.longitude,
-      );
-      if (mounted) {
-        // setState not strictly needed if placemarks are not used in build immediately or if they are just logging
-        // But the previous code had it.
-        setState(() {});
-      }
-      if (placemarks.isNotEmpty) {
-        print(placemarks[0]);
-      }
-    } catch (e) {
-      debugPrint('Error loading placemarks: $e');
-    }
+  Future<void> loadData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
+      await provider.fetchProblems();
+      await _loadMarkerIcons(provider.problems);
+    });
   }
 }
 
 class MapSubmitWidget extends MapWidget {
   const MapSubmitWidget({
     super.key,
-    required super.center,
     this.onPlacemarkChanged,
-  });
+    this.selectedPlace,
+  }) : super(mapPadding: const EdgeInsets.only(top: 80, bottom: 200));
 
-  final ValueChanged<List<Placemark>>? onPlacemarkChanged;
+  final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
+  final CmuPlaceEntity? selectedPlace;
 
   @override
   State<MapSubmitWidget> createState() => _MapSubmitWidgetState();
@@ -224,6 +284,34 @@ class MapSubmitWidget extends MapWidget {
 
 class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
   CameraPosition? userLastPosition;
+
+  @override
+  void didUpdateWidget(MapSubmitWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedPlace != null &&
+        widget.selectedPlace != oldWidget.selectedPlace) {
+      _animateToSelectedPlace();
+    }
+  }
+
+  Future<void> _animateToSelectedPlace() async {
+    try {
+      await mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              widget.selectedPlace!.lat,
+              widget.selectedPlace!.lng,
+            ),
+            zoom: 18.0,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error moving camera: $e");
+    }
+  }
+
   @override
   void onCameraMove(CameraPosition position) {
     userLastPosition = position;
@@ -231,20 +319,32 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
 
   @override
   Future<void> onCameraIdle() async {
-    // If user hasn't moved yet, we might want to use the initial center or wait.
-    // userLastPosition is null initially.
-    final target = userLastPosition?.target ?? widget.center;
+    LatLng target;
+    if (userLastPosition != null) {
+      target = userLastPosition!.target;
+    } else {
+      try {
+        final position = await _userLocationFuture;
+        target = LatLng(position.latitude, position.longitude);
+      } catch (e) {
+        target = LatLng(18.808310458255793, 98.95468245511799);
+      }
+    }
 
     List<Placemark> placemarks = [];
+    List<CmuPlaceEntity> cmuPlaces = [];
     try {
       await setLocaleIdentifier("th_TH");
       placemarks = await placemarkFromCoordinates(
         target.latitude,
         target.longitude,
       );
-
       if (placemarks.isNotEmpty) {
-        widget.onPlacemarkChanged?.call(placemarks);
+        for (var placemark in placemarks) {
+          cmuPlaces.add(CmuPlaceEntity.fromPlacemark(placemark, target));
+        }
+        placemarks.clear();
+        widget.onPlacemarkChanged?.call(cmuPlaces);
       }
     } catch (e) {
       debugPrint('Error loading placemarks: $e');
@@ -252,14 +352,31 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
   }
 
   @override
+  void onMapCreated(GoogleMapController controller) {
+    super.onMapCreated(controller);
+    // เลื่อน camera ขึ้นหลัง map โหลดเสร็จ
+    Future.delayed(const Duration(milliseconds: 300), () {
+      controller.animateCamera(
+        CameraUpdate.scrollBy(0, 60), // (bottom_padding - top_padding) / 2
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bottomPadding = widget.mapPadding.bottom; // 200
     return Stack(
       children: [
         super.build(context),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 35), // Adjust for pin tip
-            child: Icon(Icons.location_on, size: 50, color: Colors.red),
+        Positioned.fill(
+          top: widget.mapPadding.top,
+          bottom: bottomPadding,
+          child: Align(
+            alignment: Alignment.center,
+            child: Transform.translate(
+              offset: const Offset(0, -25),
+              child: const Icon(Icons.location_on, size: 50, color: Colors.red),
+            ),
           ),
         ),
       ],

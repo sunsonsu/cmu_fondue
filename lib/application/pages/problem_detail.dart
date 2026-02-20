@@ -1,19 +1,211 @@
+import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
+import 'package:cmu_fondue/application/widgets/admin_status_management.dart';
+import 'package:cmu_fondue/application/widgets/problem_location_map.dart';
+import 'package:cmu_fondue/application/widgets/photo_upload.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProblemDetailPage extends StatelessWidget {
+class ProblemDetailPage extends StatefulWidget {
   final ProblemEntity problem;
 
   const ProblemDetailPage({super.key, required this.problem});
 
   @override
+  State<ProblemDetailPage> createState() => _ProblemDetailPageState();
+}
+
+class _ProblemDetailPageState extends State<ProblemDetailPage> {
+  File? _completedImage;
+  File? _tempImage;
+  final ImagePicker _picker = ImagePicker();
+  ProblemTag? _currentStatus;
+  DateTime? _statusUpdatedAt;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentStatus = widget.problem.tagName;
+  }
+  
+  ProblemTag get currentStatus => _currentStatus ?? widget.problem.tagName;
+
+  String _formatThaiDate(DateTime dateTime) {
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year + 543; // แปลงเป็น พ.ศ.
+    final time = DateFormat('HH:mm').format(dateTime);
+    return '$day/$month/$year $time';
+  }
+
+  Future<void> _showStatusChangeDialog(ProblemTag newStatus) async {
+    if (newStatus == ProblemTag.completed) {
+      // Show photo upload dialog
+      await _showPhotoUploadDialog();
+    } else {
+      // Direct status change
+      _changeStatus(newStatus);
+    }
+  }
+
+  Future<void> _showPhotoUploadDialog() async {
+    _tempImage = null;
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PhotoUploadWidget(
+                  onUploadPressed: () async {
+                    try {
+                      final XFile? image = await _picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 80,
+                      );
+                      if (image != null) {
+                        setDialogState(() {
+                          _tempImage = File(image.path);
+                        });
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        CustomSnackBar.showError(
+                          context: context,
+                          message: 'เลือกรูปภาพไม่สำเร็จ',
+                        );
+                      }
+                    }
+                  },
+                  onTakePhotoPressed: () async {
+                    try {
+                      final XFile? image = await _picker.pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 80,
+                      );
+                      if (image != null) {
+                        setDialogState(() {
+                          _tempImage = File(image.path);
+                        });
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        CustomSnackBar.showError(
+                          context: context,
+                          message: 'ถ่ายรูปไม่สำเร็จ',
+                        );
+                      }
+                    }
+                  },
+                  selectedImage: _tempImage,
+                ),
+                if (_tempImage != null) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _completedImage = _tempImage;
+                        });
+                        Navigator.pop(context);
+                        _changeStatus(ProblemTag.completed);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF5D3891),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'ยืนยัน',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteProblem() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => const DeleteConfirmationDialog(),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        // TODO: Implement actual delete logic with backend
+        // await problemService.deleteProblem(widget.problem.id);
+        
+        CustomSnackBar.showSuccess(
+          context: context,
+          message: 'ลบปัญหาเรียบร้อยแล้ว',
+        );
+        // Navigate back after deletion
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          CustomSnackBar.showError(
+            context: context,
+            message: 'ลบปัญหาไม่สำเร็จ',
+          );
+        }
+      }
+    }
+  }
+
+  void _changeStatus(ProblemTag newStatus) {
+    try {
+      // TODO: Implement actual status change logic with backend
+      setState(() {
+        _currentStatus = newStatus;
+        _statusUpdatedAt = DateTime.now();
+      });
+      
+      CustomSnackBar.showSuccess(
+        context: context,
+        message: 'เปลี่ยนเป็น "${newStatus.labelTh}"',
+      );
+    } catch (e) {
+      if (mounted) {
+        CustomSnackBar.showError(
+          context: context,
+          message: 'เปลี่ยนสถานะไม่สำเร็จ',
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AppAuthProvider>();
+    final isAdmin = authProvider.user?.isAdmin ?? false;
     final formattedDate = DateFormat(
       'dd/MM/yyyy HH:mm',
-    ).format(problem.createdAt);
+    ).format(widget.problem.createdAt);
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAE5F1),
@@ -45,27 +237,21 @@ class ProblemDetailPage extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // --- ส่วนหัว: ชื่อปัญหาและสถานะ ---
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ชื่อปัญหา
-                      Text(
-                        problem.title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          height: 1.3,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                // ชื่อปัญหา
+                Text(
+                  widget.problem.title,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
                       // Tags Row
                       Row(
                         children: [
@@ -76,19 +262,19 @@ class ProblemDetailPage extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: problem.tagName.getStatusColor.withOpacity(0.1),
+                              color: currentStatus.getStatusColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: problem.tagName.getStatusColor.withOpacity(0.3),
+                                color: currentStatus.getStatusColor.withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             child: Text(
-                              problem.tagName.labelTh,
+                              currentStatus.labelTh,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: problem.tagName.getStatusColor,
+                                color: currentStatus.getStatusColor,
                               ),
                             ),
                           ),
@@ -108,7 +294,7 @@ class ProblemDetailPage extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              problem.typeName.labelTh,
+                              widget.problem.typeName.labelTh,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -116,16 +302,24 @@ class ProblemDetailPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ],
+                      ],
+                    ),
+                    // แสดงวันที่อัปเดตสถานะ
+                    if (_statusUpdatedAt != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'อัปเดตเมื่อ ${_formatThaiDate(_statusUpdatedAt!)} โดย Admin',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
-                  ),
-                ),
 
-            const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-            // --- ข้อมูลเมตา: วันที่และสถานที่ ---
-            Container(
+                // --- ข้อมูล: วันที่และสถานที่ ---
+                Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -170,7 +364,7 @@ class ProblemDetailPage extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          problem.locationName,
+                          widget.problem.locationName,
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.grey[700],
@@ -218,77 +412,11 @@ class ProblemDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // พิกัด
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.place,
-                          size: 16,
-                          color: Colors.grey[700],
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Kanit',
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'พิกัด: ',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '${problem.lat.toStringAsFixed(6)}, ${problem.lng.toStringAsFixed(6)}',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Google Map
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: SizedBox(
-                      height: 250,
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(problem.lat, problem.lng),
-                          zoom: 16,
-                        ),
-                        markers: {
-                          Marker(
-                            markerId: const MarkerId('problem_location'),
-                            position: LatLng(problem.lat, problem.lng),
-                            infoWindow: InfoWindow(
-                              title: problem.title,
-                              snippet: problem.locationName,
-                            ),
-                          ),
-                        },
-                        zoomControlsEnabled: true,
-                        myLocationButtonEnabled: false,
-                        mapToolbarEnabled: false,
-                      ),
-                    ),
+                  // Google Map with Coordinates
+                  ProblemLocationMap(
+                    location: LatLng(widget.problem.lat, widget.problem.lng),
+                    title: widget.problem.title,
+                    snippet: widget.problem.locationName,
                   ),
                 ],
               ),
@@ -330,7 +458,7 @@ class ProblemDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    problem.detail,
+                    widget.problem.detail,
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.6,
@@ -377,11 +505,11 @@ class ProblemDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   // ตรวจสอบว่ามี imageUrl หรือไม่
-                  if (problem.imageUrl != null && problem.imageUrl!.isNotEmpty)
+                  if (widget.problem.imageUrl != null && widget.problem.imageUrl!.isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        problem.imageUrl!,
+                        widget.problem.imageUrl!,
                         width: double.infinity,
                         height: 280,
                         fit: BoxFit.cover,
@@ -470,6 +598,109 @@ class ProblemDetailPage extends StatelessWidget {
                 ],
               ),
             ),
+
+            // --- รูปภาพที่ admin upload ---
+            if (_completedImage != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey[200]!,
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          size: 20,
+                          color: Colors.green[700],
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'ภาพหลังแก้ไข',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_statusUpdatedAt != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'อัปโหลดเมื่อ ${_formatThaiDate(_statusUpdatedAt!)} โดย Admin',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        _completedImage!,
+                        width: double.infinity,
+                        height: 280,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // --- ปุ่มสำหรับ Admin ---
+            if (isAdmin) ...[
+              const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5D3891).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF5D3891).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AdminStatusManagement(
+                      currentStatus: currentStatus,
+                      onStatusChange: _showStatusChangeDialog,
+                    ),
+                    
+                    // ปุ่มลบปัญหา
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: _deleteProblem,
+                      icon: const Icon(Icons.delete_outline, size: 20),
+                      label: const Text('ลบปัญหานี้'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red, width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             const SizedBox(height: 24),
               ],
