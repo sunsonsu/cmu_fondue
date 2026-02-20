@@ -262,7 +262,7 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
   Future<void> loadData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<ProblemProvider>(context, listen: false);
-      await provider.fetchProblems();
+      await provider.fetchNotDoneProblems();
       await _loadMarkerIcons(provider.problems);
     });
   }

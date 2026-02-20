@@ -30,6 +30,20 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchNotDoneProblems() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _problems = await _getProblemsUseCase.getNotDoneProblems();
+    } catch (e, stacktrace) {
+      print('Fetch Error: $e');
+      print('Stacktrace: $stacktrace');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> createProblem({
     required String title,
     required String detail,
@@ -53,7 +67,7 @@ class ProblemProvider with ChangeNotifier {
         reporterId: reporterId,
         typeId: typeId,
         tagId: tagId,
-        imageFile: imageFile
+        imageFile: imageFile,
       );
       await fetchProblems(); // รีเฟรชข้อมูลหน้ารายการใหม่หลังจากสร้างสำเร็จ
     } catch (e) {

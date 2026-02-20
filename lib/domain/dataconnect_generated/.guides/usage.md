@@ -10,7 +10,7 @@ ConnectorConnector.instance.CreateProblemImage(createProblemImageVariables).exec
 ConnectorConnector.instance.UpdateProblemImage(updateProblemImageVariables).execute();
 ConnectorConnector.instance.DeleteProblemImage(deleteProblemImageVariables).execute();
 ConnectorConnector.instance.ListProblems().execute();
-ConnectorConnector.instance.ListProblemTypes().execute();
+ConnectorConnector.instance.ListNotDoneProblems().execute();
 
 ```
 

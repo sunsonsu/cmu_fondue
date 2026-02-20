@@ -21,6 +21,8 @@ part 'delete_problem_image.dart';
 
 part 'list_problems.dart';
 
+part 'list_not_done_problems.dart';
+
 part 'list_problem_types.dart';
 
 part 'list_problem_tags.dart';
@@ -82,6 +84,11 @@ class ConnectorConnector {
   
   ListProblemsVariablesBuilder listProblems () {
     return ListProblemsVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListNotDoneProblemsVariablesBuilder listNotDoneProblems () {
+    return ListNotDoneProblemsVariablesBuilder(dataConnect, );
   }
   
   

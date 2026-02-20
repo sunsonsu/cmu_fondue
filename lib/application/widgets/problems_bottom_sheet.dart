@@ -16,14 +16,6 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
       DraggableScrollableController();
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProblemProvider>(context, listen: false).fetchProblems();
-    });
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -109,7 +101,9 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    print('-----------------UI bottom sheet: ${provider.problems.length}-------------------');
+                    print(
+                      '-----------------UI bottom sheet: ${provider.problems.length}-------------------',
+                    );
 
                     if (provider.problems.isEmpty) {
                       return const Center(

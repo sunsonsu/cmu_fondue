@@ -1,9 +1,10 @@
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-import 'package:cmu_fondue/domain/usecases/get_problems_nearby.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
@@ -13,11 +14,10 @@ class StaffDashboard extends StatefulWidget {
 }
 
 class _StaffDashboardState extends State<StaffDashboard> {
-  final GetProblemsNearbyUseCase _getProblemsUseCase = GetProblemsNearbyUseCase();
   List<ProblemEntity> _allProblems = [];
   List<ProblemEntity> _filteredProblems = [];
   bool _isLoading = true;
-  
+
   ProblemTag? _selectedTag;
   ProblemType? _selectedCategory;
 
@@ -28,35 +28,40 @@ class _StaffDashboardState extends State<StaffDashboard> {
   }
 
   Future<void> _loadProblems() async {
-    setState(() => _isLoading = true);
-    
-    try {
-      final problems = await _getProblemsUseCase();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
+      await provider.fetchProblems();
       setState(() {
-        _allProblems = problems;
-        _filteredProblems = problems;
+        _allProblems = provider.problems;
+        _filteredProblems = provider.problems;
         _isLoading = false;
       });
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
+    });
   }
 
   void _applyFilters() {
     setState(() {
       _filteredProblems = _allProblems.where((problem) {
-        bool matchesTag = _selectedTag == null || problem.tagName == _selectedTag;
-        bool matchesCategory = _selectedCategory == null || problem.typeName == _selectedCategory;
+        bool matchesTag =
+            _selectedTag == null || problem.tagName == _selectedTag;
+        bool matchesCategory =
+            _selectedCategory == null || problem.typeName == _selectedCategory;
         return matchesTag && matchesCategory;
       }).toList();
     });
   }
 
   Map<String, int> _getStatistics() {
-    int pending = _allProblems.where((p) => p.tagName == ProblemTag.pending).length;
-    int inProgress = _allProblems.where((p) => p.tagName == ProblemTag.inProgress).length;
-    int completed = _allProblems.where((p) => p.tagName == ProblemTag.completed).length;
-    
+    int pending = _allProblems
+        .where((p) => p.tagName == ProblemTag.pending)
+        .length;
+    int inProgress = _allProblems
+        .where((p) => p.tagName == ProblemTag.inProgress)
+        .length;
+    int completed = _allProblems
+        .where((p) => p.tagName == ProblemTag.completed)
+        .length;
+
     return {
       'pending': pending,
       'inProgress': inProgress,
@@ -66,13 +71,14 @@ class _StaffDashboardState extends State<StaffDashboard> {
 
   String _getMostReportedArea() {
     if (_allProblems.isEmpty) return 'ไม่มีข้อมูล';
-    
+
     // Count problems by location
     Map<String, int> locationCounts = {};
     for (var problem in _allProblems) {
-      locationCounts[problem.locationName] = (locationCounts[problem.locationName] ?? 0) + 1;
+      locationCounts[problem.locationName] =
+          (locationCounts[problem.locationName] ?? 0) + 1;
     }
-    
+
     // Find location with max count
     String mostReported = '';
     int maxCount = 0;
@@ -82,38 +88,38 @@ class _StaffDashboardState extends State<StaffDashboard> {
         mostReported = location;
       }
     });
-    
+
     return mostReported;
   }
 
   @override
   Widget build(BuildContext context) {
     final stats = _getStatistics();
-    
+
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(41),
-                  topRight: Radius.circular(41),
-                ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(41),
+                topRight: Radius.circular(41),
               ),
-              child: Column(
-                children: [
-                  // Most Report Area Section
-                  Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                // Most Report Area Section
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -221,10 +227,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
                       ? const Center(
                           child: Text(
                             'ไม่พบข้อมูล',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         )
                       : ListView.builder(

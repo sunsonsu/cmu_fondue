@@ -23,7 +23,19 @@ class ProblemRepoImpl implements ProblemRepo {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาได้: $e");
     }
   }
- 
+
+  @override
+  Future<List<ProblemEntity>> getNotDoneProblems() async {
+    try {
+      final result = await connector.listNotDoneProblems().execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาที่ยังไม่เสร็จสิ้นได้: $e");
+    }
+  }
+
   // Create
   // Komsan
   @override
@@ -58,17 +70,17 @@ class ProblemRepoImpl implements ProblemRepo {
   @override
   Future<void> updateProblem({
     required String id,
-     String? title,
-     String? detail,
-     String? locationName,
-     double? lat,
-     double? lng,
-     String? typeId,
-     String? tagId,
+    String? title,
+    String? detail,
+    String? locationName,
+    double? lat,
+    double? lng,
+    String? typeId,
+    String? tagId,
   }) async {
     try {
       var mutation = connector.updateProblem(id: id);
-      
+
       if (title != null) mutation = mutation.title(title);
       if (detail != null) mutation = mutation.detail(detail);
       if (locationName != null) mutation = mutation.locationName(locationName);
@@ -76,7 +88,7 @@ class ProblemRepoImpl implements ProblemRepo {
       if (lng != null) mutation = mutation.lng(lng);
       if (typeId != null) mutation = mutation.typeId(typeId);
       if (tagId != null) mutation = mutation.tagId(tagId);
-      
+
       await mutation.execute();
     } catch (e) {
       throw Exception("ไม่สามารถแก้ไขข้อมูลได้: $e");
@@ -97,11 +109,12 @@ class ProblemRepoImpl implements ProblemRepo {
   @override
   Future<int> countProblemsByTag({required String currentTagId}) async {
     try {
-      final result = await connector.problemsByTag(TagId: currentTagId).execute();
+      final result = await connector
+          .problemsByTag(TagId: currentTagId)
+          .execute();
       return result.data.problems.length;
     } catch (e) {
       throw Exception("ไม่สามารถนับจำนวนปัญหาตามแท็กได้: $e");
     }
   }
-
 }
