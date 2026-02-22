@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';
@@ -13,14 +13,6 @@ class ProblemsBottomSheet extends StatefulWidget {
 class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProblemProvider>(context, listen: false).fetchProblems();
-    });
-  }
 
   @override
   void dispose() {
@@ -102,11 +94,15 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: Consumer<ProblemProvider>(
+                child: Consumer<MapProblemProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
+                    print(
+                      '-----------------UI bottom sheet: ${provider.problems.length}-------------------',
+                    );
 
                     if (provider.problems.isEmpty) {
                       return const Center(

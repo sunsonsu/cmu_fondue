@@ -24,6 +24,18 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
+  @override
+  Future<List<ProblemEntity>> getNotCompletedProblems() async {
+    try {
+      final result = await connector.listNotCompletedProblems().execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาที่ยังไม่เสร็จสิ้นได้: $e");
+    }
+  }
+
   // Create
   // Komsan
   @override
@@ -103,6 +115,51 @@ class ProblemRepoImpl implements ProblemRepo {
       return result.data.problems.length;
     } catch (e) {
       throw Exception("ไม่สามารถนับจำนวนปัญหาตามแท็กได้: $e");
+    }
+  }
+
+  @override
+  Future<List<ProblemEntity>> getProblemsByTagAndType({
+    required String tagId,
+    required String typeId,
+  }) async {
+    try {
+      final result = await connector
+          .problemsByTagAndType(TagId: tagId, TypeId: typeId)
+          .execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามแท็กและประเภทได้: $e");
+    }
+  }
+
+  @override
+  Future<List<ProblemEntity>> getProblemsByTag({required String tagId}) async {
+    try {
+      final result = await connector.problemsByTagFull(TagId: tagId).execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามแท็กได้: $e");
+    }
+  }
+
+  @override
+  Future<List<ProblemEntity>> getProblemsByType({
+    required String typeId,
+  }) async {
+    try {
+      final result = await connector
+          .problemsByTypeFull(TypeId: typeId)
+          .execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามประเภทได้: $e");
     }
   }
 

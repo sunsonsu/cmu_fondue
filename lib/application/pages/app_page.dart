@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final int initialIndex;
-  
+
   const HomePage({super.key, this.initialIndex = 0});
 
   @override

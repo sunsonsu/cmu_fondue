@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cmu_fondue/application/pages/app_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
@@ -120,129 +121,132 @@ class _CreateReportPageState extends State<CreateReportPage> {
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-              child: ReportingForm(
-                location: widget.location.formattedAddress,
-                titleController: _titleController,
-                descriptionController: _descriptionController,
-                selectedCategory: _selectedCategory,
-                selectedImage: _selectedImage,
-                onCategoryChanged: (category) {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-                onPickImageFromGallery: _pickImageFromGallery,
-                onTakePicture: _takePicture,
+                child: ReportingForm(
+                  location: widget.location.formattedAddress,
+                  titleController: _titleController,
+                  descriptionController: _descriptionController,
+                  selectedCategory: _selectedCategory,
+                  selectedImage: _selectedImage,
+                  onCategoryChanged: (category) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                  onPickImageFromGallery: _pickImageFromGallery,
+                  onTakePicture: _takePicture,
                 ),
               ),
             ),
 
             // Next Button
             Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isFormValid()
-                      ? () async {
-                          final probProvider = Provider.of<ProblemProvider>(
-                            context,
-                            listen: false,
-                          );
-                          final authProvider = Provider.of<AppAuthProvider>(
-                            context,
-                            listen: false,
-                          );
-
-                          if (authProvider.user?.id == "") {
-                            CustomSnackBar.showWarning(
-                              context: context,
-                              message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isFormValid()
+                        ? () async {
+                            final probProvider = Provider.of<ProblemProvider>(
+                              context,
+                              listen: false,
                             );
-                            return;
-                          }
-
-                          if (_selectedImage == null) {
-                            CustomSnackBar.showError(
-                              context: context,
-                              message: 'กรุณาเลือกรูปภาพ',
-                            );
-                            return;
-                          }
-
-                          try {
-                            await probProvider.createProblem(
-                              title: _titleController.text,
-                              detail: _descriptionController.text,
-                              locationName: widget.location,
-                              lat: 18.8001,
-                              lng: 98.9502,
-                              reporterId: authProvider.user!.id,
-                              typeId: _selectedCategory!,
-                              tagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8",
-                              imageFile: _selectedImage!,
+                            final authProvider = Provider.of<AppAuthProvider>(
+                              context,
+                              listen: false,
                             );
 
-                            if (context.mounted) {
-                              CustomSnackBar.showSuccess(
+                            if (authProvider.user?.id == "") {
+                              CustomSnackBar.showWarning(
                                 context: context,
-                                message: 'สร้างรายงานสำเร็จ',
+                                message: 'กรุณาเข้าสู่ระบบก่อนแจ้งปัญหา',
+                              );
+                              return;
+                            }
+
+                            if (_selectedImage == null) {
+                              CustomSnackBar.showError(
+                                context: context,
+                                message: 'กรุณาเลือกรูปภาพ',
+                              );
+                              return;
+                            }
+
+                            try {
+                              await probProvider.createProblem(
+                                title: _titleController.text,
+                                detail: _descriptionController.text,
+                                locationName: widget.location.formattedAddress,
+                                lat: widget.location.lat,
+                                lng: widget.location.lng,
+                                reporterId: authProvider.user!.id,
+                                typeId: _selectedCategory!,
+                                tagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8",
+                                imageFile: _selectedImage!,
                               );
 
-                              await Future.delayed(const Duration(milliseconds: 500));
                               if (context.mounted) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(initialIndex: 1),
-                                  ),
-                                  (route) => false,
+                                CustomSnackBar.showSuccess(
+                                  context: context,
+                                  message: 'สร้างรายงานสำเร็จ',
+                                );
+
+                                await Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                );
+                                if (context.mounted) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(initialIndex: 1),
+                                    ),
+                                    (route) => false,
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                CustomSnackBar.showError(
+                                  context: context,
+                                  message: 'ไม่สามารถสร้างรายงานได้',
                                 );
                               }
                             }
-                          } catch (e) {
-                            if (context.mounted) {
-                              CustomSnackBar.showError(
-                                context: context,
-                                message: 'ไม่สามารถสร้างรายงานได้',
-                              );
-                            }
                           }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: const Color(0xFF5D3891),
-                    disabledBackgroundColor: Colors.grey[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFF5D3891),
+                      disabledBackgroundColor: Colors.grey[300],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'สร้างรายงาน',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color:
+                            _titleController.text.isNotEmpty &&
+                                _selectedCategory != null &&
+                                _descriptionController.text.isNotEmpty
+                            ? Colors.white
+                            : Colors.grey[600],
+                      ),
                     ),
                   ),
-                  child: Text(
-                    'สร้างรายงาน',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color:
-                          _titleController.text.isNotEmpty &&
-                              _selectedCategory != null &&
-                              _descriptionController.text.isNotEmpty
-                          ? Colors.white
-                          : Colors.grey[600],
-                    ),
-                  ),
-                ),
                 ),
               ),
             ),

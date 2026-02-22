@@ -36,6 +36,60 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchNotCompletedProblems() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _problems = await _getProblemsUseCase.getNotCompletedProblems();
+    } catch (e, stacktrace) {
+      print('Fetch Error: $e');
+      print('Stacktrace: $stacktrace');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<List<ProblemEntity>> fetchProblemsByTagAndType({
+    required String tagId,
+    required String typeId,
+  }) async {
+    try {
+      return await _getProblemsUseCase.getProblemsByTagAndType(
+        tagId: tagId,
+        typeId: typeId,
+      );
+    } catch (e, stacktrace) {
+      print('Fetch by Tag and Type Error: $e');
+      print('Stacktrace: $stacktrace');
+      return [];
+    }
+  }
+
+  Future<List<ProblemEntity>> fetchProblemsByTag({
+    required String tagId,
+  }) async {
+    try {
+      return await _getProblemsUseCase.getProblemsByTag(tagId: tagId);
+    } catch (e, stacktrace) {
+      print('Fetch by Tag Error: $e');
+      print('Stacktrace: $stacktrace');
+      return [];
+    }
+  }
+
+  Future<List<ProblemEntity>> fetchProblemsByType({
+    required String typeId,
+  }) async {
+    try {
+      return await _getProblemsUseCase.getProblemsByType(typeId: typeId);
+    } catch (e, stacktrace) {
+      print('Fetch by Type Error: $e');
+      print('Stacktrace: $stacktrace');
+      return [];
+    }
+  }
+
   Future<void> createProblem({
     required String title,
     required String detail,
@@ -110,6 +164,4 @@ class ProblemProvider with ChangeNotifier {
       rethrow;
     }
   }
-
-  
 }
