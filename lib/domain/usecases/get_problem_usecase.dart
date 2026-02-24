@@ -12,7 +12,6 @@ class GetProblemsUseCase {
   }
 
   Future<List<ProblemEntity>> getNotCompletedProblems(String? userId) async {
-    print("======================Get Problems without Completed by User: ${userId}==============================");
     return await repository.getNotCompletedProblems(userId ?? '');
   }
 
