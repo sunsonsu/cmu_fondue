@@ -1,7 +1,6 @@
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
-import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
 import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
 import 'package:cmu_fondue/data/repositories/user_repo_impl.dart';
@@ -122,19 +121,17 @@ void main() async {
               AppAuthProvider(authRepository, setupNotificationsUseCase),
         ),
 
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AppAuthProvider, ProblemProvider>(
           create: (_) => ProblemProvider(
             getProblemsUseCase,
             createProblemUseCase,
             updateProblemUpvoteUseCase,
           ),
-        ),
+          update: (_, auth, problemProvider) {
+            final userId = auth.isAuthenticated ? auth.user?.id : null;
 
-        ChangeNotifierProvider(
-          create: (_) => MapProblemProvider(
-            getProblemsUseCase,
-            updateProblemUpvoteUseCase,
-          ),
+            return problemProvider!..updateUserId(userId);
+          },
         ),
       ],
       child: const MyApp(),

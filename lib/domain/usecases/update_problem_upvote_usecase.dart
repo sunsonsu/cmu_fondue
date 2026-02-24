@@ -14,11 +14,19 @@ class UpdateProblemUpvoteUseCase {
   ///
   /// [problemId]: The unique identifier of the problem.
   /// [isUpvote]: True to add an upvote, False to remove it.
-  Future<void> call({required String problemId, required bool isUpvoted}) {
+  Future<void> call({
+    required String problemId,
+    required bool isUpvoted,
+    String? userId,
+  }) async {
+    if (userId == null) {
+      throw Exception('Login required to upvote a problem.');
+    }
+
     if (isUpvoted) {
-      return _problemRepository.addUpvote(id: problemId);
+      return _problemRepository.addUpvote(id: problemId, userId: userId);
     } else {
-      return _problemRepository.removeUpvote(id: problemId);
+      return _problemRepository.removeUpvote(id: problemId, userId: userId);
     }
   }
 }

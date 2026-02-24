@@ -2,9 +2,10 @@ part of 'generated.dart';
 
 class AddUpvoteVariablesBuilder {
   String problemId;
+  String userId;
 
   final FirebaseDataConnect _dataConnect;
-  AddUpvoteVariablesBuilder(this._dataConnect, {required  this.problemId,});
+  AddUpvoteVariablesBuilder(this._dataConnect, {required  this.problemId,required  this.userId,});
   Deserializer<AddUpvoteData> dataDeserializer = (dynamic json)  => AddUpvoteData.fromJson(jsonDecode(json));
   Serializer<AddUpvoteVariables> varsSerializer = (AddUpvoteVariables vars) => jsonEncode(vars.toJson());
   Future<OperationResult<AddUpvoteData, AddUpvoteVariables>> execute() {
@@ -12,7 +13,7 @@ class AddUpvoteVariablesBuilder {
   }
 
   MutationRef<AddUpvoteData, AddUpvoteVariables> ref() {
-    AddUpvoteVariables vars= AddUpvoteVariables(problemId: problemId,);
+    AddUpvoteVariables vars= AddUpvoteVariables(problemId: problemId,userId: userId,);
     return _dataConnect.mutation("AddUpvote", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -134,10 +135,12 @@ class AddUpvoteData {
 @immutable
 class AddUpvoteVariables {
   final String problemId;
+  final String userId;
   @Deprecated('fromJson is deprecated for Variable classes as they are no longer required for deserialization.')
   AddUpvoteVariables.fromJson(Map<String, dynamic> json):
   
-  problemId = nativeFromJson<String>(json['problemId']);
+  problemId = nativeFromJson<String>(json['problemId']),
+  userId = nativeFromJson<String>(json['userId']);
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -148,21 +151,24 @@ class AddUpvoteVariables {
     }
 
     final AddUpvoteVariables otherTyped = other as AddUpvoteVariables;
-    return problemId == otherTyped.problemId;
+    return problemId == otherTyped.problemId && 
+    userId == otherTyped.userId;
     
   }
   @override
-  int get hashCode => problemId.hashCode;
+  int get hashCode => Object.hashAll([problemId.hashCode, userId.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['problemId'] = nativeToJson<String>(problemId);
+    json['userId'] = nativeToJson<String>(userId);
     return json;
   }
 
   AddUpvoteVariables({
     required this.problemId,
+    required this.userId,
   });
 }
 

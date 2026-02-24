@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 import 'dart:math' as math;
 
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
-import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
@@ -143,10 +143,10 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   @override
   Set<Marker> get markers {
-    final problems = Provider.of<MapProblemProvider>(
+    final problems = Provider.of<ProblemProvider>(
       context,
       listen: false,
-    ).problems;
+    ).allProblems;
 
     return problems.map((ProblemEntity problem) {
       final Uint8List? icon = _markerIcons[problem.id];
@@ -261,9 +261,9 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   Future<void> loadData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = Provider.of<MapProblemProvider>(context, listen: false);
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
       await provider.fetchProblems();
-      await _loadMarkerIcons(provider.problems);
+      await _loadMarkerIcons(provider.allProblems);
     });
   }
 }

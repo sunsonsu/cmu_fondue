@@ -1,11 +1,19 @@
 # This file is used to seed initial data into the database for testing and development purposes.
 # Komsan
 mutation SeedInitialData @auth(level: PUBLIC) {
-  user_upsert(
+  admin: user_upsert(
     data: {
       userId: "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"
       email: "admin@test.com"
       isAdmin: true
+    }
+  )
+  
+  user: user_upsert(
+    data: {
+      userId: "QHjkBhA8HLU2BFrlo2RBcUmw8xh2"
+      email: "user@test.com"
+      isAdmin: false
     }
   )
 
@@ -134,7 +142,7 @@ mutation SeedInitialData @auth(level: PUBLIC) {
       problemLat: 18.80123248435703
       problemLng: 98.95259418015277
       title: "ห้องน้ำ RB5 ชั้น 1 เสีย"
-      upvoteCount: 12
+      upvoteCount: 0
     }
   )
 

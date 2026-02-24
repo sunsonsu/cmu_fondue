@@ -99,18 +99,27 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (provider.problems.isEmpty) {
+                  if (provider.notCompletedProblems.isEmpty) {
                     return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
                   }
 
                   return ListView.builder(
+                    key: const PageStorageKey('problemsList'),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
                     ),
-                    itemCount: provider.problems.length,
+                    itemCount: provider.notCompletedProblems.length,
                     itemBuilder: (context, index) {
-                      return ProblemCard(problem: provider.problems[index]);
+                      return ProblemCard(
+                        key: ValueKey(provider.notCompletedProblems[index].id),
+                        problem: provider.notCompletedProblems[index],
+                        onUpvote: (isUpvoted) =>
+                            context.read<ProblemProvider>().toggleUpvote(
+                              problemId: provider.notCompletedProblems[index].id,
+                              isUpvoted: isUpvoted,
+                            ),
+                      );
                     },
                   );
                 },

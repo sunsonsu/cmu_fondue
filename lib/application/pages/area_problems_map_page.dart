@@ -1,7 +1,9 @@
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 class AreaProblemsMapPage extends StatefulWidget {
   final String areaName;
@@ -120,7 +122,8 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                 child: _center == null
                     ? const Center(child: CircularProgressIndicator())
                     : GoogleMap(
-                        onMapCreated: (controller) => _mapController = controller,
+                        onMapCreated: (controller) =>
+                            _mapController = controller,
                         initialCameraPosition: CameraPosition(
                           target: _center!,
                           zoom: 15,
@@ -167,10 +170,7 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.list_alt,
-                          color: Color(0xFF5D3891),
-                        ),
+                        const Icon(Icons.list_alt, color: Color(0xFF5D3891)),
                         const SizedBox(width: 8),
                         Text(
                           'ปัญหาในพื้นที่นี้ (${widget.problems.length})',
@@ -200,6 +200,7 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                             itemCount: widget.problems.length,
                             itemBuilder: (context, index) {
                               return ProblemCard(
+                                key: ValueKey(widget.problems[index].id),
                                 problem: widget.problems[index],
                                 onDeleted: () {
                                   // Refresh if needed
@@ -208,6 +209,12 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                                     _setupMarkers();
                                   });
                                 },
+                                onUpvote: (isUpvoted) => context
+                                    .read<ProblemProvider>()
+                                    .toggleUpvote(
+                                      problemId: widget.problems[index].id,
+                                      isUpvoted: isUpvoted,
+                                    ),
                               );
                             },
                           ),
@@ -228,19 +235,10 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
       ],
     );
   }
