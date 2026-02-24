@@ -13,10 +13,6 @@ class UserEntity {
   });
 
   factory UserEntity.fromFirebase(User user) {
-    // Dev mode
-    // print("--------------------Dev Mode--------------------");
-    // print("is admin: ${user.uid == dotenv.env['UID_ADMIN']}");
-    // Dev mode
     return UserEntity(
       id: user.uid,
       email: user.email ?? '',

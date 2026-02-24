@@ -1,34 +1,22 @@
 import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/material.dart';
 
 class ProblemProvider with ChangeNotifier {
-  Future<ProblemEntity?> getMaxUpvotedProblem() async {
-    try {
-      return await _getProblemsUseCase.getMaxUpvotedProblem();
-    } catch (e, stacktrace) {
-      print('Get Max Upvoted Problem Error: $e');
-      print('Stacktrace: $stacktrace');
-      return null;
-    }
-  }
-
-  Future<int> countProblemsByTag({required String currentTagId}) async {
-    try {
-      return await _getProblemsUseCase.countByTag(currentTagId);
-    } catch (e, stacktrace) {
-      print('Count by Tag Error: $e');
-      print('Stacktrace: $stacktrace');
-      return 0;
-    }
-  }
-
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
+
+  String? _currentUserId;
+  bool _isLoading = false;
+  List<ProblemEntity> _problems = [];
+
+  ProblemTag? _selectedTag;
+  ProblemType? _selectedCategory;
 
   ProblemProvider(
     this._getProblemsUseCase,
@@ -36,37 +24,150 @@ class ProblemProvider with ChangeNotifier {
     this._updateProblemUpvoteUseCase,
   );
 
-  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  List<ProblemEntity> _problems = [];
-  List<ProblemEntity> get problems => _problems;
+  ProblemTag? get selectedTag => _selectedTag;
+  ProblemType? get selectedCategory => _selectedCategory;
+
+  List<ProblemEntity> get allProblems => _problems;
+
+  List<ProblemEntity> get filteredProblems {
+    if (_selectedTag == null && _selectedCategory == null) return _problems;
+    
+    return _problems.where((p) {
+      final matchTag = _selectedTag == null || p.tagName == _selectedTag;
+      final matchType = _selectedCategory == null || p.typeName == _selectedCategory;
+      return matchTag && matchType;
+    }).toList();
+  }
+
+  List<ProblemEntity> get notCompletedProblems =>
+      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
+
+  int get countPending =>
+      _problems.where((p) => p.tagName == ProblemTag.pending).length;
+  int get countInProgress =>
+      _problems.where((p) => p.tagName == ProblemTag.inProgress).length;
+  int get countCompleted =>
+      _problems.where((p) => p.tagName == ProblemTag.completed).length;
+
+  void setFilters({ProblemTag? tag, ProblemType? category}) {
+    _selectedTag = tag;
+    _selectedCategory = category;
+    notifyListeners(); // แจ้ง Consumer ให้วาดใหม่พร้อมข้อมูลที่กรองแล้ว
+  }
+
+  Map<String, dynamic> getMostReportedAreaData() {
+    // 1. ถ้าไม่มีข้อมูลในระบบเลย ให้ส่งค่า Default กลับไป
+    if (_problems.isEmpty) {
+      return {
+        'location': 'ไม่มีข้อมูล',
+        'problems': <ProblemEntity>[],
+        'upvotes': 0,
+      };
+    }
+
+    // 2. จัดกลุ่มปัญหาตามชื่อสถานที่ (locationName)
+    // Key: ชื่อสถานที่, Value: List ของปัญหาที่เกิด ณ ที่นั้น
+    Map<String, List<ProblemEntity>> locationGroups = {};
+    for (var problem in _problems) {
+      if (!locationGroups.containsKey(problem.locationName)) {
+        locationGroups[problem.locationName] = [];
+      }
+      locationGroups[problem.locationName]!.add(problem);
+    }
+
+    // 3. หาพื้นที่ที่มีผลกระทบสูงสุด (วัดจากผลรวมของ Upvote ทั้งหมดในพื้นที่นั้น)
+    String mostReportedLocation = '';
+    List<ProblemEntity> mostReportedProblems = [];
+    int maxUpvoteSum = -1; // เริ่มต้นที่ -1 เพื่อให้เจอค่าที่มากกว่าเสมอ
+
+    locationGroups.forEach((location, problemsInArea) {
+      // คำนวณผลรวม Upvote ของปัญหาย่อยๆ ทั้งหมดในสถานที่นี้
+      int totalUpvotes = problemsInArea.fold(
+        0,
+        (sum, problem) => sum + problem.upvoteCount,
+      );
+
+      // ถ้าคะแนนรวม Upvote ของที่นี่ มากกว่าที่เคยบันทึกไว้ ให้เปลี่ยนเป็นที่นี่แทน
+      if (totalUpvotes > maxUpvoteSum) {
+        maxUpvoteSum = totalUpvotes;
+        mostReportedLocation = location;
+        mostReportedProblems = problemsInArea;
+      }
+    });
+
+    // 4. ส่งข้อมูลสรุปกลับไปให้ Dashboard ใช้งาน
+    return {
+      'location': mostReportedLocation,
+      'problems': mostReportedProblems,
+      'upvotes': maxUpvoteSum,
+    };
+  }
+
+  Map<String, int> getLocalStatistics() {
+  return {
+    'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
+    'inProgress': _problems.where((p) => p.tagName == ProblemTag.inProgress).length,
+    'completed': _problems.where((p) => p.tagName == ProblemTag.completed).length,
+  };
+}
+
+  void updateUserId(String? userId) {
+    if (_currentUserId == userId) return;
+    _currentUserId = userId;
+    debugPrint('ProblemProvider updated with userId: $_currentUserId');
+    notifyListeners();
+  }
 
   Future<void> fetchProblems() async {
     _isLoading = true;
     notifyListeners();
     try {
-      _problems = await _getProblemsUseCase();
-    } catch (e, stacktrace) {
-      print('Fetch Error: $e');
-      print('Stacktrace: $stacktrace');
+      _problems = await _getProblemsUseCase(_currentUserId);
+    } catch (e) {
+      debugPrint('Fetch Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> fetchNotCompletedProblems() async {
-    _isLoading = true;
-    notifyListeners();
+  Future<void> toggleUpvote({
+    required String problemId,
+    required bool isUpvoted,
+  }) async {
     try {
-      _problems = await _getProblemsUseCase.getNotCompletedProblems();
-    } catch (e, stacktrace) {
-      print('Fetch Error: $e');
-      print('Stacktrace: $stacktrace');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      await _updateProblemUpvoteUseCase(
+        problemId: problemId,
+        isUpvoted: isUpvoted,
+        userId: _currentUserId,
+      );
+
+      final index = _problems.indexWhere((p) => p.id == problemId);
+      if (index != -1) {
+        // 1. อัปเดตข้อมูลตัวที่เลือก
+        final updatedProblem = _problems[index].copyWith(
+          upvoteCount: isUpvoted ? _problems[index].upvoteCount + 1 : _problems[index].upvoteCount - 1,
+          isUpvotedByMe: isUpvoted,
+        );
+
+        // 2. ลบตัวเก่าออก และแทรกกลับเข้าไปในตำแหน่งที่เรียงลำดับถูกต้อง (In-place update)
+        _problems.removeAt(index);
+        
+        // หาตำแหน่งใหม่ที่ควรจะเป็น (Binary Search หรือ Loop หา)
+        // เพื่อความง่ายแต่ยังเร็วอยู่ ใช้การหา index แรกที่น้อยกว่าคะแนนใหม่
+        int newIndex = _problems.indexWhere((p) => p.upvoteCount <= updatedProblem.upvoteCount);
+        if (newIndex == -1) {
+          _problems.add(updatedProblem); // ถ้าคะแนนน้อยสุดไปอยู่ท้ายสุด
+        } else {
+          _problems.insert(newIndex, updatedProblem);
+        }
+
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -146,42 +247,23 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
-  Future<void> toggleUpvote({
-    required String problemId,
-    required bool isUpvoted,
-  }) async {
+  Future<ProblemEntity?> getMaxUpvotedProblem() async {
     try {
-      await _updateProblemUpvoteUseCase(
-        problemId: problemId,
-        isUpvoted: isUpvoted,
-      );
-      // สำคัญ: อัปเดตข้อมูลใน List ของ Provider ด้วย!
-      final index = _problems.indexWhere((p) => p.id == problemId);
-      if (index != -1) {
-        final oldProblem = _problems[index];
-        _problems[index] = ProblemEntity(
-          id: oldProblem.id,
-          title: oldProblem.title,
-          detail: oldProblem.detail,
-          lat: oldProblem.lat,
-          lng: oldProblem.lng,
-          upvoteCount: isUpvoted
-              ? oldProblem.upvoteCount + 1
-              : oldProblem.upvoteCount - 1,
-          createdAt: oldProblem.createdAt,
-          reporterEmail: oldProblem.reporterEmail,
-          typeName: oldProblem.typeName,
-          tagName: oldProblem.tagName,
-          locationName: oldProblem.locationName,
-          isUpvotedByMe: isUpvoted,
-          imageUrl: oldProblem.imageUrl,
-        );
-        notifyListeners(); // แจ้งทุกหน้าจอที่ฟังอยู่ให้วาดใหม่
-      }
+      return await _getProblemsUseCase.getMaxUpvotedProblem(_currentUserId);
     } catch (e, stacktrace) {
-      print('Toggle Upvote Error: $e');
+      print('Get Max Upvoted Problem Error: $e');
       print('Stacktrace: $stacktrace');
-      rethrow;
+      return null;
+    }
+  }
+
+  Future<int> countProblemsByTag({required String currentTagId}) async {
+    try {
+      return await _getProblemsUseCase.countByTag(currentTagId);
+    } catch (e, stacktrace) {
+      print('Count by Tag Error: $e');
+      print('Stacktrace: $stacktrace');
+      return 0;
     }
   }
 }

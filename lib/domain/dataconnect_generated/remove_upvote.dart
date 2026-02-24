@@ -2,9 +2,10 @@ part of 'generated.dart';
 
 class RemoveUpvoteVariablesBuilder {
   String problemId;
+  String userId;
 
   final FirebaseDataConnect _dataConnect;
-  RemoveUpvoteVariablesBuilder(this._dataConnect, {required  this.problemId,});
+  RemoveUpvoteVariablesBuilder(this._dataConnect, {required  this.problemId,required  this.userId,});
   Deserializer<RemoveUpvoteData> dataDeserializer = (dynamic json)  => RemoveUpvoteData.fromJson(jsonDecode(json));
   Serializer<RemoveUpvoteVariables> varsSerializer = (RemoveUpvoteVariables vars) => jsonEncode(vars.toJson());
   Future<OperationResult<RemoveUpvoteData, RemoveUpvoteVariables>> execute() {
@@ -12,7 +13,7 @@ class RemoveUpvoteVariablesBuilder {
   }
 
   MutationRef<RemoveUpvoteData, RemoveUpvoteVariables> ref() {
-    RemoveUpvoteVariables vars= RemoveUpvoteVariables(problemId: problemId,);
+    RemoveUpvoteVariables vars= RemoveUpvoteVariables(problemId: problemId,userId: userId,);
     return _dataConnect.mutation("RemoveUpvote", dataDeserializer, varsSerializer, vars);
   }
 }
@@ -136,10 +137,12 @@ class RemoveUpvoteData {
 @immutable
 class RemoveUpvoteVariables {
   final String problemId;
+  final String userId;
   @Deprecated('fromJson is deprecated for Variable classes as they are no longer required for deserialization.')
   RemoveUpvoteVariables.fromJson(Map<String, dynamic> json):
   
-  problemId = nativeFromJson<String>(json['problemId']);
+  problemId = nativeFromJson<String>(json['problemId']),
+  userId = nativeFromJson<String>(json['userId']);
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) {
@@ -150,21 +153,24 @@ class RemoveUpvoteVariables {
     }
 
     final RemoveUpvoteVariables otherTyped = other as RemoveUpvoteVariables;
-    return problemId == otherTyped.problemId;
+    return problemId == otherTyped.problemId && 
+    userId == otherTyped.userId;
     
   }
   @override
-  int get hashCode => problemId.hashCode;
+  int get hashCode => Object.hashAll([problemId.hashCode, userId.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['problemId'] = nativeToJson<String>(problemId);
+    json['userId'] = nativeToJson<String>(userId);
     return json;
   }
 
   RemoveUpvoteVariables({
     required this.problemId,
+    required this.userId,
   });
 }
 

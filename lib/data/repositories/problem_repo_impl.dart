@@ -1,6 +1,7 @@
 import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
+import 'package:firebase_data_connect/firebase_data_connect.dart';
 
 class ProblemRepoImpl implements ProblemRepo {
   final ConnectorConnector connector;
@@ -9,15 +10,14 @@ class ProblemRepoImpl implements ProblemRepo {
   // Read
   // Komsan
   @override
-  Future<List<ProblemEntity>> getProblems() async {
+  Future<List<ProblemEntity>> getProblems(String userId) async {
     try {
       // 1. เรียก Query จาก Data Connect SDK (ตัวอย่างชื่อ listProblems)
       final result = await connector.listProblems().execute();
-
       // 2. Map ข้อมูลจาก SDK Object ให้กลายเป็น Domain Entity
       // e ในที่นี้คือข้อมูลดิบที่มีความสัมพันธ์ (Nested Object) ติดมาด้วย
       return result.data.problems.map((e) {
-        return ProblemEntity.fromGenerated(e);
+        return ProblemEntity.fromGenerated(e, userId);
       }).toList();
     } catch (e) {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาได้: $e");
@@ -25,14 +25,34 @@ class ProblemRepoImpl implements ProblemRepo {
   }
 
   @override
-  Future<List<ProblemEntity>> getNotCompletedProblems() async {
+  Future<List<ProblemEntity>> getNotCompletedProblems(String userId) async {
     try {
       final result = await connector.listNotCompletedProblems().execute();
       return result.data.problems.map((e) {
-        return ProblemEntity.fromGenerated(e);
+        return ProblemEntity.fromGenerated(e, userId);
       }).toList();
     } catch (e) {
-      throw Exception("ไม่สามารถดึงข้อมูลปัญหาที่ยังไม่เสร็จสิ้นได้: $e");
+      if (e is DataConnectOperationError) {
+        print('--- Data Connect Error Found ---');
+        print('Code: ${e.code}');
+        print('Message: ${e.message}');
+
+        // ตัวนี้แหละครับที่จะบอกว่า "Instance of ..." คืออะไร
+        final errorInfo = e.response;
+        if (errorInfo != null) {
+          // ลองพิมพ์ข้อมูลดิบจาก errorInfo
+          print('Error Details: ${errorInfo.errors}');
+
+          // ถ้ามี List ของ Errors ย่อยๆ ให้วน Loop ดู
+          for (var graphQLError in errorInfo.errors) {
+            print('--- GraphQL Error Detail ---');
+            print('Message: ${graphQLError.message}');
+          }
+        }
+      } else {
+        print('Unknown Error: $e');
+      }
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาได้: $e");
     }
   }
 
@@ -123,13 +143,14 @@ class ProblemRepoImpl implements ProblemRepo {
   Future<List<ProblemEntity>> getProblemsByTagAndType({
     required String tagId,
     required String typeId,
+    String? userId,
   }) async {
     try {
       final result = await connector
           .problemsByTagAndType(TagId: tagId, TypeId: typeId)
           .execute();
       return result.data.problems.map((e) {
-        return ProblemEntity.fromGenerated(e);
+        return ProblemEntity.fromGenerated(e, userId);
       }).toList();
     } catch (e) {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามแท็กและประเภทได้: $e");
@@ -137,11 +158,14 @@ class ProblemRepoImpl implements ProblemRepo {
   }
 
   @override
-  Future<List<ProblemEntity>> getProblemsByTag({required String tagId}) async {
+  Future<List<ProblemEntity>> getProblemsByTag({
+    required String tagId,
+    String? userId,
+  }) async {
     try {
       final result = await connector.problemsByTagFull(TagId: tagId).execute();
       return result.data.problems.map((e) {
-        return ProblemEntity.fromGenerated(e);
+        return ProblemEntity.fromGenerated(e, userId);
       }).toList();
     } catch (e) {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามแท็กได้: $e");
@@ -151,13 +175,14 @@ class ProblemRepoImpl implements ProblemRepo {
   @override
   Future<List<ProblemEntity>> getProblemsByType({
     required String typeId,
+    String? userId,
   }) async {
     try {
       final result = await connector
           .problemsByTypeFull(TypeId: typeId)
           .execute();
       return result.data.problems.map((e) {
-        return ProblemEntity.fromGenerated(e);
+        return ProblemEntity.fromGenerated(e, userId);
       }).toList();
     } catch (e) {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาตามประเภทได้: $e");
@@ -167,9 +192,9 @@ class ProblemRepoImpl implements ProblemRepo {
   // Insert upvote
   // Rachata
   @override
-  Future<void> addUpvote({required String id}) async {
+  Future<void> addUpvote({required String id, required String userId}) async {
     try {
-      await connector.addUpvote(problemId: id).execute();
+      await connector.addUpvote(problemId: id, userId: userId).execute();
     } catch (e) {
       throw Exception("ไม่สามารถเพิ่มคะแนนให้ปัญหาได้: $e");
     }
@@ -178,23 +203,27 @@ class ProblemRepoImpl implements ProblemRepo {
   // Delete upvote
   // Rachata
   @override
-  Future<void> removeUpvote({required String id}) async {
+  Future<void> removeUpvote({
+    required String id,
+    required String userId,
+  }) async {
     try {
-      await connector.removeUpvote(problemId: id).execute();
+      await connector.removeUpvote(problemId: id, userId: userId).execute();
     } catch (e) {
       throw Exception("ไม่สามารถลบคะแนนให้ปัญหาได้: $e");
     }
   }
 
   @override
-  Future<ProblemEntity> getMaxUpvotedProblem() async {
+  Future<ProblemEntity> getMaxUpvotedProblem(String userId) async {
     try {
       final result = await connector.maxUpvoteProblem().execute();
       if (result.data.problems.isEmpty) {
         throw Exception("ไม่พบปัญหาที่มีคะแนนสูงสุด");
       }
-      return ProblemEntity.fromGenerated(result.data.problems.first);
+      return ProblemEntity.fromGenerated(result.data.problems.first, userId);
     } catch (e) {
+      return 
       throw Exception("ไม่สามารถดึงปัญหาที่มีคะแนนสูงสุดได้: $e");
     }
   }

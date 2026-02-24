@@ -1047,8 +1047,10 @@ ref.execute();
 #### Required Arguments
 ```dart
 String problemId = ...;
+String userId = ...;
 ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 ).execute();
 ```
 
@@ -1067,6 +1069,7 @@ class OperationResult<Data, Variables> {
 
 final result = await ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 );
 AddUpvoteData data = result.data;
 final ref = result.ref;
@@ -1077,9 +1080,11 @@ Each builder returns an `execute` function, which is a helper function that crea
 An example of how to use the `Ref` object is shown below:
 ```dart
 String problemId = ...;
+String userId = ...;
 
 final ref = ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 ).ref();
 ref.execute();
 ```
@@ -1089,8 +1094,10 @@ ref.execute();
 #### Required Arguments
 ```dart
 String problemId = ...;
+String userId = ...;
 ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 ).execute();
 ```
 
@@ -1109,6 +1116,7 @@ class OperationResult<Data, Variables> {
 
 final result = await ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 );
 RemoveUpvoteData data = result.data;
 final ref = result.ref;
@@ -1119,9 +1127,11 @@ Each builder returns an `execute` function, which is a helper function that crea
 An example of how to use the `Ref` object is shown below:
 ```dart
 String problemId = ...;
+String userId = ...;
 
 final ref = ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 ).ref();
 ref.execute();
 ```

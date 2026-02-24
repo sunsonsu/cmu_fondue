@@ -30,12 +30,16 @@ fragment ProblemFields on Problem {
 }
 
 query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
-  problems{
+  problems(orderBy: [{ upvoteCount: DESC }]) {
     ...ProblemFields 
   }
 }
+
 query ListNotCompletedProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
-  problems(where: { currentTags: { tagName: { ne: "Completed" } } }) {
+  problems(
+    where: { currentTags: { tagName: { ne: "Completed" } } },
+    orderBy: [{ upvoteCount: DESC }]
+  ) {
     ...ProblemFields
   }
 }
