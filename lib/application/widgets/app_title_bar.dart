@@ -43,7 +43,7 @@ class AppTitleBar extends StatelessWidget {
               icon: const Icon(
                 Icons.account_circle_outlined,
                 color: Colors.white,
-                size: 28,
+                size: 35,
               ),
               tooltip: 'Profile',
             ),

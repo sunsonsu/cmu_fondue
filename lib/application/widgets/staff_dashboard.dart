@@ -4,8 +4,8 @@ import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class StaffDashboard extends StatefulWidget {
@@ -212,11 +212,24 @@ class _StaffDashboardState extends State<StaffDashboard> {
                                   ),
                                   if (problem != null) ...[
                                     const SizedBox(height: 4),
-                                    Text(
-                                      '1 รายการ • $upvotes upvotes • แตะเพื่อดูแผนที่',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white.withOpacity(0.8),
+                                    RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                        children: [
+                                          TextSpan(text: '$upvotes upvotes • '),
+                                          TextSpan(
+                                            text: 'แตะเพื่อดูแผนที่',
+                                            style: GoogleFonts.kanit(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
