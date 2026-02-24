@@ -1,4 +1,4 @@
-import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';
@@ -94,31 +94,35 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: Consumer<MapProblemProvider>(
+                child: Consumer<ProblemProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    print(
-                      '-----------------UI bottom sheet: ${provider.problems.length}-------------------',
-                    );
-
-                    if (provider.problems.isEmpty) {
+                    if (provider.notCompletedProblems.isEmpty) {
                       return const Center(
                         child: Text('ไม่พบข้อมูลในบริเวณนี้'),
                       );
                     }
 
                     return ListView.builder(
+                      key: const PageStorageKey('problemsList'),
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      itemCount: provider.problems.length,
+                      itemCount: provider.notCompletedProblems.length,
                       itemBuilder: (context, index) {
-                        return ProblemCard(problem: provider.problems[index]);
+                        return ProblemCard(
+                          problem: provider.notCompletedProblems[index],
+                          onUpvote: (isUpvoted) =>
+                              context.read<ProblemProvider>().toggleUpvote(
+                                problemId: provider.notCompletedProblems[index].id,
+                                isUpvoted: isUpvoted,
+                              ),
+                        );
                       },
                     );
                   },

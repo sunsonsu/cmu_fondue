@@ -99,13 +99,13 @@ class ConnectorConnector {
   }
   
   
-  AddUpvoteVariablesBuilder addUpvote ({required String problemId, }) {
-    return AddUpvoteVariablesBuilder(dataConnect, problemId: problemId,);
+  AddUpvoteVariablesBuilder addUpvote ({required String problemId, required String userId, }) {
+    return AddUpvoteVariablesBuilder(dataConnect, problemId: problemId,userId: userId,);
   }
   
   
-  RemoveUpvoteVariablesBuilder removeUpvote ({required String problemId, }) {
-    return RemoveUpvoteVariablesBuilder(dataConnect, problemId: problemId,);
+  RemoveUpvoteVariablesBuilder removeUpvote ({required String problemId, required String userId, }) {
+    return RemoveUpvoteVariablesBuilder(dataConnect, problemId: problemId,userId: userId,);
   }
   
   

@@ -6,14 +6,14 @@ class GetProblemsUseCase {
   final ProblemRepo repository;
   GetProblemsUseCase(this.repository);
 
-  Future<List<ProblemEntity>> call() async {
-    List<ProblemEntity> list_problems = await repository.getProblems();
-    print('=============${list_problems.length}================');
-    return list_problems;
+  Future<List<ProblemEntity>> call(String? userId) async {
+    List<ProblemEntity> listProblems = await repository.getProblems(userId ?? '');
+    return listProblems;
   }
 
-  Future<List<ProblemEntity>> getNotCompletedProblems() async {
-    return await repository.getNotCompletedProblems();
+  Future<List<ProblemEntity>> getNotCompletedProblems(String? userId) async {
+    print("======================Get Problems without Completed by User: ${userId}==============================");
+    return await repository.getNotCompletedProblems(userId ?? '');
   }
 
   Future<int> countByTag(String currentTagId) async {
