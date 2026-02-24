@@ -47,6 +47,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
               // Fixed Drag Handle & Header
               GestureDetector(
                 onVerticalDragUpdate: (details) {
+                  if (!_controller.isAttached) return;
                   // Allow dragging from header area
                   final currentSize = _controller.size;
                   final delta =
@@ -97,7 +98,15 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                 child: Consumer<MapProblemProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        ],
+                      );
                     }
 
                     print(
@@ -105,8 +114,16 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                     );
 
                     if (provider.problems.isEmpty) {
-                      return const Center(
-                        child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                            ),
+                          ),
+                        ],
                       );
                     }
 
@@ -118,7 +135,12 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                       ),
                       itemCount: provider.problems.length,
                       itemBuilder: (context, index) {
-                        return ProblemCard(problem: provider.problems[index]);
+                        return ProblemCard(
+                          problem: provider.problems[index],
+                          onDeleted: () {
+                            provider.fetchProblems();
+                          },
+                        );
                       },
                     );
                   },
