@@ -200,6 +200,7 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                             itemCount: widget.problems.length,
                             itemBuilder: (context, index) {
                               return ProblemCard(
+                                key: ValueKey(widget.problems[index].id),
                                 problem: widget.problems[index],
                                 onDeleted: () {
                                   // Refresh if needed

@@ -116,6 +116,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                       itemCount: provider.notCompletedProblems.length,
                       itemBuilder: (context, index) {
                         return ProblemCard(
+                          key: ValueKey(provider.notCompletedProblems[index].id),
                           problem: provider.notCompletedProblems[index],
                           onUpvote: (isUpvoted) =>
                               context.read<ProblemProvider>().toggleUpvote(

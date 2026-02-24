@@ -30,17 +30,19 @@ class ProblemProvider with ChangeNotifier {
   ProblemType? get selectedCategory => _selectedCategory;
 
   List<ProblemEntity> get allProblems => _problems;
-  List<ProblemEntity> get notCompletedProblems =>
-      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
   List<ProblemEntity> get filteredProblems {
+    if (_selectedTag == null && _selectedCategory == null) return _problems;
+    
     return _problems.where((p) {
       final matchTag = _selectedTag == null || p.tagName == _selectedTag;
-      final matchType =
-          _selectedCategory == null || p.typeName == _selectedCategory;
+      final matchType = _selectedCategory == null || p.typeName == _selectedCategory;
       return matchTag && matchType;
     }).toList();
   }
+
+  List<ProblemEntity> get notCompletedProblems =>
+      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
   int get countPending =>
       _problems.where((p) => p.tagName == ProblemTag.pending).length;
@@ -48,6 +50,12 @@ class ProblemProvider with ChangeNotifier {
       _problems.where((p) => p.tagName == ProblemTag.inProgress).length;
   int get countCompleted =>
       _problems.where((p) => p.tagName == ProblemTag.completed).length;
+
+  void setFilters({ProblemTag? tag, ProblemType? category}) {
+    _selectedTag = tag;
+    _selectedCategory = category;
+    notifyListeners(); // แจ้ง Consumer ให้วาดใหม่พร้อมข้อมูลที่กรองแล้ว
+  }
 
   Map<String, dynamic> getMostReportedAreaData() {
     // 1. ถ้าไม่มีข้อมูลในระบบเลย ให้ส่งค่า Default กลับไป
@@ -97,23 +105,13 @@ class ProblemProvider with ChangeNotifier {
     };
   }
 
-  Map<String, int> getStatistics() {
-    return {
-      'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
-      'inProgress': _problems
-          .where((p) => p.tagName == ProblemTag.inProgress)
-          .length,
-      'completed': _problems
-          .where((p) => p.tagName == ProblemTag.completed)
-          .length,
-    };
-  }
-
-  void setFilters({ProblemTag? tag, ProblemType? category}) {
-    _selectedTag = tag;
-    _selectedCategory = category;
-    notifyListeners(); // แจ้ง Consumer ให้วาดใหม่พร้อมข้อมูลที่กรองแล้ว
-  }
+  Map<String, int> getLocalStatistics() {
+  return {
+    'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
+    'inProgress': _problems.where((p) => p.tagName == ProblemTag.inProgress).length,
+    'completed': _problems.where((p) => p.tagName == ProblemTag.completed).length,
+  };
+}
 
   void updateUserId(String? userId) {
     if (_currentUserId == userId) return;
@@ -139,20 +137,37 @@ class ProblemProvider with ChangeNotifier {
     required String problemId,
     required bool isUpvoted,
   }) async {
-    await _updateProblemUpvoteUseCase(
-      problemId: problemId,
-      isUpvoted: isUpvoted,
-      userId: _currentUserId,
-    );
-    final index = _problems.indexWhere((p) => p.id == problemId);
-    if (index != -1) {
-      _problems[index] = _problems[index].copyWith(
-        upvoteCount: isUpvoted
-            ? _problems[index].upvoteCount + 1
-            : _problems[index].upvoteCount - 1,
-        isUpvotedByMe: isUpvoted,
+    try {
+      await _updateProblemUpvoteUseCase(
+        problemId: problemId,
+        isUpvoted: isUpvoted,
+        userId: _currentUserId,
       );
-      notifyListeners();
+
+      final index = _problems.indexWhere((p) => p.id == problemId);
+      if (index != -1) {
+        // 1. อัปเดตข้อมูลตัวที่เลือก
+        final updatedProblem = _problems[index].copyWith(
+          upvoteCount: isUpvoted ? _problems[index].upvoteCount + 1 : _problems[index].upvoteCount - 1,
+          isUpvotedByMe: isUpvoted,
+        );
+
+        // 2. ลบตัวเก่าออก และแทรกกลับเข้าไปในตำแหน่งที่เรียงลำดับถูกต้อง (In-place update)
+        _problems.removeAt(index);
+        
+        // หาตำแหน่งใหม่ที่ควรจะเป็น (Binary Search หรือ Loop หา)
+        // เพื่อความง่ายแต่ยังเร็วอยู่ ใช้การหา index แรกที่น้อยกว่าคะแนนใหม่
+        int newIndex = _problems.indexWhere((p) => p.upvoteCount <= updatedProblem.upvoteCount);
+        if (newIndex == -1) {
+          _problems.add(updatedProblem); // ถ้าคะแนนน้อยสุดไปอยู่ท้ายสุด
+        } else {
+          _problems.insert(newIndex, updatedProblem);
+        }
+
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
