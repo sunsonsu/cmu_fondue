@@ -100,3 +100,9 @@ query ProblemsByTypeFull($TypeId: UUID!) @auth(level: PUBLIC insecureReason: "Ch
     ...ProblemFields
   }
 }
+
+query MaxUpvoteProblem @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(orderBy: {upvoteCount: DESC}, limit: 1) {
+    ...ProblemFields
+  }
+}

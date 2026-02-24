@@ -45,6 +45,8 @@ part 'problems_by_tag_full.dart';
 
 part 'problems_by_type_full.dart';
 
+part 'max_upvote_problem.dart';
+
 
 
 
@@ -156,6 +158,11 @@ class ConnectorConnector {
   
   ProblemsByTypeFullVariablesBuilder problemsByTypeFull ({required String TypeId, }) {
     return ProblemsByTypeFullVariablesBuilder(dataConnect, TypeId: TypeId,);
+  }
+  
+  
+  MaxUpvoteProblemVariablesBuilder maxUpvoteProblem () {
+    return MaxUpvoteProblemVariablesBuilder(dataConnect, );
   }
   
 

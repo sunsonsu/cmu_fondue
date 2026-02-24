@@ -15,6 +15,7 @@ class GetProblemsUseCase {
     return await repository.getNotCompletedProblems(userId ?? '');
   }
 
+  // Count problems by tag
   Future<int> countByTag(String currentTagId) async {
     return await repository.countProblemsByTag(currentTagId: currentTagId);
   }
@@ -37,5 +38,9 @@ class GetProblemsUseCase {
     required String typeId,
   }) async {
     return await repository.getProblemsByType(typeId: typeId);
+  }
+
+  Future<ProblemEntity> getMaxUpvotedProblem(String? userId) async {
+    return await repository.getMaxUpvotedProblem(userId ?? '');
   }
 }

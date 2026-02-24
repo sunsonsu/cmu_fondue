@@ -22,10 +22,7 @@ class AdminPage extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: ProfileButton(),
-          ),
+          Padding(padding: EdgeInsets.only(right: 12), child: ProfileButton()),
         ],
       ),
       body: const StaffDashboard(),
