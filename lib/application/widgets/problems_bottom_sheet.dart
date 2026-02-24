@@ -47,6 +47,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
               // Fixed Drag Handle & Header
               GestureDetector(
                 onVerticalDragUpdate: (details) {
+                  if (!_controller.isAttached) return;
                   // Allow dragging from header area
                   final currentSize = _controller.size;
                   final delta =
@@ -97,12 +98,28 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                 child: Consumer<ProblemProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        ],
+                      );
                     }
 
                     if (provider.notCompletedProblems.isEmpty) {
-                      return const Center(
-                        child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                            ),
+                          ),
+                        ],
                       );
                     }
 
@@ -116,13 +133,19 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                       itemCount: provider.notCompletedProblems.length,
                       itemBuilder: (context, index) {
                         return ProblemCard(
-                          key: ValueKey(provider.notCompletedProblems[index].id),
+                          key: ValueKey(
+                            provider.notCompletedProblems[index].id,
+                          ),
                           problem: provider.notCompletedProblems[index],
                           onUpvote: (isUpvoted) =>
                               context.read<ProblemProvider>().toggleUpvote(
-                                problemId: provider.notCompletedProblems[index].id,
+                                problemId:
+                                    provider.notCompletedProblems[index].id,
                                 isUpvoted: isUpvoted,
                               ),
+                          onDeleted: () {
+                            provider.fetchProblems();
+                          },
                         );
                       },
                     );
