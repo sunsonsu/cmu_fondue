@@ -90,7 +90,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
         title: const Text(
           'เลือกตำแหน่ง',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Color(0xFF5D3891),
           ),
