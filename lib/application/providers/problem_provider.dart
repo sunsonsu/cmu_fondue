@@ -7,26 +7,6 @@ import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/material.dart';
 
 class ProblemProvider with ChangeNotifier {
-  Future<ProblemEntity?> getMaxUpvotedProblem() async {
-    try {
-      return await _getProblemsUseCase.getMaxUpvotedProblem();
-    } catch (e, stacktrace) {
-      print('Get Max Upvoted Problem Error: $e');
-      print('Stacktrace: $stacktrace');
-      return null;
-    }
-  }
-
-  Future<int> countProblemsByTag({required String currentTagId}) async {
-    try {
-      return await _getProblemsUseCase.countByTag(currentTagId);
-    } catch (e, stacktrace) {
-      print('Count by Tag Error: $e');
-      print('Stacktrace: $stacktrace');
-      return 0;
-    }
-  }
-
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
@@ -249,6 +229,26 @@ class ProblemProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<ProblemEntity?> getMaxUpvotedProblem() async {
+    try {
+      return await _getProblemsUseCase.getMaxUpvotedProblem(_currentUserId);
+    } catch (e, stacktrace) {
+      print('Get Max Upvoted Problem Error: $e');
+      print('Stacktrace: $stacktrace');
+      return null;
+    }
+  }
+
+  Future<int> countProblemsByTag({required String currentTagId}) async {
+    try {
+      return await _getProblemsUseCase.countByTag(currentTagId);
+    } catch (e, stacktrace) {
+      print('Count by Tag Error: $e');
+      print('Stacktrace: $stacktrace');
+      return 0;
     }
   }
 }
