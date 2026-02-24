@@ -33,6 +33,7 @@ abstract class ProblemRepo {
   //Delete a problem
   Future<void> deleteProblem(String id);
 
+  // Count problems by tag
   Future<int> countProblemsByTag({required String currentTagId});
 
   Future<List<ProblemEntity>> getProblemsByTagAndType({
@@ -49,4 +50,6 @@ abstract class ProblemRepo {
 
   // Delete upvote
   Future<void> removeUpvote({required String id});
+
+  Future<ProblemEntity> getMaxUpvotedProblem();
 }

@@ -4,6 +4,7 @@ import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,12 @@ class _StaffDashboardState extends State<StaffDashboard> {
   List<ProblemEntity> _allProblems = [];
   List<ProblemEntity> _filteredProblems = [];
   bool _isLoading = true;
+
+  Map<String, int> _statistics = {
+    'pending': 0,
+    'inProgress': 0,
+    'completed': 0,
+  };
 
   ProblemTag? _selectedTag;
   ProblemType? _selectedCategory;
@@ -37,6 +44,27 @@ class _StaffDashboardState extends State<StaffDashboard> {
         _filteredProblems = provider.problems;
         _isLoading = false;
       });
+      await _loadStatistics();
+    });
+  }
+
+  Future<void> _loadStatistics() async {
+    final provider = Provider.of<ProblemProvider>(context, listen: false);
+    final pending = await provider.countProblemsByTag(
+      currentTagId: ProblemTag.pending.tagId,
+    );
+    final inProgress = await provider.countProblemsByTag(
+      currentTagId: ProblemTag.inProgress.tagId,
+    );
+    final completed = await provider.countProblemsByTag(
+      currentTagId: ProblemTag.completed.tagId,
+    );
+    setState(() {
+      _statistics = {
+        'pending': pending,
+        'inProgress': inProgress,
+        'completed': completed,
+      };
     });
   }
 
@@ -68,75 +96,27 @@ class _StaffDashboardState extends State<StaffDashboard> {
     });
   }
 
-  Map<String, int> _getStatistics() {
-    int pending = _allProblems
-        .where((p) => p.tagName == ProblemTag.pending)
-        .length;
-    int inProgress = _allProblems
-        .where((p) => p.tagName == ProblemTag.inProgress)
-        .length;
-    int completed = _allProblems
-        .where((p) => p.tagName == ProblemTag.completed)
-        .length;
-
-    return {
-      'pending': pending,
-      'inProgress': inProgress,
-      'completed': completed,
-    };
-  }
-
-  Map<String, dynamic> _getMostReportedAreaData() {
-    if (_allProblems.isEmpty) {
+  Future<Map<String, dynamic>> _getMostUpvotedAreaData() async {
+    final provider = Provider.of<ProblemProvider>(context, listen: false);
+    try {
+      final problem = await provider.getMaxUpvotedProblem();
+      print(problem);
+      if (problem == null) {
+        return {'location': 'ไม่มีข้อมูล', 'problem': null, 'upvotes': 0};
+      }
       return {
-        'location': 'ไม่มีข้อมูล',
-        'problems': <ProblemEntity>[],
-        'upvotes': 0,
+        'location': problem.locationName,
+        'problem': problem,
+        'upvotes': problem.upvoteCount,
       };
+    } catch (e) {
+      return {'location': 'ไม่มีข้อมูล', 'problem': null, 'upvotes': 0};
     }
-
-    // Group problems by location
-    Map<String, List<ProblemEntity>> locationProblems = {};
-    for (var problem in _allProblems) {
-      if (!locationProblems.containsKey(problem.locationName)) {
-        locationProblems[problem.locationName] = [];
-      }
-      locationProblems[problem.locationName]!.add(problem);
-    }
-
-    // Find location with max total upvotes
-    String mostReported = '';
-    List<ProblemEntity> mostReportedProblems = [];
-    int maxUpvoteCount = 0;
-    locationProblems.forEach((location, problems) {
-      // Calculate total upvotes for this location
-      int totalUpvotes = problems.fold(
-        0,
-        (sum, problem) => sum + problem.upvoteCount,
-      );
-      if (totalUpvotes > maxUpvoteCount) {
-        maxUpvoteCount = totalUpvotes;
-        mostReported = location;
-        mostReportedProblems = problems;
-      }
-    });
-
-    return {
-      'location': mostReported,
-      'problems': mostReportedProblems,
-      'upvotes': maxUpvoteCount,
-    };
   }
 
   @override
   Widget build(BuildContext context) {
-    final stats = _getStatistics();
-    final mostReportedData = _getMostReportedAreaData();
-    final mostReportedLocation = mostReportedData['location'] as String;
-    final mostReportedProblems =
-        mostReportedData['problems'] as List<ProblemEntity>;
-    final mostReportedUpvotes = mostReportedData['upvotes'] as int;
-
+    final stats = _statistics;
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : Container(
@@ -149,97 +129,110 @@ class _StaffDashboardState extends State<StaffDashboard> {
             ),
             child: Column(
               children: [
-                // Most Report Area Section
-                GestureDetector(
-                  onTap: mostReportedProblems.isNotEmpty
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AreaProblemsMapPage(
-                                areaName: mostReportedLocation,
-                                problems: mostReportedProblems,
-                              ),
-                            ),
-                          );
-                        }
-                      : null,
-                  child: Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'พื้นที่ที่ส่งผลกระทบมากที่สุด',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    color: Colors.white,
-                                    size: 20,
+                // Most Upvoted Area Section
+                FutureBuilder<Map<String, dynamic>>(
+                  future: _getMostUpvotedAreaData(),
+                  builder: (context, snapshot) {
+                    final data = snapshot.data;
+                    final location = data != null
+                        ? data['location'] as String
+                        : 'ไม่มีข้อมูล';
+                    final problem = data != null
+                        ? data['problem'] as ProblemEntity?
+                        : null;
+                    final upvotes = data != null ? data['upvotes'] as int : 0;
+                    return GestureDetector(
+                      onTap: problem != null
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AreaProblemsMapPage(
+                                    areaName: location,
+                                    problems: problem != null ? [problem] : [],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      mostReportedLocation,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            }
+                          : null,
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF5D3891), Color(0xFF7E57C2)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'พื้นที่ที่ถูกอัปโหวตมากที่สุด',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          location,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (problem != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '1 รายการ • $upvotes upvotes • แตะเพื่อดูแผนที่',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white.withOpacity(0.8),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
-                              if (mostReportedProblems.isNotEmpty) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${mostReportedProblems.length} รายการ • ${mostReportedUpvotes} upvotes • แตะเพื่อดูแผนที่',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white.withOpacity(0.8),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                            ),
+                            const Icon(
+                              Icons.trending_up,
+                              color: Colors.white,
+                              size: 48,
+                            ),
+                          ],
                         ),
-                        const Icon(
-                          Icons.trending_up,
-                          color: Colors.white,
-                          size: 48,
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
 
                 // Statistics Cards

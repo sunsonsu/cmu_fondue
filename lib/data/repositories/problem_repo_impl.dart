@@ -106,6 +106,7 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
+  // Count problems by tag
   @override
   Future<int> countProblemsByTag({required String currentTagId}) async {
     try {
@@ -182,6 +183,19 @@ class ProblemRepoImpl implements ProblemRepo {
       await connector.removeUpvote(problemId: id).execute();
     } catch (e) {
       throw Exception("ไม่สามารถลบคะแนนให้ปัญหาได้: $e");
+    }
+  }
+
+  @override
+  Future<ProblemEntity> getMaxUpvotedProblem() async {
+    try {
+      final result = await connector.maxUpvoteProblem().execute();
+      if (result.data.problems.isEmpty) {
+        throw Exception("ไม่พบปัญหาที่มีคะแนนสูงสุด");
+      }
+      return ProblemEntity.fromGenerated(result.data.problems.first);
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงปัญหาที่มีคะแนนสูงสุดได้: $e");
     }
   }
 }

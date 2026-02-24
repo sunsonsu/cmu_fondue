@@ -134,7 +134,7 @@ mutation SeedInitialData @auth(level: PUBLIC) {
       problemLat: 18.80123248435703
       problemLng: 98.95259418015277
       title: "ห้องน้ำ RB5 ชั้น 1 เสีย"
-      upvoteCount: 0
+      upvoteCount: 12
     }
   )
 
