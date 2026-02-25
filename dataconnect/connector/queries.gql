@@ -106,3 +106,12 @@ query MaxUpvoteProblem @auth(level: PUBLIC insecureReason: "Change to USER when 
     ...ProblemFields
   }
 }
+
+query ListProblemsByReporter($reporterId: String!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(
+    where: { reporterId: { eq: $reporterId } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
+    ...ProblemFields
+  }
+}

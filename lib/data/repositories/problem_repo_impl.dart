@@ -223,8 +223,23 @@ class ProblemRepoImpl implements ProblemRepo {
       }
       return ProblemEntity.fromGenerated(result.data.problems.first, userId);
     } catch (e) {
-      return 
       throw Exception("ไม่สามารถดึงปัญหาที่มีคะแนนสูงสุดได้: $e");
+    }
+  }
+
+  // Komsan
+  @override
+  Future<List<ProblemEntity>> getProblemsByReporter({
+    required String reporterId,
+    required String currentUserId,
+  }) async {
+    try {
+      final result = await connector.listProblemsByReporter(reporterId: reporterId).execute();
+      return result.data.problems.map((e) {
+        return ProblemEntity.fromGenerated(e, currentUserId);
+      }).toList();
+    } catch (e) {
+      throw Exception("ไม่สามารถดึงข้อมูลปัญหาของผู้ใช้ได้: $e");
     }
   }
 }
