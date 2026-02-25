@@ -6,9 +6,9 @@ extension ProblemTagX on ProblemTag {
   String get tagId {
     switch (this) {
       case ProblemTag.pending:
-        return 'd74d3f00-e2fb-4b71-9d06-1f4b336c56b7';
-      case ProblemTag.received:
         return '519a08f6-ee74-4b2b-870e-b35c951c8ee8';
+      case ProblemTag.received:
+        return 'd74d3f00-e2fb-4b71-9d06-1f4b336c56b7';
       case ProblemTag.inProgress:
         return '619a08f6-ee74-4b2b-870e-b35c951c8ef9';
       case ProblemTag.completed:

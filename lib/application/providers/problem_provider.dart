@@ -1,19 +1,31 @@
 import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+
+class ProblemWithDistance {
+  final ProblemEntity problem;
+  final double distance;
+
+  ProblemWithDistance(this.problem, this.distance);
+}
 
 class ProblemProvider with ChangeNotifier {
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
+  final DeleteProblemUseCase _deleteProblemUseCase;
 
   ProblemProvider(
     this._getProblemsUseCase,
     this._createProblemUseCase,
     this._updateProblemUpvoteUseCase,
+    this._deleteProblemUseCase,
   );
 
   bool _isLoading = false;
@@ -21,6 +33,27 @@ class ProblemProvider with ChangeNotifier {
 
   List<ProblemEntity> _problems = [];
   List<ProblemEntity> get problems => _problems;
+
+  List<ProblemEntity> get notCompletedProblems =>
+      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
+
+  List<ProblemEntity> getNearbyProblems(
+    double lat,
+    double lng, {
+    double maxDistance = 500,
+    bool onlyNotCompleted = false,
+  }) {
+    final List<ProblemWithDistance> problemsWithDistance = [];
+    final sourceList = onlyNotCompleted ? notCompletedProblems : _problems;
+    for (var p in sourceList) {
+      double distance = Geolocator.distanceBetween(lat, lng, p.lat, p.lng);
+      if (distance <= maxDistance) {
+        problemsWithDistance.add(ProblemWithDistance(p, distance));
+      }
+    }
+    problemsWithDistance.sort((a, b) => a.distance.compareTo(b.distance));
+    return problemsWithDistance.map((e) => e.problem).toList();
+  }
 
   Future<void> fetchProblems() async {
     _isLoading = true;
@@ -162,6 +195,19 @@ class ProblemProvider with ChangeNotifier {
       print('Toggle Upvote Error: $e');
       print('Stacktrace: $stacktrace');
       rethrow;
+    }
+  }
+
+  Future<void> deleteProblem({required String problemId}) async {
+    try {
+      await _deleteProblemUseCase(problemId);
+
+      _problems.removeWhere((p) => p.id == problemId);
+      notifyListeners();
+    } catch (e, stacktrace) {
+      print('Delete Error: $e');
+      print('Stacktrace: $stacktrace');
+      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
     }
   }
 }

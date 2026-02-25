@@ -6,9 +6,7 @@ import 'package:cmu_fondue/application/widgets/problem_category_tag.dart';
 import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
-import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
-import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
-import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -315,10 +313,9 @@ class _ProblemCardState extends State<ProblemCard> {
       );
 
       // ลบปัญหา
-      final ProblemRepo repo = ProblemRepoImpl(
-        connector: ConnectorConnector.instance,
+      await context.read<ProblemProvider>().deleteProblem(
+        problemId: widget.problem.id,
       );
-      await repo.deleteProblem(widget.problem.id);
 
       // ปิด loading
       if (context.mounted) {
@@ -327,10 +324,7 @@ class _ProblemCardState extends State<ProblemCard> {
 
       // แสดง SnackBar แจ้งผลลัพธ์
       if (context.mounted) {
-        CustomSnackBar.showSuccess(
-          context: context,
-          message: 'ลบปัญหาสำเร็จ',
-        );
+        CustomSnackBar.showSuccess(context: context, message: 'ลบปัญหาสำเร็จ');
       }
 
       // เรียก callback เพื่อให้ parent refresh ข้อมูล
@@ -343,10 +337,7 @@ class _ProblemCardState extends State<ProblemCard> {
 
       // แสดงข้อความ error
       if (context.mounted) {
-        CustomSnackBar.showError(
-          context: context,
-          message: 'ลบปัญหาไม่สำเร็จ',
-        );
+        CustomSnackBar.showError(context: context, message: 'ลบปัญหาไม่สำเร็จ');
       }
     }
   }

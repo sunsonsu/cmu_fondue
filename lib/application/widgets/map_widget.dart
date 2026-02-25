@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 import 'dart:math' as math;
 
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
-import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,33 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+
+Future<Position> getUserCurrentLocation() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    return Future.error(
+      'Location permissions are permanently denied, we cannot request permissions.',
+    );
+  }
+
+  return await Geolocator.getCurrentPosition();
+}
 
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
@@ -94,33 +121,6 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
       },
     );
   }
-
-  Future<Position> getUserCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.',
-      );
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
 }
 
 class MapViewerWidget extends MapWidget {
@@ -143,10 +143,10 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   @override
   Set<Marker> get markers {
-    final problems = Provider.of<MapProblemProvider>(
+    final problems = Provider.of<ProblemProvider>(
       context,
       listen: false,
-    ).problems;
+    ).notCompletedProblems;
 
     return problems.map((ProblemEntity problem) {
       final Uint8List? icon = _markerIcons[problem.id];
@@ -261,9 +261,9 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 
   Future<void> loadData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = Provider.of<MapProblemProvider>(context, listen: false);
+      final provider = Provider.of<ProblemProvider>(context, listen: false);
       await provider.fetchProblems();
-      await _loadMarkerIcons(provider.problems);
+      await _loadMarkerIcons(provider.notCompletedProblems);
     });
   }
 }

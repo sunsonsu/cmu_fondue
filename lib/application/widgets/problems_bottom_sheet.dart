@@ -1,7 +1,10 @@
-import 'package:cmu_fondue/application/providers/map_problem_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cmu_fondue/application/widgets/map_widget.dart';
 
 class ProblemsBottomSheet extends StatefulWidget {
   const ProblemsBottomSheet({super.key});
@@ -13,6 +16,29 @@ class ProblemsBottomSheet extends StatefulWidget {
 class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
+
+  Position? _currentPosition;
+  bool _isLoadingLocation = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    try {
+      final position = await getUserCurrentLocation();
+      if (mounted) {
+        setState(() {
+          _currentPosition = position;
+          _isLoadingLocation = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingLocation = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -94,17 +120,20 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
 
               // Scrollable Problems List
               Expanded(
-                child: Consumer<MapProblemProvider>(
+                child: Consumer<ProblemProvider>(
                   builder: (context, provider, child) {
-                    if (provider.isLoading) {
+                    if (provider.isLoading || _isLoadingLocation) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
+                    List<ProblemEntity> displayProblems =
+                        provider.notCompletedProblems;
+
                     print(
-                      '-----------------UI bottom sheet: ${provider.problems.length}-------------------',
+                      '-----------------UI bottom sheet: ${displayProblems.length}-------------------',
                     );
 
-                    if (provider.problems.isEmpty) {
+                    if (displayProblems.isEmpty) {
                       return const Center(
                         child: Text('ไม่พบข้อมูลในบริเวณนี้'),
                       );
@@ -116,9 +145,9 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      itemCount: provider.problems.length,
+                      itemCount: displayProblems.length,
                       itemBuilder: (context, index) {
-                        return ProblemCard(problem: provider.problems[index]);
+                        return ProblemCard(problem: displayProblems[index]);
                       },
                     );
                   },
