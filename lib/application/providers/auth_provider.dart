@@ -18,10 +18,10 @@ class AppAuthProvider extends ChangeNotifier {
     _authRepository.authStateChanges().listen((user) {
       _user = user;
       _isLoading = false;
-      
+
       if (user != null) {
-      _setupFCMToken(user.id);
-    }
+        _setupFCMToken(user.id);
+      }
 
       notifyListeners(); // บอก Widget ที่ฟังอยู่ให้เปลี่ยนหน้า
     });
@@ -42,17 +42,17 @@ class AppAuthProvider extends ChangeNotifier {
         debugPrint("Failed to delete FCM Token: $e");
       }
     }
-    
+
     await _authRepository.logout();
   }
 
   Future<void> _setupFCMToken(String userId) async {
     try {
       await _setupNotificationsUseCase.execute(userId);
-      
+
       // Subscribe to user-specific topic
       await _notificationService.subscribeToTopic('user_$userId');
-      
+
       debugPrint("FCM Token setup completed for user: $userId");
     } catch (e) {
       debugPrint("Failed to setup FCM Token: $e");

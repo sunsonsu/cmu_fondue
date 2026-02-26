@@ -15,11 +15,8 @@ class ProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => _navigateToProfile(context),
-      icon: const Icon(
-        Icons.person,
-        color: Color(0xFF5D3891),
-      ),
-      iconSize: 32,
+      icon: const Icon(Icons.account_circle_outlined, color: Color(0xFF5D3891)),
+      iconSize: 35,
       tooltip: 'Profile',
     );
   }

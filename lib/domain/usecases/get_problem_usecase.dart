@@ -6,16 +6,16 @@ class GetProblemsUseCase {
   final ProblemRepo repository;
   GetProblemsUseCase(this.repository);
 
-  Future<List<ProblemEntity>> call() async {
-    List<ProblemEntity> list_problems = await repository.getProblems();
-    print('=============${list_problems.length}================');
-    return list_problems;
+  Future<List<ProblemEntity>> call(String? userId) async {
+    List<ProblemEntity> listProblems = await repository.getProblems(userId ?? '');
+    return listProblems;
   }
 
-  Future<List<ProblemEntity>> getNotCompletedProblems() async {
-    return await repository.getNotCompletedProblems();
+  Future<List<ProblemEntity>> getNotCompletedProblems(String? userId) async {
+    return await repository.getNotCompletedProblems(userId ?? '');
   }
 
+  // Count problems by tag
   Future<int> countByTag(String currentTagId) async {
     return await repository.countProblemsByTag(currentTagId: currentTagId);
   }
@@ -38,5 +38,9 @@ class GetProblemsUseCase {
     required String typeId,
   }) async {
     return await repository.getProblemsByType(typeId: typeId);
+  }
+
+  Future<ProblemEntity> getMaxUpvotedProblem(String? userId) async {
+    return await repository.getMaxUpvotedProblem(userId ?? '');
   }
 }

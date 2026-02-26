@@ -109,16 +109,15 @@ mutation DeleteProblemImage($problemImageId: UUID!)
 }
 
 # Komsan
-mutation UpdateFcmToken($userId: String!, $fcmToken: String!) @auth(level: USER) {
-  user_update(
-    key: { userId: $userId },
-    data: { fcmToken: $fcmToken }
-  )
+mutation UpdateFcmToken($userId: String!, $fcmToken: String!)
+@auth(level: USER) {
+  user_update(key: { userId: $userId }, data: { fcmToken: $fcmToken })
 }
 
 # Rachata
-mutation AddUpvote($problemId: UUID!) @auth(level: PUBLIC) {
-  userUpvote_insert(data: { problemId: $problemId, userId_expr: "auth.uid" })
+mutation AddUpvote($problemId: UUID!, $userId: String!)
+@auth(level: PUBLIC, insecureReason: "change to USER when production") {
+  userUpvote_insert(data: { problemId: $problemId, userId: $userId })
 
   problem_update(
     key: { problemId: $problemId }
@@ -127,9 +126,9 @@ mutation AddUpvote($problemId: UUID!) @auth(level: PUBLIC) {
 }
 
 # Rachata
-mutation RemoveUpvote($problemId: UUID!)
+mutation RemoveUpvote($problemId: UUID!, $userId: String!)
 @auth(level: PUBLIC, insecureReason: "change to USER when production") {
-  userUpvote_delete(key: { problemId: $problemId, userId_expr: "auth.uid" })
+  userUpvote_delete(key: { problemId: $problemId, userId: $userId })
 
   problem_update(
     key: { problemId: $problemId }

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:flutter/material.dart';

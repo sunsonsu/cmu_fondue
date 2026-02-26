@@ -32,7 +32,7 @@ class ProblemEntity {
     this.imageUrl,
   });
 
-  factory ProblemEntity.fromGenerated(dynamic data) {
+  factory ProblemEntity.fromGenerated(dynamic data, String? currentUserId) {
     String? firstImageUrl;
     if (data.problemImages_on_problem != null &&
         data.problemImages_on_problem.isNotEmpty) {
@@ -40,8 +40,11 @@ class ProblemEntity {
     }
 
     final bool upvotedByMe =
+        currentUserId != null &&
         data.userUpvotes_on_problem != null &&
-        data.userUpvotes_on_problem.isNotEmpty;
+        data.userUpvotes_on_problem.any(
+          (upvote) => upvote.userId == currentUserId,
+        );
 
     return ProblemEntity(
       id: data.problemId,
@@ -68,6 +71,38 @@ class ProblemEntity {
       locationName: data.locationName,
       imageUrl: firstImageUrl,
       isUpvotedByMe: upvotedByMe,
+    );
+  }
+
+  ProblemEntity copyWith({
+    String? id,
+    String? title,
+    String? detail,
+    double? lat,
+    double? lng,
+    int? upvoteCount,
+    DateTime? createdAt,
+    String? reporterEmail,
+    ProblemType? typeName,
+    ProblemTag? tagName,
+    String? locationName,
+    String? imageUrl,
+    bool? isUpvotedByMe,
+  }) {
+    return ProblemEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      detail: detail ?? this.detail,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      upvoteCount: upvoteCount ?? this.upvoteCount,
+      createdAt: createdAt ?? this.createdAt,
+      reporterEmail: reporterEmail ?? this.reporterEmail,
+      typeName: typeName ?? this.typeName,
+      tagName: tagName ?? this.tagName,
+      locationName: locationName ?? this.locationName,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isUpvotedByMe: isUpvotedByMe ?? this.isUpvotedByMe,
     );
   }
 }

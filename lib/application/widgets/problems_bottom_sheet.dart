@@ -73,6 +73,7 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
               // Fixed Drag Handle & Header
               GestureDetector(
                 onVerticalDragUpdate: (details) {
+                  if (!_controller.isAttached) return;
                   // Allow dragging from header area
                   final currentSize = _controller.size;
                   final delta =
@@ -122,32 +123,56 @@ class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
               Expanded(
                 child: Consumer<ProblemProvider>(
                   builder: (context, provider, child) {
-                    if (provider.isLoading || _isLoadingLocation) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (provider.isLoading) {
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        ],
+                      );
                     }
 
-                    List<ProblemEntity> displayProblems =
-                        provider.notCompletedProblems;
-
-                    print(
-                      '-----------------UI bottom sheet: ${displayProblems.length}-------------------',
-                    );
-
-                    if (displayProblems.isEmpty) {
-                      return const Center(
-                        child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                    if (provider.notCompletedProblems.isEmpty) {
+                      return CustomScrollView(
+                        controller: scrollController,
+                        slivers: const [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Text('ไม่พบข้อมูลในบริเวณนี้'),
+                            ),
+                          ),
+                        ],
                       );
                     }
 
                     return ListView.builder(
+                      key: const PageStorageKey('problemsList'),
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      itemCount: displayProblems.length,
+                      itemCount: provider.notCompletedProblems.length,
                       itemBuilder: (context, index) {
-                        return ProblemCard(problem: displayProblems[index]);
+                        return ProblemCard(
+                          key: ValueKey(
+                            provider.notCompletedProblems[index].id,
+                          ),
+                          problem: provider.notCompletedProblems[index],
+                          onUpvote: (isUpvoted) =>
+                              context.read<ProblemProvider>().toggleUpvote(
+                                problemId:
+                                    provider.notCompletedProblems[index].id,
+                                isUpvoted: isUpvoted,
+                              ),
+                          onDeleted: () {
+                            provider.fetchProblems();
+                          },
+                        );
                       },
                     );
                   },

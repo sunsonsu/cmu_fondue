@@ -101,7 +101,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     try {
       final results = await Future.wait([
         _getProblemTypesUseCase.call(),
-        _getProblemsUseCase.call(),
+        _getProblemsUseCase.call(''),
       ]);
       setState(() {
         _problemTypes = results[0] as List<ProblemTypeEntity>;

@@ -123,11 +123,17 @@ void main() async {
               AppAuthProvider(authRepository, setupNotificationsUseCase),
         ),
 
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AppAuthProvider, ProblemProvider>(
           create: (_) => ProblemProvider(
             getProblemsUseCase,
             createProblemUseCase,
             updateProblemUpvoteUseCase,
+          ),
+          update: (_, auth, problemProvider) {
+            final userId = auth.isAuthenticated ? auth.user?.id : null;
+
+            return problemProvider!..updateUserId(userId);
+          },
             deleteProblemUseCase,
           ),
         ),

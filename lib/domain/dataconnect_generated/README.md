@@ -475,6 +475,96 @@ ref.execute();
 ref.subscribe(...);
 ```
 
+
+### MaxUpvoteProblem
+#### Required Arguments
+```dart
+// No required arguments
+ConnectorConnector.instance.maxUpvoteProblem().execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `QueryResult<MaxUpvoteProblemData, void>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+/// Result of a query request. Created to hold extra variables in the future.
+class QueryResult<Data, Variables> extends OperationResult<Data, Variables> {
+  QueryResult(super.dataConnect, super.data, super.ref);
+}
+
+final result = await ConnectorConnector.instance.maxUpvoteProblem();
+MaxUpvoteProblemData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+final ref = ConnectorConnector.instance.maxUpvoteProblem().ref();
+ref.execute();
+
+ref.subscribe(...);
+```
+
+
+### ListProblemsByReporter
+#### Required Arguments
+```dart
+String reporterId = ...;
+ConnectorConnector.instance.listProblemsByReporter(
+  reporterId: reporterId,
+).execute();
+```
+
+
+
+#### Return Type
+`execute()` returns a `QueryResult<ListProblemsByReporterData, ListProblemsByReporterVariables>`
+```dart
+/// Result of an Operation Request (query/mutation).
+class OperationResult<Data, Variables> {
+  OperationResult(this.dataConnect, this.data, this.ref);
+  Data data;
+  OperationRef<Data, Variables> ref;
+  FirebaseDataConnect dataConnect;
+}
+
+/// Result of a query request. Created to hold extra variables in the future.
+class QueryResult<Data, Variables> extends OperationResult<Data, Variables> {
+  QueryResult(super.dataConnect, super.data, super.ref);
+}
+
+final result = await ConnectorConnector.instance.listProblemsByReporter(
+  reporterId: reporterId,
+);
+ListProblemsByReporterData data = result.data;
+final ref = result.ref;
+```
+
+#### Getting the Ref
+Each builder returns an `execute` function, which is a helper function that creates a `Ref` object, and executes the underlying operation.
+An example of how to use the `Ref` object is shown below:
+```dart
+String reporterId = ...;
+
+final ref = ConnectorConnector.instance.listProblemsByReporter(
+  reporterId: reporterId,
+).ref();
+ref.execute();
+
+ref.subscribe(...);
+```
+
 ## Mutations
 
 ### CreateProblem
@@ -1006,8 +1096,10 @@ ref.execute();
 #### Required Arguments
 ```dart
 String problemId = ...;
+String userId = ...;
 ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 ).execute();
 ```
 
@@ -1026,6 +1118,7 @@ class OperationResult<Data, Variables> {
 
 final result = await ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 );
 AddUpvoteData data = result.data;
 final ref = result.ref;
@@ -1036,9 +1129,11 @@ Each builder returns an `execute` function, which is a helper function that crea
 An example of how to use the `Ref` object is shown below:
 ```dart
 String problemId = ...;
+String userId = ...;
 
 final ref = ConnectorConnector.instance.addUpvote(
   problemId: problemId,
+  userId: userId,
 ).ref();
 ref.execute();
 ```
@@ -1048,8 +1143,10 @@ ref.execute();
 #### Required Arguments
 ```dart
 String problemId = ...;
+String userId = ...;
 ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 ).execute();
 ```
 
@@ -1068,6 +1165,7 @@ class OperationResult<Data, Variables> {
 
 final result = await ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 );
 RemoveUpvoteData data = result.data;
 final ref = result.ref;
@@ -1078,9 +1176,11 @@ Each builder returns an `execute` function, which is a helper function that crea
 An example of how to use the `Ref` object is shown below:
 ```dart
 String problemId = ...;
+String userId = ...;
 
 final ref = ConnectorConnector.instance.removeUpvote(
   problemId: problemId,
+  userId: userId,
 ).ref();
 ref.execute();
 ```

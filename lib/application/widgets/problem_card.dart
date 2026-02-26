@@ -14,8 +14,14 @@ import 'package:intl/intl.dart';
 class ProblemCard extends StatefulWidget {
   final ProblemEntity problem;
   final VoidCallback? onDeleted;
+  final Future<void> Function(bool isUpvoted)? onUpvote;
 
-  const ProblemCard({super.key, required this.problem, this.onDeleted});
+  const ProblemCard({
+    super.key,
+    required this.problem,
+    this.onDeleted,
+    this.onUpvote,
+  });
 
   @override
   State<ProblemCard> createState() => _ProblemCardState();
@@ -94,9 +100,7 @@ class _ProblemCardState extends State<ProblemCard> {
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(Icons.broken_image),
                           )
-                        : const Icon(
-                            Icons.image_not_supported,
-                          ), // แสดง icon ถ้าไม่มี URL
+                        : const Icon(Icons.image_not_supported),
                   ),
                 ),
 
@@ -343,11 +347,11 @@ class _ProblemCardState extends State<ProblemCard> {
   }
 
   Future<void> handleUpvote() async {
+    // ถ้าไม่ได้ส่งฟังก์ชัน upvote มา ก็ไม่ต้องทำอะไร
+    if (widget.onUpvote == null) return;
+
     final previousIsUpvoted = isUpvoted;
     final previousCount = localUpvoteCount;
-
-    final problemProvider = context.read<ProblemProvider>();
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     setState(() {
       isUpvoted = !isUpvoted;
@@ -355,12 +359,8 @@ class _ProblemCardState extends State<ProblemCard> {
     });
 
     try {
-      await problemProvider.toggleUpvote(
-        problemId: widget.problem.id,
-        isUpvoted: isUpvoted,
-      );
-
-      if (!mounted) return;
+      // เรียกฟังก์ชันที่รับมาจากภายนอก
+      await widget.onUpvote!(isUpvoted);
     } catch (e) {
       if (!mounted) return;
 
@@ -369,9 +369,13 @@ class _ProblemCardState extends State<ProblemCard> {
         localUpvoteCount = previousCount;
       });
 
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(
-          content: Text('Failed to update upvote. Please try again.'),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString().contains('Login required')
+                ? 'กรุณาเข้าสู่ระบบก่อนกด Upvote'
+                : 'เกิดข้อผิดพลาด กรุณาลองใหม่',
+          ),
         ),
       );
     }

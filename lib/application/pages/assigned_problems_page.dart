@@ -100,6 +100,9 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
+                  if (provider.notCompletedProblems.isEmpty) {
+                    return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
+                  }
                   List<ProblemEntity> displayProblems = provider
                       .getNearbyProblems(
                         widget.location.lat,
@@ -111,13 +114,22 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                   }
 
                   return ListView.builder(
+                    key: const PageStorageKey('problemsList'),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
                     ),
                     itemCount: displayProblems.length,
                     itemBuilder: (context, index) {
-                      return ProblemCard(problem: displayProblems[index]);
+                      return ProblemCard(
+                        key: ValueKey(displayProblems[index].id),
+                        problem: displayProblems[index],
+                        onUpvote: (isUpvoted) =>
+                            context.read<ProblemProvider>().toggleUpvote(
+                              problemId: displayProblems[index].id,
+                              isUpvoted: isUpvoted,
+                            ),
+                      );
                     },
                   );
                 },
