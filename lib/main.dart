@@ -128,14 +128,13 @@ void main() async {
             getProblemsUseCase,
             createProblemUseCase,
             updateProblemUpvoteUseCase,
+            deleteProblemUseCase,
           ),
           update: (_, auth, problemProvider) {
             final userId = auth.isAuthenticated ? auth.user?.id : null;
 
             return problemProvider!..updateUserId(userId);
           },
-            deleteProblemUseCase,
-          ),
         ),
       ],
       child: const MyApp(),
