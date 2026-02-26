@@ -1,6 +1,7 @@
 fragment ProblemFields on Problem {
     problemId
     reporter {
+      userId
       email
       isAdmin
     }

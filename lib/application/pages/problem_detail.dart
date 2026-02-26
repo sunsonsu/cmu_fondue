@@ -181,9 +181,13 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     }
   }
 
-  void _changeStatus(ProblemTag newStatus) {
+  void _changeStatus(ProblemTag newStatus) async {
     try {
-      // TODO: Implement actual status change logic with backend
+      await context.read<ProblemProvider>().changeProblemTag(
+        problemId: widget.problem.id,
+        newTag: newStatus,
+      );
+
       setState(() {
         _currentStatus = newStatus;
         _statusUpdatedAt = DateTime.now();

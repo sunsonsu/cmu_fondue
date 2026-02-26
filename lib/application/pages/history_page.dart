@@ -1,10 +1,7 @@
+import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-import 'package:cmu_fondue/domain/usecases/get_user_problems_usecase.dart';
-import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
-import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
-import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,65 +13,18 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  late final GetUserProblemsUseCase _getUserProblemsUseCase;
-  List<ProblemEntity> _userProblems = [];
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    // Initialize the use case with repository
-    final connector = ConnectorConnector.instance;
-    final problemRepo = ProblemRepoImpl(connector: connector);
-    _getUserProblemsUseCase = GetUserProblemsUseCase(problemRepo);
-    _loadProblems();
-  }
-
-  Future<void> _loadProblems() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final authProvider = context.read<AppAuthProvider>();
-      final userId = authProvider.user?.id;
-
-      if (userId != null) {
-        final problems = await _getUserProblemsUseCase(
-          reporterId: userId,
-          currentUserId: userId,
-        );
-
-        setState(() {
-          _userProblems = problems;
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _userProblems = [];
-          _isLoading = false;
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ProblemProvider>().fetchProblems();
       }
-    } catch (e) {
-      debugPrint('Error loading user problems: $e');
-      setState(() {
-        _userProblems = [];
-        _isLoading = false;
-      });
-    }
-  }
-
-  List<ProblemEntity> _filterByStatus(List<ProblemTag> tags) {
-    return _userProblems.where((p) => tags.contains(p.tagName)).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final pendingProblems = _filterByStatus([
-      ProblemTag.pending,
-      ProblemTag.received,
-    ]);
-    final inProgressProblems = _filterByStatus([ProblemTag.inProgress]);
-    final completedProblems = _filterByStatus([ProblemTag.completed]);
-
     return Scaffold(
       backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
@@ -91,6 +41,8 @@ class _HistoryPageState extends State<HistoryPage> {
         automaticallyImplyLeading: false,
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -99,70 +51,91 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ),
         child: RefreshIndicator(
-          onRefresh: _loadProblems,
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _userProblems.isEmpty
-              ? const Center(
-                  child: Text(
-                    'ไม่มีประวัติการแจ้งเรื่อง',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-                  children: [
-                    // รอเคลม Section
-                    if (pendingProblems.isNotEmpty) ...[
-                      _buildSectionHeader(
-                        'รอดำเนินการ',
-                        pendingProblems.length,
-                      ),
-                      ...pendingProblems.map(
-                        (p) =>
-                            ProblemCard(problem: p, onDeleted: _loadProblems),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+          onRefresh: () => context.read<ProblemProvider>().fetchProblems(),
+          child: Consumer<ProblemProvider>(
+            builder: (context, provider, child) {
+              final historyList = provider.historyProblems;
 
-                    // กำลังเคลม Section
-                    if (inProgressProblems.isNotEmpty) ...[
-                      _buildSectionHeader(
-                        'กำลังดำเนินการ',
-                        inProgressProblems.length,
-                      ),
-                      ...inProgressProblems.map(
-                        (p) =>
-                            ProblemCard(problem: p, onDeleted: _loadProblems),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+              if (provider.isLoading && historyList.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                    // เสร็จสิ้น Section
-                    if (completedProblems.isNotEmpty) ...[
-                      _buildSectionHeader(
-                        'เสร็จสิ้น',
-                        completedProblems.length,
+              if (historyList.isEmpty) {
+                return _buildEmptyState();
+              }
+
+              // ✅ รวมข้อมูลและสร้างรายการ Section
+              final sections = _getSections(historyList);
+
+              return ListView.builder(
+                key: const PageStorageKey('historyList'),
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: sections.length,
+                itemBuilder: (context, index) {
+                  final item = sections[index];
+                  
+                  if (item is String) {
+                    // ถ้าเป็น Header (ชื่อกลุ่ม)
+                    return _buildSectionHeader(item);
+                  } else if (item is ProblemEntity) {
+                    // ถ้าเป็นรายการปัญหา
+                    return ProblemCard(
+                      key: ValueKey(item.id),
+                      problem: item,
+                      onUpvote: (isUpvoted) => provider.toggleUpvote(
+                        problemId: item.id,
+                        isUpvoted: isUpvoted,
                       ),
-                      ...completedProblems.map(
-                        (p) =>
-                            ProblemCard(problem: p, onDeleted: _loadProblems),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ],
-                ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, int count) {
+  // ✅ ฟังก์ชันช่วยจัดกลุ่มข้อมูลเพื่อใช้กับ ListView.builder
+  List<dynamic> _getSections(List<ProblemEntity> problems) {
+    final pending = problems.where((p) => [ProblemTag.pending, ProblemTag.received].contains(p.tagName)).toList();
+    final inProgress = problems.where((p) => p.tagName == ProblemTag.inProgress).toList();
+    final completed = problems.where((p) => p.tagName == ProblemTag.completed).toList();
+
+    List<dynamic> items = [];
+    if (pending.isNotEmpty) {
+      items.add('รอดำเนินการ (${pending.length})');
+      items.addAll(pending);
+    }
+    if (inProgress.isNotEmpty) {
+      items.add('กำลังดำเนินการ (${inProgress.length})');
+      items.addAll(inProgress);
+    }
+    if (completed.isNotEmpty) {
+      items.add('เสร็จสิ้น (${completed.length})');
+      items.addAll(completed);
+    }
+    return items;
+  }
+
+  Widget _buildEmptyState() {
+    return ListView(
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+        const Center(child: Text('ไม่มีประวัติการแจ้งเรื่อง', style: TextStyle(color: Colors.grey))),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Text(
-        '$title ($count)',
-        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+        title,
+        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF5D3891)),
       ),
     );
   }

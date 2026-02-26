@@ -116,10 +116,12 @@ class ListNotCompletedProblemsProblems {
 
 @immutable
 class ListNotCompletedProblemsProblemsReporter {
+  final String userId;
   final String email;
   final bool isAdmin;
   ListNotCompletedProblemsProblemsReporter.fromJson(dynamic json):
   
+  userId = nativeFromJson<String>(json['userId']),
   email = nativeFromJson<String>(json['email']),
   isAdmin = nativeFromJson<bool>(json['isAdmin']);
   @override
@@ -132,22 +134,25 @@ class ListNotCompletedProblemsProblemsReporter {
     }
 
     final ListNotCompletedProblemsProblemsReporter otherTyped = other as ListNotCompletedProblemsProblemsReporter;
-    return email == otherTyped.email && 
+    return userId == otherTyped.userId && 
+    email == otherTyped.email && 
     isAdmin == otherTyped.isAdmin;
     
   }
   @override
-  int get hashCode => Object.hashAll([email.hashCode, isAdmin.hashCode]);
+  int get hashCode => Object.hashAll([userId.hashCode, email.hashCode, isAdmin.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
+    json['userId'] = nativeToJson<String>(userId);
     json['email'] = nativeToJson<String>(email);
     json['isAdmin'] = nativeToJson<bool>(isAdmin);
     return json;
   }
 
   ListNotCompletedProblemsProblemsReporter({
+    required this.userId,
     required this.email,
     required this.isAdmin,
   });

@@ -10,6 +10,7 @@ class ProblemEntity {
   int upvoteCount;
   final DateTime createdAt;
   final String reporterEmail;
+  final String reporterId;
   final ProblemType typeName;
   final ProblemTag tagName;
   final String locationName;
@@ -25,6 +26,7 @@ class ProblemEntity {
     required this.upvoteCount,
     required this.createdAt,
     required this.reporterEmail,
+    required this.reporterId,
     required this.typeName,
     required this.tagName,
     required this.locationName,
@@ -57,6 +59,8 @@ class ProblemEntity {
 
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
+      reporterId: data.reporter.userId,
+
 
       typeName: ProblemType.values.firstWhere(
         (e) => e.labelTh == data.problemType.typeThaiName,
@@ -83,6 +87,7 @@ class ProblemEntity {
     int? upvoteCount,
     DateTime? createdAt,
     String? reporterEmail,
+    String? reporterId,
     ProblemType? typeName,
     ProblemTag? tagName,
     String? locationName,
@@ -98,6 +103,7 @@ class ProblemEntity {
       upvoteCount: upvoteCount ?? this.upvoteCount,
       createdAt: createdAt ?? this.createdAt,
       reporterEmail: reporterEmail ?? this.reporterEmail,
+      reporterId: reporterId ?? this.reporterId,
       typeName: typeName ?? this.typeName,
       tagName: tagName ?? this.tagName,
       locationName: locationName ?? this.locationName,
