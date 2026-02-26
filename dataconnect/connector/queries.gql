@@ -30,16 +30,13 @@ fragment ProblemFields on Problem {
 }
 
 query ListProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
-  problems(orderBy: [{ upvoteCount: DESC }]) {
+  problems(orderBy: [ { upvoteCount: DESC }]){
     ...ProblemFields 
   }
 }
 
 query ListNotCompletedProblems @auth(level: PUBLIC insecureReason: "Change to USER when production") {
-  problems(
-    where: { currentTags: { tagName: { ne: "Completed" } } },
-    orderBy: [{ upvoteCount: DESC }]
-  ) {
+  problems(where: { currentTags: { tagName: { ne: "Completed" } } }, orderBy: [ { upvoteCount: DESC }]) {
     ...ProblemFields
   }
 }
@@ -103,6 +100,15 @@ query ProblemsByTypeFull($TypeId: UUID!) @auth(level: PUBLIC insecureReason: "Ch
 
 query MaxUpvoteProblem @auth(level: PUBLIC insecureReason: "Change to USER when production") {
   problems(orderBy: {upvoteCount: DESC}, limit: 1) {
+    ...ProblemFields
+  }
+}
+
+query ListProblemsByReporter($reporterId: String!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  problems(
+    where: { reporterId: { eq: $reporterId } },
+    orderBy: [{ createdAt: DESC }]
+  ) {
     ...ProblemFields
   }
 }

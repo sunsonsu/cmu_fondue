@@ -2,14 +2,25 @@ import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
+
+class ProblemWithDistance {
+  final ProblemEntity problem;
+  final double distance;
+
+  ProblemWithDistance(this.problem, this.distance);
+}
 
 class ProblemProvider with ChangeNotifier {
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
+  final DeleteProblemUseCase _deleteProblemUseCase;
 
   String? _currentUserId;
   bool _isLoading = false;
@@ -22,6 +33,7 @@ class ProblemProvider with ChangeNotifier {
     this._getProblemsUseCase,
     this._createProblemUseCase,
     this._updateProblemUpvoteUseCase,
+    this._deleteProblemUseCase,
   );
 
   bool get isLoading => _isLoading;
@@ -33,16 +45,14 @@ class ProblemProvider with ChangeNotifier {
 
   List<ProblemEntity> get filteredProblems {
     if (_selectedTag == null && _selectedCategory == null) return _problems;
-    
+
     return _problems.where((p) {
       final matchTag = _selectedTag == null || p.tagName == _selectedTag;
-      final matchType = _selectedCategory == null || p.typeName == _selectedCategory;
+      final matchType =
+          _selectedCategory == null || p.typeName == _selectedCategory;
       return matchTag && matchType;
     }).toList();
   }
-
-  List<ProblemEntity> get notCompletedProblems =>
-      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
   int get countPending =>
       _problems.where((p) => p.tagName == ProblemTag.pending).length;
@@ -106,18 +116,43 @@ class ProblemProvider with ChangeNotifier {
   }
 
   Map<String, int> getLocalStatistics() {
-  return {
-    'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
-    'inProgress': _problems.where((p) => p.tagName == ProblemTag.inProgress).length,
-    'completed': _problems.where((p) => p.tagName == ProblemTag.completed).length,
-  };
-}
+    return {
+      'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
+      'inProgress': _problems
+          .where((p) => p.tagName == ProblemTag.inProgress)
+          .length,
+      'completed': _problems
+          .where((p) => p.tagName == ProblemTag.completed)
+          .length,
+    };
+  }
 
   void updateUserId(String? userId) {
     if (_currentUserId == userId) return;
     _currentUserId = userId;
     debugPrint('ProblemProvider updated with userId: $_currentUserId');
     notifyListeners();
+  }
+
+  List<ProblemEntity> get notCompletedProblems =>
+      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
+
+  List<ProblemEntity> getNearbyProblems(
+    double lat,
+    double lng, {
+    double maxDistance = 500,
+    bool onlyNotCompleted = false,
+  }) {
+    final List<ProblemWithDistance> problemsWithDistance = [];
+    final sourceList = onlyNotCompleted ? notCompletedProblems : _problems;
+    for (var p in sourceList) {
+      double distance = Geolocator.distanceBetween(lat, lng, p.lat, p.lng);
+      if (distance <= maxDistance) {
+        problemsWithDistance.add(ProblemWithDistance(p, distance));
+      }
+    }
+    problemsWithDistance.sort((a, b) => a.distance.compareTo(b.distance));
+    return problemsWithDistance.map((e) => e.problem).toList();
   }
 
   Future<void> fetchProblems() async {
@@ -148,16 +183,20 @@ class ProblemProvider with ChangeNotifier {
       if (index != -1) {
         // 1. อัปเดตข้อมูลตัวที่เลือก
         final updatedProblem = _problems[index].copyWith(
-          upvoteCount: isUpvoted ? _problems[index].upvoteCount + 1 : _problems[index].upvoteCount - 1,
+          upvoteCount: isUpvoted
+              ? _problems[index].upvoteCount + 1
+              : _problems[index].upvoteCount - 1,
           isUpvotedByMe: isUpvoted,
         );
 
         // 2. ลบตัวเก่าออก และแทรกกลับเข้าไปในตำแหน่งที่เรียงลำดับถูกต้อง (In-place update)
         _problems.removeAt(index);
-        
+
         // หาตำแหน่งใหม่ที่ควรจะเป็น (Binary Search หรือ Loop หา)
         // เพื่อความง่ายแต่ยังเร็วอยู่ ใช้การหา index แรกที่น้อยกว่าคะแนนใหม่
-        int newIndex = _problems.indexWhere((p) => p.upvoteCount <= updatedProblem.upvoteCount);
+        int newIndex = _problems.indexWhere(
+          (p) => p.upvoteCount <= updatedProblem.upvoteCount,
+        );
         if (newIndex == -1) {
           _problems.add(updatedProblem); // ถ้าคะแนนน้อยสุดไปอยู่ท้ายสุด
         } else {
@@ -264,6 +303,19 @@ class ProblemProvider with ChangeNotifier {
       print('Count by Tag Error: $e');
       print('Stacktrace: $stacktrace');
       return 0;
+    }
+  }
+
+  Future<void> deleteProblem({required String problemId}) async {
+    try {
+      await _deleteProblemUseCase(problemId);
+
+      _problems.removeWhere((p) => p.id == problemId);
+      notifyListeners();
+    } catch (e, stacktrace) {
+      print('Delete Error: $e');
+      print('Stacktrace: $stacktrace');
+      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
     }
   }
 }

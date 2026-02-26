@@ -2,6 +2,9 @@ import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:provider/provider.dart';
+import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cmu_fondue/application/widgets/map_widget.dart';
 
 class ProblemsBottomSheet extends StatefulWidget {
   const ProblemsBottomSheet({super.key});
@@ -13,6 +16,29 @@ class ProblemsBottomSheet extends StatefulWidget {
 class _ProblemsBottomSheetState extends State<ProblemsBottomSheet> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
+
+  Position? _currentPosition;
+  bool _isLoadingLocation = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    try {
+      final position = await getUserCurrentLocation();
+      if (mounted) {
+        setState(() {
+          _currentPosition = position;
+          _isLoadingLocation = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isLoadingLocation = false);
+    }
+  }
 
   @override
   void dispose() {

@@ -53,4 +53,10 @@ abstract class ProblemRepo {
   Future<void> removeUpvote({required String id, required String userId});
 
   Future<ProblemEntity> getMaxUpvotedProblem(String userId);
+
+  // Get problems by reporter
+  Future<List<ProblemEntity>> getProblemsByReporter({
+    required String reporterId,
+    required String currentUserId,
+  });
 }

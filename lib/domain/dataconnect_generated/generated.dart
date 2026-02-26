@@ -47,6 +47,8 @@ part 'problems_by_type_full.dart';
 
 part 'max_upvote_problem.dart';
 
+part 'list_problems_by_reporter.dart';
+
 
 
 
@@ -163,6 +165,11 @@ class ConnectorConnector {
   
   MaxUpvoteProblemVariablesBuilder maxUpvoteProblem () {
     return MaxUpvoteProblemVariablesBuilder(dataConnect, );
+  }
+  
+  
+  ListProblemsByReporterVariablesBuilder listProblemsByReporter ({required String reporterId, }) {
+    return ListProblemsByReporterVariablesBuilder(dataConnect, reporterId: reporterId,);
   }
   
 

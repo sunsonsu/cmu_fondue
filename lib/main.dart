@@ -9,6 +9,7 @@ import 'package:cmu_fondue/data/services/notification_service.dart';
 import 'package:cmu_fondue/domain/cache/cache_service.dart';
 import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/setup_notifications_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
@@ -104,6 +105,7 @@ void main() async {
   );
   final UpdateProblemUpvoteUseCase updateProblemUpvoteUseCase =
       UpdateProblemUpvoteUseCase(problemRepository);
+  final deleteProblemUseCase = DeleteProblemUseCase(problemRepository);
 
   // injection provider to app
   runApp(
@@ -126,6 +128,7 @@ void main() async {
             getProblemsUseCase,
             createProblemUseCase,
             updateProblemUpvoteUseCase,
+            deleteProblemUseCase,
           ),
           update: (_, auth, problemProvider) {
             final userId = auth.isAuthenticated ? auth.user?.id : null;
