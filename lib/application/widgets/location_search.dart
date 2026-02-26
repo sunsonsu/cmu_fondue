@@ -4,11 +4,13 @@ import 'package:geocoding/geocoding.dart';
 class LocationSearchWidget extends StatefulWidget {
   final List<String> locations;
   final Function(Placemark) onLocationSelected;
+  final TextEditingController? searchController;
 
   const LocationSearchWidget({
     super.key,
     required this.locations,
     required this.onLocationSelected,
+    this.searchController,
   });
 
   @override
@@ -16,7 +18,7 @@ class LocationSearchWidget extends StatefulWidget {
 }
 
 class _LocationSearchWidgetState extends State<LocationSearchWidget> {
-  final TextEditingController _searchController = TextEditingController();
+  late final TextEditingController _searchController;
   final FocusNode _searchFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   List<String> _filteredPlaces = [];
@@ -24,12 +26,15 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
   @override
   void initState() {
     super.initState();
+    _searchController = widget.searchController ?? TextEditingController();
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    if (widget.searchController == null) {
+      _searchController.dispose();
+    }
     _searchFocusNode.dispose();
     _scrollController.dispose();
     super.dispose();

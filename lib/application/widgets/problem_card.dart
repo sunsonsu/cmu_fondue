@@ -6,9 +6,7 @@ import 'package:cmu_fondue/application/widgets/problem_category_tag.dart';
 import 'package:cmu_fondue/application/widgets/delete_confirmation_dialog.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
-import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
-import 'package:cmu_fondue/data/repositories/problem_repo_impl.dart';
-import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -319,10 +317,9 @@ class _ProblemCardState extends State<ProblemCard> {
       );
 
       // ลบปัญหา
-      final ProblemRepo repo = ProblemRepoImpl(
-        connector: ConnectorConnector.instance,
+      await context.read<ProblemProvider>().deleteProblem(
+        problemId: widget.problem.id,
       );
-      await repo.deleteProblem(widget.problem.id);
 
       // ปิด loading
       if (context.mounted) {
