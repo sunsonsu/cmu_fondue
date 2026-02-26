@@ -3,6 +3,7 @@ import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 // Komsan
 class ProblemEntity {
   final String id;
+  final String reporterId;
   final String title;
   final String detail;
   final double lat;
@@ -10,7 +11,6 @@ class ProblemEntity {
   int upvoteCount;
   final DateTime createdAt;
   final String reporterEmail;
-  final String reporterId;
   final ProblemType typeName;
   final ProblemTag tagName;
   final String locationName;
@@ -19,6 +19,7 @@ class ProblemEntity {
 
   ProblemEntity({
     required this.id,
+    required this.reporterId,
     required this.title,
     required this.detail,
     required this.lat,
@@ -26,7 +27,6 @@ class ProblemEntity {
     required this.upvoteCount,
     required this.createdAt,
     required this.reporterEmail,
-    required this.reporterId,
     required this.typeName,
     required this.tagName,
     required this.locationName,
@@ -50,6 +50,7 @@ class ProblemEntity {
 
     return ProblemEntity(
       id: data.problemId,
+      reporterId: data.reporterId,
       title: data.title,
       detail: data.detail,
       lat: data.problemLat.toDouble(),
@@ -59,7 +60,6 @@ class ProblemEntity {
 
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
-      reporterId: data.reporter.userId,
 
 
       typeName: ProblemType.values.firstWhere(
@@ -80,6 +80,7 @@ class ProblemEntity {
 
   ProblemEntity copyWith({
     String? id,
+    String? reporterId,
     String? title,
     String? detail,
     double? lat,
@@ -87,7 +88,6 @@ class ProblemEntity {
     int? upvoteCount,
     DateTime? createdAt,
     String? reporterEmail,
-    String? reporterId,
     ProblemType? typeName,
     ProblemTag? tagName,
     String? locationName,
@@ -96,6 +96,7 @@ class ProblemEntity {
   }) {
     return ProblemEntity(
       id: id ?? this.id,
+      reporterId: reporterId ?? this.reporterId,
       title: title ?? this.title,
       detail: detail ?? this.detail,
       lat: lat ?? this.lat,
@@ -103,7 +104,6 @@ class ProblemEntity {
       upvoteCount: upvoteCount ?? this.upvoteCount,
       createdAt: createdAt ?? this.createdAt,
       reporterEmail: reporterEmail ?? this.reporterEmail,
-      reporterId: reporterId ?? this.reporterId,
       typeName: typeName ?? this.typeName,
       tagName: tagName ?? this.tagName,
       locationName: locationName ?? this.locationName,

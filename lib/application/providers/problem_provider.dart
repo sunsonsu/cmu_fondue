@@ -6,6 +6,8 @@ import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/get_user_by_id_usecase.dart';
+import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -22,6 +24,8 @@ class ProblemProvider with ChangeNotifier {
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
   final DeleteProblemUseCase _deleteProblemUseCase;
   final UpdateProblemUseCase _updateProblemUseCase;
+  final GetUserByIdUseCase _getUserByIdUseCase;
+  final CloudFunctionsService _cloudFunctionsService;
 
   String? _currentUserId;
   bool _isLoading = false;
@@ -36,6 +40,8 @@ class ProblemProvider with ChangeNotifier {
     this._updateProblemUpvoteUseCase,
     this._deleteProblemUseCase,
     this._updateProblemUseCase,
+    this._getUserByIdUseCase,
+    this._cloudFunctionsService,
   );
 
   bool get isLoading => _isLoading;
@@ -121,13 +127,14 @@ class ProblemProvider with ChangeNotifier {
     };
   }
 
-  Map<String, int> getLocalStatistics() {
+  Map<ProblemTag, int> getLocalStatistics() {
     return {
-      'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
-      'inProgress': _problems
+      ProblemTag.pending: _problems.where((p) => p.tagName == ProblemTag.pending).length,
+      ProblemTag.received: _problems.where((p) => p.tagName == ProblemTag.received).length,
+      ProblemTag.inProgress: _problems
           .where((p) => p.tagName == ProblemTag.inProgress)
           .length,
-      'completed': _problems
+      ProblemTag.completed: _problems
           .where((p) => p.tagName == ProblemTag.completed)
           .length,
     };
@@ -334,12 +341,49 @@ class ProblemProvider with ChangeNotifier {
     required ProblemTag newTag,
   }) async {
     try {
+      // 1. อัปเดตสถานะใน database
       await _updateProblemUseCase.call(id: problemId, tagId: newTag.tagId);
 
-      // อัปเดตข้อมูลใน Provider ทันทีหลังจากเปลี่ยนสถานะสำเร็จ
+      // 2. หา problem info เพื่อเอา reporterId และ title
       final index = _problems.indexWhere((p) => p.id == problemId);
       if (index != -1) {
-        _problems[index] = _problems[index].copyWith(tagName: newTag);
+        final problem = _problems[index];
+
+        // 3. ดึงข้อมูล user (reporter) เพื่อเอา fcmToken
+        try {
+          final reporter = await _getUserByIdUseCase.call(problem.reporterId);
+
+          // 4. ส่ง push notification (ถ้ามี fcmToken)
+          if (reporter?.fcmToken != null && reporter!.fcmToken!.isNotEmpty) {
+            try {
+              await _cloudFunctionsService.sendProblemStatusNotification(
+                problemId: problemId,
+                problemTitle: problem.title,
+                newTagName: newTag.labelTh,
+                fcmToken: reporter.fcmToken!,
+              );
+              if (kDebugMode) {
+                print('✅ Notification sent to reporter');
+              }
+            } catch (e) {
+              // ถ้าส่ง notification ไม่สำเร็จ ไม่ต้อง throw error ออกมา
+              if (kDebugMode) {
+                print('⚠️ ส่ง notification ไม่สำเร็จ: $e');
+              }
+            }
+          } else {
+            if (kDebugMode) {
+              print('⚠️ Reporter ไม่มี fcmToken');
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ ดึงข้อมูล reporter ไม่สำเร็จ: $e');
+          }
+        }
+
+        // 5. อัปเดตข้อมูลใน Provider ทันที
+        _problems[index] = problem.copyWith(tagName: newTag);
         notifyListeners();
       }
     } catch (e, stacktrace) {

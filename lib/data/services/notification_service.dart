@@ -16,10 +16,18 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications = 
       FlutterLocalNotificationsPlugin();
 
+  // Callback สำหรับ navigation
+  Function(String problemId)? _onNotificationTap;
+
   // Singleton pattern
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
+
+  // Set callback สำหรับการ navigate
+  void setNavigationCallback(Function(String problemId) callback) {
+    _onNotificationTap = callback;
+  }
 
   // Initialize notification service
   Future<void> initialize() async {
@@ -133,10 +141,9 @@ class NotificationService {
       print('Message opened app: ${message.data}');
     }
     
-    // TODO: Navigate ไปหน้า Problem Detail
     final problemId = message.data['problemId'];
-    if (problemId != null) {
-      debugPrint('Navigate to problem: $problemId');
+    if (problemId != null && _onNotificationTap != null) {
+      _onNotificationTap!(problemId);
     }
   }
 
@@ -146,9 +153,8 @@ class NotificationService {
       print('Local notification tapped: ${response.payload}');
     }
     
-    // TODO: Navigate ไปหน้า Problem Detail
-    if (response.payload != null) {
-      debugPrint('Navigate to problem: ${response.payload}');
+    if (response.payload != null && _onNotificationTap != null) {
+      _onNotificationTap!(response.payload!);
     }
   }
 
