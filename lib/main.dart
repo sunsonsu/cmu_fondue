@@ -13,6 +13,7 @@ import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/setup_notifications_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -107,6 +108,8 @@ void main() async {
       UpdateProblemUpvoteUseCase(problemRepository);
   final deleteProblemUseCase = DeleteProblemUseCase(problemRepository);
 
+  final updateProblemUseCase = UpdateProblemUseCase(problemRepository);
+
   // injection provider to app
   runApp(
     MultiProvider(
@@ -129,6 +132,7 @@ void main() async {
             createProblemUseCase,
             updateProblemUpvoteUseCase,
             deleteProblemUseCase,
+            updateProblemUseCase,
           ),
           update: (_, auth, problemProvider) {
             final userId = auth.isAuthenticated ? auth.user?.id : null;

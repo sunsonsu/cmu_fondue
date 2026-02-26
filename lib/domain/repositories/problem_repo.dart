@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 
 abstract class ProblemRepo {
   //List all problems
@@ -59,4 +60,5 @@ abstract class ProblemRepo {
     required String reporterId,
     required String currentUserId,
   });
+
 }

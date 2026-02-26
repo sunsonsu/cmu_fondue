@@ -5,9 +5,9 @@ import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
-import 'package:flutter/material.dart';
+import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 
 class ProblemWithDistance {
   final ProblemEntity problem;
@@ -21,6 +21,7 @@ class ProblemProvider with ChangeNotifier {
   final CreateProblemUseCase _createProblemUseCase;
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
   final DeleteProblemUseCase _deleteProblemUseCase;
+  final UpdateProblemUseCase _updateProblemUseCase;
 
   String? _currentUserId;
   bool _isLoading = false;
@@ -34,6 +35,7 @@ class ProblemProvider with ChangeNotifier {
     this._createProblemUseCase,
     this._updateProblemUpvoteUseCase,
     this._deleteProblemUseCase,
+    this._updateProblemUseCase,
   );
 
   bool get isLoading => _isLoading;
@@ -52,6 +54,10 @@ class ProblemProvider with ChangeNotifier {
           _selectedCategory == null || p.typeName == _selectedCategory;
       return matchTag && matchType;
     }).toList();
+  }
+
+  List<ProblemEntity> get historyProblems {
+    return _problems.where((p) => p.reporterId == _currentUserId).toList();
   }
 
   int get countPending =>
@@ -313,8 +319,36 @@ class ProblemProvider with ChangeNotifier {
       _problems.removeWhere((p) => p.id == problemId);
       notifyListeners();
     } catch (e, stacktrace) {
-      print('Delete Error: $e');
-      print('Stacktrace: $stacktrace');
+      if (kDebugMode) {
+        print('Delete Error: $e');
+      }
+      if (kDebugMode) {
+        print('Stacktrace: $stacktrace');
+      }
+      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
+    }
+  }
+
+  Future<void> changeProblemTag({
+    required String problemId,
+    required ProblemTag newTag,
+  }) async {
+    try {
+      await _updateProblemUseCase.call(id: problemId, tagId: newTag.tagId);
+
+      // อัปเดตข้อมูลใน Provider ทันทีหลังจากเปลี่ยนสถานะสำเร็จ
+      final index = _problems.indexWhere((p) => p.id == problemId);
+      if (index != -1) {
+        _problems[index] = _problems[index].copyWith(tagName: newTag);
+        notifyListeners();
+      }
+    } catch (e, stacktrace) {
+      if (kDebugMode) {
+        print('Change Tag Error: $e');
+      }
+      if (kDebugMode) {
+        print('Stacktrace: $stacktrace');
+      }
       rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
     }
   }
