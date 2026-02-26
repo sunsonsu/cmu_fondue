@@ -2,6 +2,7 @@ import 'package:cmu_fondue/application/widgets/submit_location_bottom_sheet.dart
 import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/usecases/cmu_place_usecase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/location_search.dart';
 import 'package:cmu_fondue/application/widgets/map_widget.dart';
@@ -67,7 +68,9 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   void _onLocationSelected(Placemark place) {
     setState(() {
       _selectedPlace = place.name;
-      print("This is a selected place: $_selectedPlace");
+      if (kDebugMode) {
+        print("This is a selected place: $_selectedPlace");
+      }
     });
 
     if (place.name != null) {
@@ -77,7 +80,9 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
         );
         _placemarkNotifier.value = [selectedEntity];
       } catch (e) {
-        print("Place not found: ${place.name}");
+        if (kDebugMode) {
+          print("Place not found: ${place.name}");
+        }
       }
     }
   }
