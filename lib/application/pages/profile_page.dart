@@ -120,6 +120,8 @@ class ProfilePage extends StatelessWidget {
                               context: context,
                               message: 'ออกจากระบบสำเร็จ',
                             );
+
+                            Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
                           }
                         } catch (e) {
                           if (context.mounted) {
