@@ -3,10 +3,10 @@ import 'package:cmu_fondue/application/pages/app_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cmu_fondue/application/widgets/reporting_form.dart';
-import 'package:cmu_fondue/application/pages/history_page.dart';
 import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
@@ -23,7 +23,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  String? _selectedCategory;
+  ProblemType? _selectedCategory;
   File? _selectedImage;
 
   @override
@@ -190,8 +190,8 @@ class _CreateReportPageState extends State<CreateReportPage> {
                                 lat: widget.location.lat,
                                 lng: widget.location.lng,
                                 reporterId: authProvider.user!.id,
-                                typeId: _selectedCategory!,
-                                tagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8",
+                                typeId: _selectedCategory!.typeId,
+                                tagId: ProblemTag.pending.tagId,
                                 imageFile: _selectedImage!,
                               );
 
@@ -209,7 +209,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          HomePage(initialIndex: 1),
+                                          HomePage(initialIndex: 2),
                                     ),
                                     (route) => false,
                                   );

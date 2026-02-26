@@ -44,6 +44,7 @@ class AppAuthProvider extends ChangeNotifier {
     }
 
     await _authRepository.logout();
+    notifyListeners();
   }
 
   Future<void> _setupFCMToken(String userId) async {

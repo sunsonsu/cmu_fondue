@@ -14,10 +14,12 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFEAE5F1),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF5D3891)),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: authProvider.isAdmin
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF5D3891)),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: const Text(
           'โปรไฟล์',
           style: TextStyle(
@@ -120,6 +122,10 @@ class ProfilePage extends StatelessWidget {
                               context: context,
                               message: 'ออกจากระบบสำเร็จ',
                             );
+
+                            Navigator.of(
+                              context,
+                            ).pushNamedAndRemoveUntil('/', (route) => false);
                           }
                         } catch (e) {
                           if (context.mounted) {

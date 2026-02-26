@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cmu_fondue/application/widgets/photo_upload.dart';
@@ -7,8 +8,8 @@ class ReportingForm extends StatefulWidget {
   final String location;
   final TextEditingController titleController;
   final TextEditingController descriptionController;
-  final ValueChanged<String?> onCategoryChanged;
-  final String? selectedCategory;
+  final ValueChanged<ProblemType?> onCategoryChanged;
+  final ProblemType? selectedCategory;
   final File? selectedImage;
   final VoidCallback onPickImageFromGallery;
   final VoidCallback onTakePicture;
@@ -30,12 +31,7 @@ class ReportingForm extends StatefulWidget {
 }
 
 class _ReportingFormState extends State<ReportingForm> {
-  final List<String> _categories = [
-    'ถนน/ทางเข้า',
-    'ขยะ/สิ่งปฏิกูล',
-    'ไฟฟ้า/ไฟจราจร/แสงสว่าง',
-    'อื่นๆ',
-  ];
+  final List<ProblemType> _categories = ProblemType.values;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +145,7 @@ class _ReportingFormState extends State<ReportingForm> {
                   ),
                 ),
                 child: Text(
-                  category,
+                  category.labelTh,
                   style: GoogleFonts.kanit(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
