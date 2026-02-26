@@ -45,16 +45,14 @@ class ProblemProvider with ChangeNotifier {
 
   List<ProblemEntity> get filteredProblems {
     if (_selectedTag == null && _selectedCategory == null) return _problems;
-    
+
     return _problems.where((p) {
       final matchTag = _selectedTag == null || p.tagName == _selectedTag;
-      final matchType = _selectedCategory == null || p.typeName == _selectedCategory;
+      final matchType =
+          _selectedCategory == null || p.typeName == _selectedCategory;
       return matchTag && matchType;
     }).toList();
   }
-
-  List<ProblemEntity> get notCompletedProblems =>
-      _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
   int get countPending =>
       _problems.where((p) => p.tagName == ProblemTag.pending).length;
@@ -118,12 +116,16 @@ class ProblemProvider with ChangeNotifier {
   }
 
   Map<String, int> getLocalStatistics() {
-  return {
-    'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
-    'inProgress': _problems.where((p) => p.tagName == ProblemTag.inProgress).length,
-    'completed': _problems.where((p) => p.tagName == ProblemTag.completed).length,
-  };
-}
+    return {
+      'pending': _problems.where((p) => p.tagName == ProblemTag.pending).length,
+      'inProgress': _problems
+          .where((p) => p.tagName == ProblemTag.inProgress)
+          .length,
+      'completed': _problems
+          .where((p) => p.tagName == ProblemTag.completed)
+          .length,
+    };
+  }
 
   void updateUserId(String? userId) {
     if (_currentUserId == userId) return;
@@ -181,16 +183,20 @@ class ProblemProvider with ChangeNotifier {
       if (index != -1) {
         // 1. อัปเดตข้อมูลตัวที่เลือก
         final updatedProblem = _problems[index].copyWith(
-          upvoteCount: isUpvoted ? _problems[index].upvoteCount + 1 : _problems[index].upvoteCount - 1,
+          upvoteCount: isUpvoted
+              ? _problems[index].upvoteCount + 1
+              : _problems[index].upvoteCount - 1,
           isUpvotedByMe: isUpvoted,
         );
 
         // 2. ลบตัวเก่าออก และแทรกกลับเข้าไปในตำแหน่งที่เรียงลำดับถูกต้อง (In-place update)
         _problems.removeAt(index);
-        
+
         // หาตำแหน่งใหม่ที่ควรจะเป็น (Binary Search หรือ Loop หา)
         // เพื่อความง่ายแต่ยังเร็วอยู่ ใช้การหา index แรกที่น้อยกว่าคะแนนใหม่
-        int newIndex = _problems.indexWhere((p) => p.upvoteCount <= updatedProblem.upvoteCount);
+        int newIndex = _problems.indexWhere(
+          (p) => p.upvoteCount <= updatedProblem.upvoteCount,
+        );
         if (newIndex == -1) {
           _problems.add(updatedProblem); // ถ้าคะแนนน้อยสุดไปอยู่ท้ายสุด
         } else {

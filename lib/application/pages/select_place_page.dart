@@ -26,6 +26,9 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     null,
   );
 
+  final TextEditingController _searchController = TextEditingController();
+  bool _isProgrammaticMove = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +63,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
 
   @override
   void dispose() {
+    _searchController.dispose();
     _placemarkNotifier.dispose();
     super.dispose();
   }
@@ -70,11 +74,19 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
       print("This is a selected place: $_selectedPlace");
     });
 
-    if (place.name != null) {
+    if (place.name != null && place.name!.isNotEmpty) {
       try {
         final selectedEntity = _cmuPlaces.firstWhere(
           (element) => element.name == place.name,
         );
+
+        // If it's a new place, map will animate, so flag it
+        if (_placemarkNotifier.value == null ||
+            _placemarkNotifier.value!.isEmpty ||
+            _placemarkNotifier.value!.first.name != selectedEntity.name) {
+          _isProgrammaticMove = true;
+        }
+
         _placemarkNotifier.value = [selectedEntity];
       } catch (e) {
         print("Place not found: ${place.name}");
@@ -117,8 +129,14 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                     // Map
                     Positioned.fill(
                       child: MapSubmitWidget(
-                        onPlacemarkChanged: (placemark) =>
-                            _placemarkNotifier.value = placemark,
+                        onPlacemarkChanged: (placemark) {
+                          if (!_isProgrammaticMove) {
+                            _searchController.clear();
+                          } else {
+                            _isProgrammaticMove = false;
+                          }
+                          _placemarkNotifier.value = placemark;
+                        },
                         selectedPlace:
                             _placemarkNotifier.value?.isNotEmpty == true
                             ? _placemarkNotifier.value!.first
@@ -166,8 +184,8 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                       ),
                     ),
 
-                    // Location Search Widget
                     LocationSearchWidget(
+                      searchController: _searchController,
                       locations: _cmuPlaces.map((e) => e.name).toList(),
                       onLocationSelected: _onLocationSelected,
                     ),

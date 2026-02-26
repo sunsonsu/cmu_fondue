@@ -100,13 +100,11 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (provider.notCompletedProblems.isEmpty) {
-                    return const Center(child: Text('ไม่พบข้อมูลในบริเวณนี้'));
-                  }
                   List<ProblemEntity> displayProblems = provider
                       .getNearbyProblems(
                         widget.location.lat,
                         widget.location.lng,
+                        onlyNotCompleted: true,
                       );
 
                   if (displayProblems.isEmpty) {
