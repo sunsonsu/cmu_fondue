@@ -1,5 +1,6 @@
 fragment ProblemFields on Problem {
     problemId
+    reporterId
     reporter {
       userId
       email
@@ -111,5 +112,13 @@ query ListProblemsByReporter($reporterId: String!) @auth(level: PUBLIC insecureR
     orderBy: [{ createdAt: DESC }]
   ) {
     ...ProblemFields
+  }
+}
+query GetUserById($userId: String!) @auth(level: PUBLIC insecureReason: "Change to USER when production") {
+  user(key: { userId: $userId }) {
+    userId
+    email
+    isAdmin
+    fcmToken
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
+import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/data/repositories/problem_image_repo_impl.dart';
@@ -11,9 +12,12 @@ import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 import 'package:cmu_fondue/domain/usecases/create_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/delete_problem_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/get_problem_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/get_problem_by_id_usecase.dart';
+import 'package:cmu_fondue/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/setup_notifications_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_upvote_usecase.dart';
 import 'package:cmu_fondue/domain/usecases/update_problem_usecase.dart';
+import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +39,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 final cache = CacheService();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -110,6 +115,46 @@ void main() async {
 
   final updateProblemUseCase = UpdateProblemUseCase(problemRepository);
 
+  final getUserByIdUseCase = GetUserByIdUseCase(userRepository);
+
+  final getProblemByIdUseCase = GetProblemByIdUseCase(problemRepository);
+
+  final cloudFunctionsService = CloudFunctionsService();
+
+  // Setup notification navigation callback
+  notificationService.setNavigationCallback((problemId) async {
+    // รอจน navigator พร้อม
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (navigatorKey.currentContext == null) return;
+    
+    try {
+      // ดึงข้อมูล problem จาก problemId
+      final problem = await getProblemByIdUseCase(
+        problemId: problemId,
+        userId: null,
+      );
+      
+      if (problem == null) {
+        if (kDebugMode) {
+          print('⚠️ Problem not found: $problemId');
+        }
+        return;
+      }
+      
+      // Navigate ไปหน้า ProblemDetailPage
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => ProblemDetailPage(problem: problem),
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error navigating to problem: $e');
+      }
+    }
+  });
+
   // injection provider to app
   runApp(
     MultiProvider(
@@ -133,6 +178,8 @@ void main() async {
             updateProblemUpvoteUseCase,
             deleteProblemUseCase,
             updateProblemUseCase,
+            getUserByIdUseCase,
+            cloudFunctionsService,
           ),
           update: (_, auth, problemProvider) {
             final userId = auth.isAuthenticated ? auth.user?.id : null;
@@ -152,6 +199,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'CMU Fondue',
       theme: AppTheme.lightTheme,
       home: Consumer<AppAuthProvider>(

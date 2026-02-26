@@ -200,7 +200,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
     );
   }
 
-  Widget _buildStatRow(Map<String, int> stats) {
+  Widget _buildStatRow(Map<ProblemTag, int> stats) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -208,7 +208,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
           Expanded(
             child: _buildStatCard(
               label: 'รอดำเนินการ',
-              count: stats['pending'] ?? 0,
+              count: (stats[ProblemTag.pending] ?? 0) + (stats[ProblemTag.received] ?? 0),
               color: const Color(0xFFE53935),
             ),
           ),
@@ -216,7 +216,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
           Expanded(
             child: _buildStatCard(
               label: 'ดำเนินการอยู่',
-              count: stats['inProgress'] ?? 0,
+              count: stats[ProblemTag.inProgress] ?? 0,
               color: const Color(0xFFFF8604),
             ),
           ),
@@ -224,7 +224,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
           Expanded(
             child: _buildStatCard(
               label: 'เสร็จสิ้น',
-              count: stats['completed'] ?? 0,
+              count: stats[ProblemTag.completed] ?? 0,
               color: const Color(0xFF2E7D32),
             ),
           ),

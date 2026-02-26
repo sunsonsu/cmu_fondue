@@ -59,15 +59,15 @@ mutation SeedInitialData @auth(level: PUBLIC) {
   tag1: problemTag_upsert(
     data: {
       problemTagId: "d74d3f00-e2fb-4b71-9d06-1f4b336c56b7"
-      tagName: "Received Report"
-      tagThaiName: "รอดำเนินการ"
+      tagName: "Received"
+      tagThaiName: "รับเรื่องแล้ว"
     }
   )
   tag2: problemTag_upsert(
     data: {
       problemTagId: "519a08f6-ee74-4b2b-870e-b35c951c8ee8"
       tagName: "Pending"
-      tagThaiName: "รับเรื่องแล้ว"
+      tagThaiName: "รอดำเนินการ"
     }
   )
   tag3: problemTag_upsert(

@@ -198,10 +198,13 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
         message: 'เปลี่ยนเป็น "${newStatus.labelTh}"',
       );
     } catch (e) {
+      // ปิด loading dialog
+      if (mounted) Navigator.pop(context);
+
       if (mounted) {
         CustomSnackBar.showError(
           context: context,
-          message: 'เปลี่ยนสถานะไม่สำเร็จ',
+          message: 'เปลี่ยนสถานะไม่สำเร็จ: ${e.toString()}',
         );
       }
     }

@@ -19,6 +19,7 @@ class ListProblemsVariablesBuilder {
 @immutable
 class ListProblemsProblems {
   final String problemId;
+  final String reporterId;
   final ListProblemsProblemsReporter reporter;
   final String title;
   final String detail;
@@ -34,6 +35,7 @@ class ListProblemsProblems {
   ListProblemsProblems.fromJson(dynamic json):
   
   problemId = nativeFromJson<String>(json['problemId']),
+  reporterId = nativeFromJson<String>(json['reporterId']),
   reporter = ListProblemsProblemsReporter.fromJson(json['reporter']),
   title = nativeFromJson<String>(json['title']),
   detail = nativeFromJson<String>(json['detail']),
@@ -61,6 +63,7 @@ class ListProblemsProblems {
 
     final ListProblemsProblems otherTyped = other as ListProblemsProblems;
     return problemId == otherTyped.problemId && 
+    reporterId == otherTyped.reporterId && 
     reporter == otherTyped.reporter && 
     title == otherTyped.title && 
     detail == otherTyped.detail && 
@@ -76,12 +79,13 @@ class ListProblemsProblems {
     
   }
   @override
-  int get hashCode => Object.hashAll([problemId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, upvoteCount.hashCode, userUpvotes_on_problem.hashCode, problemImages_on_problem.hashCode]);
+  int get hashCode => Object.hashAll([problemId.hashCode, reporterId.hashCode, reporter.hashCode, title.hashCode, detail.hashCode, locationName.hashCode, problemType.hashCode, currentTags.hashCode, createdAt.hashCode, problemLat.hashCode, problemLng.hashCode, upvoteCount.hashCode, userUpvotes_on_problem.hashCode, problemImages_on_problem.hashCode]);
   
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['problemId'] = nativeToJson<String>(problemId);
+    json['reporterId'] = nativeToJson<String>(reporterId);
     json['reporter'] = reporter.toJson();
     json['title'] = nativeToJson<String>(title);
     json['detail'] = nativeToJson<String>(detail);
@@ -99,6 +103,7 @@ class ListProblemsProblems {
 
   ListProblemsProblems({
     required this.problemId,
+    required this.reporterId,
     required this.reporter,
     required this.title,
     required this.detail,
