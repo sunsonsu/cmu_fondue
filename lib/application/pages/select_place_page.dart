@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/location_search.dart';
 import 'package:cmu_fondue/application/widgets/map_widget.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SelectPlaceBottomSheet extends StatefulWidget {
   const SelectPlaceBottomSheet({super.key});
@@ -62,6 +64,48 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _showNotInCmuDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('ไม่อนุญาต'),
+        content: const Text('สถานที่ที่เลือกอยู่นอกเขตมหาวิทยาลัยเชียงใหม่'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _moveToCurrentLocation();
+            },
+            child: const Text('ตกลง'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _moveToCurrentLocation() async {
+    try {
+      final position = await getUserCurrentLocation();
+      final latLng = LatLng(position.latitude, position.longitude);
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final entity = CmuPlaceEntity.fromPlacemark(placemarks.first, latLng);
+        setState(() {
+          _isProgrammaticMove = true;
+          _placemarkNotifier.value = [entity];
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error moving to current location: $e");
+      }
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -82,6 +126,14 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
         final selectedEntity = _cmuPlaces.firstWhere(
           (element) => element.name == place.name,
         );
+
+        if (!_cmuPlaceUsecase.isInsideCmu(
+          LatLng(selectedEntity.lat, selectedEntity.lng),
+        )) {
+          _showNotInCmuDialog();
+          _placemarkNotifier.value = null;
+          return;
+        }
 
         // If it's a new place, map will animate, so flag it
         if (_placemarkNotifier.value == null ||
@@ -135,6 +187,17 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                     Positioned.fill(
                       child: MapSubmitWidget(
                         onPlacemarkChanged: (placemark) {
+                          if (placemark.isNotEmpty) {
+                            final entity = placemark.first;
+                            if (!_cmuPlaceUsecase.isInsideCmu(
+                              LatLng(entity.lat, entity.lng),
+                            )) {
+                              _showNotInCmuDialog();
+                              _placemarkNotifier.value = null;
+                              return;
+                            }
+                          }
+
                           if (!_isProgrammaticMove) {
                             _searchController.clear();
                           } else {
