@@ -21,7 +21,9 @@ class _StaffDashboardState extends State<StaffDashboard> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {
@@ -208,7 +210,9 @@ class _StaffDashboardState extends State<StaffDashboard> {
           Expanded(
             child: _buildStatCard(
               label: 'รอดำเนินการ',
-              count: (stats[ProblemTag.pending] ?? 0) + (stats[ProblemTag.received] ?? 0),
+              count:
+                  (stats[ProblemTag.pending] ?? 0) +
+                  (stats[ProblemTag.received] ?? 0),
               color: const Color(0xFFE53935),
             ),
           ),
