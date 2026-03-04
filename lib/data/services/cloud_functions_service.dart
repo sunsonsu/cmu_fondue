@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 
 // Komsan
 class CloudFunctionsService {
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  // ระบุ region ให้ตรงกับที่ deploy (us-central1)
+  final FirebaseFunctions _functions = 
+      FirebaseFunctions.instanceFor(region: 'us-central1');
 
   // Singleton pattern
   static final CloudFunctionsService _instance =
