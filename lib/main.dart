@@ -22,7 +22,6 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cmu_fondue/firebase_options.dart';
@@ -51,30 +50,33 @@ void main() async {
   await NotificationService().initialize();
 
   if (kDebugMode) {
-    // Development mode: Configure Firebase Emulators
-    String host = defaultTargetPlatform == TargetPlatform.android
-        ? '10.0.2.2'
-        : 'localhost';
-
-    // Use production Auth but emulated Functions and DataConnect
-    // FirebaseAuth.instance.useAuthEmulator(host, 9099); // ปิดเพื่อใช้ Auth จริง
-    ConnectorConnector.instance.dataConnect.useDataConnectEmulator(host, 9399);
-    FirebaseFunctions.instance.useFunctionsEmulator(host, 5001);
-
-    // App Check with debug provider - required for Cloud Functions
+    // Development mode: Use production Firebase with debug App Check
+    
+    // App Check with debug provider
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.debug,
       appleProvider: AppleProvider.debug,
     );
 
-    print('🔧 Emulators: $host (Functions:5001, DataConnect:9399)');
-    print('✅ Using production Firebase Auth');
+    // Print debug token for adding to Firebase Console
+    try {
+      final token = await FirebaseAppCheck.instance.getToken();
+      if (token != null) {
+        print('🔑 App Check Debug Token: $token');
+        print('   Add this token at: https://console.firebase.google.com/project/cmu-fondue/appcheck');
+      }
+    } catch (e) {
+      print('⚠️  Could not get App Check token: $e');
+    }
+
+    print('✅ Using production Firebase (Auth, Functions, DataConnect)');
   } else {
     // Production mode: Use Play Integrity & Device Check
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.playIntegrity,
       appleProvider: AppleProvider.deviceCheck,
     );
+    print('✅ App Check activated for production');
   }
   await cache.init();
 

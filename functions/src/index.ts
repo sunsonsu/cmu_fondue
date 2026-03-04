@@ -48,8 +48,11 @@ admin.initializeApp();
  */
 export const sendProblemStatusNotification = onCall(
   {
-    // Disable App Check enforcement for development/testing
-    consumeAppCheckToken: false,
+    // Enable App Check but don't enforce (allows debug tokens in development)
+    consumeAppCheckToken: true,
+    enforceAppCheck: false,
+    // Allow all authenticated Firebase users to invoke this function
+    invoker: "public",
   },
   async (request: CallableRequest) => {
     // ตรวจสอบว่า User Login และเป็น Admin
