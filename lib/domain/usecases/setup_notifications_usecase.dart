@@ -2,6 +2,7 @@
 import 'package:cmu_fondue/data/services/notification_service.dart';
 import 'package:cmu_fondue/domain/repositories/user_repo.dart';
 
+// Komsan
 class SetupNotificationsUseCase {
   final NotificationService notificationService;
   final UserRepo userRepository;
