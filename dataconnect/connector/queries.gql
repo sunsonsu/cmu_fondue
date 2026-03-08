@@ -100,6 +100,7 @@ query ProblemsByTypeFull($TypeId: UUID!) @auth(level: PUBLIC insecureReason: "Ch
   }
 }
 
+# Chananchida Prathum 650510659
 query MaxUpvoteProblem @auth(level: PUBLIC insecureReason: "Change to USER when production") {
   problems(orderBy: {upvoteCount: DESC}, limit: 1) {
     ...ProblemFields
