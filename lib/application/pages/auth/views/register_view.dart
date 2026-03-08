@@ -19,7 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 class RegisterView extends StatefulWidget {
   /// The dependent logic instructing cloud creations strictly.
   final RegisterUseCase registerUseCase;
-  
+
   /// The reactive closure triggered explicitly when redirecting back towards standard authentication.
   final VoidCallback onSwitchToLogin;
 
@@ -189,26 +189,55 @@ class _RegisterViewState extends State<RegisterView> {
           ),
 
           const SizedBox(height: 20),
-          RichText(
-            text: TextSpan(
-              text: 'You already have an account? ',
-              style: GoogleFonts.kanit(
-                color: Colors.black,
-                fontSize: 18,
-              ),
-              children: [
-                TextSpan(
-                  text: 'Login',
-                  style: GoogleFonts.kanit(
-                    color: const Color(0xFF5D3891),
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = widget.onSwitchToLogin,
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmall = constraints.maxWidth < 400;
+              if (isSmall) {
+                return Column(
+                  children: [
+                    Text(
+                      'You already have an account?',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.kanit(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: widget.onSwitchToLogin,
+                      child: Text(
+                        'Login',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.kanit(
+                          color: const Color(0xFF5D3891),
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return RichText(
+                text: TextSpan(
+                  text: 'You already have an account? ',
+                  style: GoogleFonts.kanit(color: Colors.black, fontSize: 18),
+                  children: [
+                    TextSpan(
+                      text: 'Login',
+                      style: GoogleFonts.kanit(
+                        color: const Color(0xFF5D3891),
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = widget.onSwitchToLogin,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
