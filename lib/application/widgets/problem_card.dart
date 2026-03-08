@@ -48,6 +48,7 @@ class _ProblemCardState extends State<ProblemCard> {
   final Color activeColor = const Color(0xFF6750A4);
   late int localUpvoteCount;
   late bool isUpvoted;
+  bool _isUpvoting = false;
 
   @override
   void initState() {
@@ -376,6 +377,10 @@ class _ProblemCardState extends State<ProblemCard> {
     // ถ้าไม่ได้ส่งฟังก์ชัน upvote มา ก็ไม่ต้องทำอะไร
     if (widget.onUpvote == null) return;
 
+    // ป้องกันการกดซ้ำขณะที่กำลังประมวลผล
+    if (_isUpvoting) return;
+    _isUpvoting = true;
+
     final previousIsUpvoted = isUpvoted;
     final previousCount = localUpvoteCount;
 
@@ -404,6 +409,8 @@ class _ProblemCardState extends State<ProblemCard> {
           ),
         ),
       );
+    } finally {
+      _isUpvoting = false;
     }
   }
 }
