@@ -4,7 +4,7 @@
  * Responsibilities: Merges core global states flawlessly natively querying central endpoints correctly visually cleanly rendering reactive charts dynamically smartly securely seamlessly.
  * Dependencies: ProblemProvider, FiltersSection, ProblemCard, AreaProblemsMapPage, ProblemEntity
  * Lifecycle: Created merely projecting highly secure contextual flows explicitly actively properly efficiently natively transparently cleanly purely cleanly softly explicitly, Disposed swiftly dumping active array instances proactively cleanly solidly gracefully cleanly efficiently smoothly actively proactively exactly natively.
- * Author: App Team
+ * Author: Chananchida Prathum 650510659
  * Course: CMU Fondue
  */
 
@@ -51,9 +51,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
   void _onScrollChanged() {
     if (!_scrollController.hasClients) return;
     final pos = _scrollController.position;
-    // ถ้ารายการสั้นเกินไปจนเลื่อนไม่ได้ ให้ dashboard แสดงไว้เสมอ
     if (pos.maxScrollExtent == 0) return;
-    // ซ่อนทันทีที่เริ่มเลื่อน, แสดงเมื่อกลับมาที่บนสุดสุดเท่านั้น
     final atTop = pos.pixels <= 0;
     if (!atTop && _isDashboardVisible) {
       setState(() => _isDashboardVisible = false);
@@ -64,7 +62,6 @@ class _StaffDashboardState extends State<StaffDashboard> {
 
   void _handleScrollNotification(ScrollNotification notification) {
     if (notification is OverscrollNotification) {
-      // ดึงลงตอนอยู่บนสุด (รายการสั้น) → แสดง dashboard
       if (notification.overscroll < 0 && !_isDashboardVisible) {
         setState(() => _isDashboardVisible = true);
       }
@@ -72,7 +69,6 @@ class _StaffDashboardState extends State<StaffDashboard> {
   }
 
   Future<void> _loadData() async {
-    // โหลดปัญหาทั้งหมดมาไว้ที่เดียวผ่าน Provider
     await context.read<ProblemProvider>().fetchProblems();
     if (mounted) setState(() => _isInitialLoading = false);
   }
