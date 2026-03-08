@@ -4,7 +4,6 @@ import 'package:cmu_fondue/application/widgets/filters_section.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,13 +16,47 @@ class StaffDashboard extends StatefulWidget {
 
 class _StaffDashboardState extends State<StaffDashboard> {
   bool _isInitialLoading = true;
+  bool _isDashboardVisible = true;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScrollChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScrollChanged);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScrollChanged() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    // ถ้ารายการสั้นเกินไปจนเลื่อนไม่ได้ ให้ dashboard แสดงไว้เสมอ
+    if (pos.maxScrollExtent == 0) return;
+    // ซ่อนทันทีที่เริ่มเลื่อน, แสดงเมื่อกลับมาที่บนสุดสุดเท่านั้น
+    final atTop = pos.pixels <= 0;
+    if (!atTop && _isDashboardVisible) {
+      setState(() => _isDashboardVisible = false);
+    } else if (atTop && !_isDashboardVisible) {
+      setState(() => _isDashboardVisible = true);
+    }
+  }
+
+  void _handleScrollNotification(ScrollNotification notification) {
+    if (notification is OverscrollNotification) {
+      // ดึงลงตอนอยู่บนสุด (รายการสั้น) → แสดง dashboard
+      if (notification.overscroll < 0 && !_isDashboardVisible) {
+        setState(() => _isDashboardVisible = true);
+      }
+    }
   }
 
   Future<void> _loadData() async {
@@ -57,13 +90,25 @@ class _StaffDashboardState extends State<StaffDashboard> {
           ),
           child: Column(
             children: [
-              // 1. Most Upvoted Area Card
-              _buildMostUpvotedCard(mostUpvotedProblem),
-
-              // 2. Statistics Row
-              _buildStatRow(stats),
-
-              const SizedBox(height: 16),
+              // 1 & 2. Most Upvoted Card + Statistics Row (collapsible)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 250),
+                  opacity: _isDashboardVisible ? 1.0 : 0.0,
+                  child: _isDashboardVisible
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildMostUpvotedCard(mostUpvotedProblem),
+                            _buildStatRow(stats),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ),
 
               // 3. Filters Section
               FiltersSection(
@@ -82,22 +127,30 @@ class _StaffDashboardState extends State<StaffDashboard> {
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
                       )
-                    : ListView.builder(
-                        key: const PageStorageKey('problemsList'),
-                        padding: const EdgeInsets.all(16),
-                        itemCount: filteredList.length,
-                        itemBuilder: (context, index) {
-                          final problem = filteredList[index];
-                          return ProblemCard(
-                            key: ValueKey(problem.id),
-                            problem: problem,
-                            onDeleted: () => provider.fetchProblems(),
-                            onUpvote: (isUpvoted) => provider.toggleUpvote(
-                              problemId: problem.id,
-                              isUpvoted: isUpvoted,
-                            ),
-                          );
+                    : NotificationListener<ScrollNotification>(
+                        onNotification: (n) {
+                          _handleScrollNotification(n);
+                          return false;
                         },
+                        child: ListView.builder(
+                          key: const PageStorageKey('problemsList'),
+                          controller: _scrollController,
+                          padding: const EdgeInsets.all(16),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: filteredList.length,
+                          itemBuilder: (context, index) {
+                            final problem = filteredList[index];
+                            return ProblemCard(
+                              key: ValueKey(problem.id),
+                              problem: problem,
+                              onDeleted: () => provider.fetchProblems(),
+                              onUpvote: (isUpvoted) => provider.toggleUpvote(
+                                problemId: problem.id,
+                                isUpvoted: isUpvoted,
+                              ),
+                            );
+                          },
+                        ),
                       ),
               ),
             ],
@@ -184,11 +237,23 @@ class _StaffDashboardState extends State<StaffDashboard> {
                   ),
                   if (problem != null) ...[
                     const SizedBox(height: 4),
-                    Text(
-                      '1 รายการ • $upvotes upvotes • แตะเพื่อดูแผนที่',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withOpacity(0.8),
+                    Text.rich(
+                      TextSpan(
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                        children: [
+                          TextSpan(text: '1 รายการ • $upvotes upvotes • '),
+                          const TextSpan(
+                            text: 'แตะเพื่อดูแผนที่',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -258,6 +323,8 @@ class _StaffDashboardState extends State<StaffDashboard> {
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
           Text(
