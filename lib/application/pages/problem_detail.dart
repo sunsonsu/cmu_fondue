@@ -29,6 +29,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   final ImagePicker _picker = ImagePicker();
   ProblemTag? _currentStatus;
   DateTime? _statusUpdatedAt;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -182,6 +183,10 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   }
 
   void _changeStatus(ProblemTag newStatus) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await context.read<ProblemProvider>().changeProblemTag(
         problemId: widget.problem.id,
@@ -193,19 +198,25 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
         _statusUpdatedAt = DateTime.now();
       });
 
-      CustomSnackBar.showSuccess(
-        context: context,
-        message: 'เปลี่ยนเป็น "${newStatus.labelTh}"',
-      );
+      if (mounted) {
+        CustomSnackBar.showSuccess(
+          context: context,
+          message: 'เปลี่ยนเป็น "${newStatus.labelTh}"',
+        );
+      }
     } catch (e) {
-      // ปิด loading dialog
-      if (mounted) Navigator.pop(context);
-
+      // ไม่ต้อง pop หน้าออกถ้ายิง api พลาด
       if (mounted) {
         CustomSnackBar.showError(
           context: context,
           message: 'เปลี่ยนสถานะไม่สำเร็จ: ${e.toString()}',
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -233,9 +244,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF5D3891)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: _isLoading ? null : () => Navigator.pop(context),
         ),
       ),
       body: Container(
@@ -675,6 +684,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                         AdminStatusManagement(
                           currentStatus: currentStatus,
                           onStatusChange: _showStatusChangeDialog,
+                          isLoading: _isLoading,
                         ),
 
                         // ปุ่มลบปัญหา
@@ -682,7 +692,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                         const Divider(),
                         const SizedBox(height: 12),
                         OutlinedButton.icon(
-                          onPressed: _deleteProblem,
+                          onPressed: _isLoading ? null : _deleteProblem,
                           icon: const Icon(Icons.delete_outline, size: 20),
                           label: const Text('ลบปัญหานี้'),
                           style: OutlinedButton.styleFrom(

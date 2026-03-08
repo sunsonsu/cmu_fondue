@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class CacheService {
   static const _boxName = 'cmu_places_cache';
-  static const _defaultTtl = 300;
+  static const _defaultTtl = 7;
   late Box _box;
 
   Future<void> init() async {
@@ -14,7 +14,7 @@ class CacheService {
   Future<void> set(String key, dynamic value, {int ttl = _defaultTtl}) async {
     await _box.put(key, {
       'data': json.encode(value),
-      'expiry': DateTime.now().add(Duration(seconds: ttl)).toIso8601String(),
+      'expiry': DateTime.now().add(Duration(days: ttl)).toIso8601String(),
     });
   }
 
