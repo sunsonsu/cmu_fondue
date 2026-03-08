@@ -1,22 +1,58 @@
+/*
+ * File: problem_entity.dart
+ * Description: Entity representing a reported problem.
+ * Responsibilities: Encapsulates all data related to a problem report and provides methods for parsing from generated SDK data and copying instances.
+ * Author: Komsan
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 
-// Komsan
+/// Represents a problem reported by a user in the system.
 class ProblemEntity {
+  /// The unique identifier of the problem.
   final String id;
+
+  /// The unique identifier of the user who reported the problem.
   final String reporterId;
+
+  /// The brief title summarizing the problem.
   final String title;
+
+  /// The full detailed description of the problem.
   final String detail;
+
+  /// The latitude coordinate where the problem occurred.
   final double lat;
+
+  /// The longitude coordinate where the problem occurred.
   final double lng;
+
+  /// The number of upvotes this problem has received.
   int upvoteCount;
+
+  /// The date and time when the problem was reported.
   final DateTime createdAt;
+
+  /// The email address of the user who reported the problem.
   final String reporterEmail;
+
+  /// The categorization type of the problem.
   final ProblemType typeName;
+
+  /// The current tag classifying the state of the problem.
   final ProblemTag tagName;
+
+  /// The named location where the problem occurred.
   final String locationName;
+
+  /// Whether the currently authenticated user has upvoted this problem.
   final bool isUpvotedByMe;
+
+  /// The URL of the primary image associated with this problem, or null if no image exists.
   final String? imageUrl;
 
+  /// Initializes a new instance of [ProblemEntity].
   ProblemEntity({
     required this.id,
     required this.reporterId,
@@ -34,6 +70,7 @@ class ProblemEntity {
     this.imageUrl,
   });
 
+  /// Constructs an entity from dynamic generated data, integrating the active user status.
   factory ProblemEntity.fromGenerated(dynamic data, String? currentUserId) {
     String? firstImageUrl;
     if (data.problemImages_on_problem != null &&
@@ -78,6 +115,7 @@ class ProblemEntity {
     );
   }
 
+  /// Creates a new copy of the [ProblemEntity] with specified properties replaced.
   ProblemEntity copyWith({
     String? id,
     String? reporterId,

@@ -1,14 +1,33 @@
+/*
+ * File: admin_status_management.dart
+ * Description: Special UI component isolating administrative privileges governing state changes directly natively.
+ * Responsibilities: Renders dynamic progression choices depending linearly across current incident lifecycles securely hiding unauthorized endpoints natively.
+ * Dependencies: ProblemTag
+ * Lifecycle: Created merely upon admin inspections within detail pathways, Disposed backwards navigating outwardly gracefully.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 
+/// Segregates exclusive workflow transitions providing tactile paths updating cloud states distinctly explicitly.
 class AdminStatusManagement extends StatelessWidget {
+  /// The static reflection defining which transitions remain valid currently natively.
   final ProblemTag currentStatus;
+  
+  /// Injects external domain behaviors directly intercepting tactile choices dynamically explicitly.
   final Function(ProblemTag) onStatusChange;
+  
+  /// Flags ongoing async locks masking interactive layouts behind circular loading indicators completely gracefully.
+  final bool isLoading;
 
+  /// Initializes a new instance of [AdminStatusManagement].
   const AdminStatusManagement({
     super.key,
     required this.currentStatus,
     required this.onStatusChange,
+    this.isLoading = false,
   });
 
   @override
@@ -18,9 +37,9 @@ class AdminStatusManagement extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.admin_panel_settings,
-              color: const Color(0xFF5D3891),
+              color: Color(0xFF5D3891),
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -35,17 +54,30 @@ class AdminStatusManagement extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        
+
         // แสดงปุ่มตามสถานะปัจจุบัน
         if (currentStatus == ProblemTag.pending) ...[
           // ยังไม่ได้แก้ไข -> รับเรื่อง
           ElevatedButton.icon(
-            onPressed: () => onStatusChange(ProblemTag.received),
-            icon: const Icon(Icons.check_circle_outline, size: 20),
+            onPressed: isLoading
+                ? null
+                : () => onStatusChange(ProblemTag.received),
+            icon: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.check_circle_outline, size: 20),
             label: const Text('รับเรื่อง'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1976D2),
               foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.grey[400],
+              disabledForegroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -55,12 +87,25 @@ class AdminStatusManagement extends StatelessWidget {
         ] else if (currentStatus == ProblemTag.received) ...[
           // รับเรื่อง -> กำลังแก้ไข (primary)
           ElevatedButton.icon(
-            onPressed: () => onStatusChange(ProblemTag.inProgress),
-            icon: const Icon(Icons.build_circle_outlined, size: 20),
+            onPressed: isLoading
+                ? null
+                : () => onStatusChange(ProblemTag.inProgress),
+            icon: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.build_circle_outlined, size: 20),
             label: const Text('เริ่มดำเนินการแก้ไข'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF8604),
               foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.grey[400],
+              disabledForegroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -70,12 +115,15 @@ class AdminStatusManagement extends StatelessWidget {
           const SizedBox(height: 8),
           // ย้อนกลับเป็นยังไม่ได้แก้ไข (secondary)
           OutlinedButton.icon(
-            onPressed: () => onStatusChange(ProblemTag.pending),
+            onPressed: isLoading
+                ? null
+                : () => onStatusChange(ProblemTag.pending),
             icon: const Icon(Icons.undo, size: 18),
             label: const Text('ยังไม่ได้แก้ไข'),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.grey[700],
               side: BorderSide(color: Colors.grey[400]!),
+              disabledForegroundColor: Colors.grey[400],
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -85,12 +133,25 @@ class AdminStatusManagement extends StatelessWidget {
         ] else if (currentStatus == ProblemTag.inProgress) ...[
           // กำลังแก้ไข -> เสร็จสิ้น (primary)
           ElevatedButton.icon(
-            onPressed: () => onStatusChange(ProblemTag.completed),
-            icon: const Icon(Icons.check_circle, size: 20),
+            onPressed: isLoading
+                ? null
+                : () => onStatusChange(ProblemTag.completed),
+            icon: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.check_circle, size: 20),
             label: const Text('ทำเครื่องหมายเสร็จสิ้น'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2E7D32),
               foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.grey[400],
+              disabledForegroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -103,12 +164,15 @@ class AdminStatusManagement extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => onStatusChange(ProblemTag.received),
+                  onPressed: isLoading
+                      ? null
+                      : () => onStatusChange(ProblemTag.received),
                   icon: const Icon(Icons.arrow_back, size: 18),
                   label: const Text('รับเรื่อง'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.grey[700],
                     side: BorderSide(color: Colors.grey[400]!),
+                    disabledForegroundColor: Colors.grey[400],
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -119,12 +183,19 @@ class AdminStatusManagement extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => onStatusChange(ProblemTag.pending),
+                  onPressed: isLoading
+                      ? null
+                      : () => onStatusChange(ProblemTag.pending),
                   icon: const Icon(Icons.cancel_outlined, size: 18),
                   label: const Text('ยังไม่ได้แก้ไข'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFE53935),
-                    side: const BorderSide(color: Color(0xFFE53935)),
+                    disabledForegroundColor: Colors.grey[400],
+                    side: BorderSide(
+                      color: isLoading
+                          ? Colors.grey[400]!
+                          : const Color(0xFFE53935),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -145,11 +216,7 @@ class AdminStatusManagement extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.lock_outline,
-                  color: Colors.green[700],
-                  size: 24,
-                ),
+                Icon(Icons.lock_outline, color: Colors.green[700], size: 24),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

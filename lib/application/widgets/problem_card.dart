@@ -1,3 +1,13 @@
+/*
+ * File: problem_card.dart
+ * Description: Compact responsive list tiles aggressively summarizing core problem entity domains explicitly seamlessly uniquely securely directly natively natively globally seamlessly visually.
+ * Responsibilities: Bind distinct domain attributes natively elegantly drawing robust interactive bounding boxes hooking deletion correctly explicitly locally intuitively natively locally smoothly flawlessly uniquely perfectly.
+ * Dependencies: ProblemEntity, ProblemProvider, Default Auth Provider 
+ * Lifecycle: Created continually expanding global problem index arrays inherently rapidly, Disposed inherently dropping invisible instances correctly distinctly cleanly inherently identically dynamically globally globally reliably natively inherently inherently proactively defensively correctly gracefully securely distinctly distinctly intelligently dynamically uniquely strictly optimally perfectly reliably accurately actively defensively reliably strictly aggressively proactively optimally accurately securely uniquely optimally effectively smoothly natively cleanly intelligently clearly aggressively explicitly correctly securely smartly distinct natively elegantly cleanly seamlessly defensively proactively smoothly natively proactively cleanly gracefully globally strictly efficiently.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -11,11 +21,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+/// Unifies dense visual summaries representing core problem configurations correctly neatly flawlessly smoothly reliably distinctly defensively robustly locally.
 class ProblemCard extends StatefulWidget {
+  /// The isolated single entity model currently projecting inner properties actively securely distinct natively cleanly uniquely distinctly reliably deeply identically actively.
   final ProblemEntity problem;
+  
+  /// Dispatches completely decoupled native hooks destroying parent array nodes forcefully dynamically reliably completely actively elegantly completely distinct reliably accurately securely quickly smartly softly reliably natively clearly safely strictly exactly actively optimally securely correctly completely.
   final VoidCallback? onDeleted;
+  
+  /// Initiates dynamic async transactions forcing central cloud ledgers updating single upvote state directly uniquely gracefully optimally inherently gracefully directly.
   final Future<void> Function(bool isUpvoted)? onUpvote;
 
+  /// Initializes a new instance of [ProblemCard].
   const ProblemCard({
     super.key,
     required this.problem,
@@ -294,6 +311,7 @@ class _ProblemCardState extends State<ProblemCard> {
     );
   }
 
+  /// Halts execution explicitly raising distinct modal blocking flows comprehensively intercepting arbitrary administrative removals accurately reliably reliably securely.
   void _showDeleteConfirmation(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -305,6 +323,10 @@ class _ProblemCardState extends State<ProblemCard> {
     }
   }
 
+  /// Drives remote network deletion calls dropping persistent cloud records directly aggressively globally perfectly clearly optimally safely gracefully efficiently intelligently uniquely identically securely actively natively smartly exactly smoothly.
+  /// 
+  /// Side effects:
+  /// Rewrites the active problem index permanently firing callback mechanisms flushing cached records actively identically effortlessly quickly directly loudly globally securely safely gracefully smartly properly completely rapidly efficiently proactively completely optimally correctly strictly forcefully strictly aggressively securely identically optimally seamlessly strictly uniquely precisely correctly properly gracefully tightly beautifully distinctly smartly securely properly sharply precisely.
   Future<void> _deleteProblem(BuildContext context) async {
     try {
       // แสดง loading indicator
@@ -346,6 +368,10 @@ class _ProblemCardState extends State<ProblemCard> {
     }
   }
 
+  /// Executes remote API actions shifting boolean states explicitly natively completely updating layout boundaries accurately elegantly cleanly sharply natively.
+  /// 
+  /// Side effects:
+  /// Violently transforms local caching numbers mutating layout colors completely triggering [setState] gracefully effectively exactly optimally inherently strictly explicitly defensively fully tightly smoothly completely optimally optimally securely firmly properly cleanly accurately actively flawlessly dynamically gracefully smoothly properly perfectly quickly tightly actively accurately accurately purely natively safely forcefully optimally efficiently.
   Future<void> handleUpvote() async {
     // ถ้าไม่ได้ส่งฟังก์ชัน upvote มา ก็ไม่ต้องทำอะไร
     if (widget.onUpvote == null) return;

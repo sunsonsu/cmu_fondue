@@ -1,10 +1,25 @@
+/*
+ * File: filter_by_category.dart
+ * Description: Horizontal chip array segregating arbitrary problem pools matching strict localized metadata domains distinctly locally.
+ * Responsibilities: Evaluates active semantic clusters, visualizes highlighted filter pills explicitly mapping internal enumerations correctly explicitly natively.
+ * Dependencies: ProblemType
+ * Lifecycle: Created merely while viewing lists exposing filtering tabs dynamically, Disposed automatically when abandoning history flows.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 
+/// Wraps continuous categorical metadata exposing discrete interactive nodes narrowing data queries precisely dynamically globally.
 class FilterByCategory extends StatelessWidget {
+  /// The isolated single domain presently filtering list queries correctly transparently natively.
   final ProblemType? selectedCategory;
+  
+  /// Dispatches strict metadata shifts backwards rewriting upstream streams abruptly safely.
   final Function(ProblemType?) onCategorySelected;
 
+  /// Initializes a new instance of [FilterByCategory].
   const FilterByCategory({
     super.key,
     required this.selectedCategory,
@@ -59,6 +74,7 @@ class FilterByCategory extends StatelessWidget {
     );
   }
 
+  /// Synthesizes distinct clickable pills marking active domains clearly leveraging contrast natively cleanly seamlessly.
   Widget _buildChip({
     required String label,
     required bool isSelected,
@@ -91,7 +107,7 @@ class FilterByCategory extends StatelessWidget {
             ),
             if (isSelected) ...[
               const SizedBox(width: 4),
-              Icon(
+              const Icon(
                 Icons.close,
                 size: 16,
                 color: Colors.white,

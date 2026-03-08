@@ -1,10 +1,29 @@
+/*
+ * File: profile_page.dart
+ * Description: Identity inspection hub exposing active email credentials distinctly providing explicit exit pathways.
+ * Responsibilities: Isolates user data strings distinctly, intercepts logout directions aggressively, and dumps active session tokens backward conclusively natively.
+ * Dependencies: AppAuthProvider, CustomSnackBar
+ * Lifecycle: Created instantly when accessing navigation index 3 exclusively, Disposed merely exiting parent tabs correctly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
+/// Renders basic visual abstractions surrounding internal active credentials allowing strict explicit token dropping dynamically natively.
+class ProfilePage extends StatefulWidget {
+  /// Initializes a new instance of [ProfilePage].
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +66,13 @@ class ProfilePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
 
-                // Profile Header Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 32),
-                    // decoration: const BoxDecoration(
-                    //   color: Color(0xFFEAE5F1),
-                    //   borderRadius: BorderRadius.all(Radius.circular(30)),
-                    // ),
                     child: Column(
                       children: [
-                        // Profile Avatar
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -83,7 +96,6 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // User Name/Email
                         Text(
                           user?.email.split('@')[0].toUpperCase() ?? 'User',
                           style: const TextStyle(
@@ -107,14 +119,16 @@ class ProfilePage extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                // Logout Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: _isLoading ? null : () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
                         try {
                           await authProvider.logout();
                           if (context.mounted) {
@@ -134,36 +148,50 @@ class ProfilePage extends StatelessWidget {
                               message:
                                   'ออกจากระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
                             );
+                            setState(() {
+                              _isLoading = false;
+                            });
                           }
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
+                        disabledBackgroundColor: Colors.red.withAlpha(150),
                         foregroundColor: Colors.white,
+                        disabledForegroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.logout_rounded,
-                            size: 22,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            'ออกจากระบบ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.logout_rounded,
+                                  size: 22,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'ออกจากระบบ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),

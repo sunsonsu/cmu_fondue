@@ -1,19 +1,38 @@
+/*
+ * File: cloud_functions_service.dart
+ * Description: Wrapper for executing remote Firebase Cloud Functions.
+ * Responsibilities: Acts as a central dispatcher for invoking secure serverless backend logic securely.
+ * Author: Komsan
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-// Komsan
+/// Routes triggers explicitly designed to activate serverless logic hooks within Google Cloud.
 class CloudFunctionsService {
-  // ระบุ region ให้ตรงกับที่ deploy (us-central1)
+  /// The client SDK instance pinned explicitly to the `us-central1` environment.
   final FirebaseFunctions _functions = 
       FirebaseFunctions.instanceFor(region: 'us-central1');
 
-  // Singleton pattern
+  /// The shared singleton instance.
   static final CloudFunctionsService _instance =
       CloudFunctionsService._internal();
+      
+  /// Retrieves the unified singleton instance of [CloudFunctionsService].
   factory CloudFunctionsService() => _instance;
+  
+  /// Privately provisions the singleton state.
   CloudFunctionsService._internal();
 
-  /// ส่ง notification เมื่อมีการเปลี่ยนสถานะของ Problem
+  /// Invokes the HTTPS callable function responsible for distributing push notifications.
+  ///
+  /// This operates asynchronously over the network.
+  /// Dispatches the signal utilizing the reporter's specific [fcmToken]. Includes
+  /// the [problemId] and [problemTitle] for deep linking, while [newTagName]
+  /// clarifies the updated status parameter.
+  /// Throws an exception if the cloud invocation fails or rejects the payload.
   Future<void> sendProblemStatusNotification({
     required String problemId,
     required String problemTitle,
@@ -25,7 +44,6 @@ class CloudFunctionsService {
     }
     
     try {
-
       final callable =
           _functions.httpsCallable('sendProblemStatusNotification');
 

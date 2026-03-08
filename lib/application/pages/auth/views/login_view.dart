@@ -1,3 +1,13 @@
+/*
+ * File: login_view.dart
+ * Description: The primary identity verification form capturing returning user credentials securely.
+ * Responsibilities: Captures raw email/password inputs, handles validation rules, and dispatches strict backend authentication attempts.
+ * Dependencies: AuthTextField, LoginUseCase
+ * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verification propagating downwards.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/widgets/auth_text_field.dart';
 import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/login.dart';
@@ -5,10 +15,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Captures credentials coordinating rigorous backend validations dynamically exposing loading indications natively.
 class LoginView extends StatefulWidget {
+  /// The dependent logic instructing cloud validations securely.
   final LoginUseCase loginUseCase;
+  
+  /// The reactive closure triggered explicitly when redirecting back towards registration.
   final VoidCallback onSwitchToRegister;
 
+  /// Initializes a new instance of [LoginView].
   const LoginView({
     super.key,
     required this.loginUseCase,
@@ -27,6 +42,14 @@ class _LoginViewState extends State<LoginView> {
   String? _passwordError;
   bool _loading = false;
 
+  /// Executes stringent validations rejecting empty fields securely before submitting native credentials upstream asynchronously.
+  ///
+  /// This operates asynchronously initiating deep architecture verifications actively. Formal failures mapping identically
+  /// to invalid credentials or poor formats natively mutate internal UI rendering variables pushing identical messages
+  /// underneath distinct text inputs exactly.
+  ///
+  /// Side effects:
+  /// Rewrites [_emailError] and [_passwordError] distinctly upon rule breaking, toggles [_loading] phases, and fires [setState].
   Future<void> _submit() async {
     setState(() {
       _emailError = null;
@@ -105,9 +128,8 @@ class _LoginViewState extends State<LoginView> {
           ),
 
           const SizedBox(height: 16),
-
-          // Forgot Password Row... (ละไว้ในฐานที่เข้าใจ หรือใส่เพิ่มได้เลย)
           const SizedBox(height: 60),
+
           ElevatedButton(
             onPressed: _loading ? null : _submit,
             style: ButtonStyle(

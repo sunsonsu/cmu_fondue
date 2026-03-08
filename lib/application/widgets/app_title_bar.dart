@@ -1,7 +1,19 @@
+/*
+ * File: app_title_bar.dart
+ * Description: High-level visual identity band rendering universal application branding statically.
+ * Responsibilities: Isolates header logic uniquely providing fixed pathways jumping across deep user profile configurations easily cleanly.
+ * Dependencies: ProfilePage
+ * Lifecycle: Created invariably aligning top screens consistently natively, Disposed explicitly switching global layouts.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
+/// Wraps simple static identification assets allowing explicit global user setting paths universally gracefully.
 class AppTitleBar extends StatelessWidget {
+  /// Initializes a new instance of [AppTitleBar].
   const AppTitleBar({super.key});
 
   @override

@@ -1,15 +1,34 @@
+/*
+ * File: app_scaffold.dart
+ * Description: The primary architectural container anchoring global navigation persistently across distinct high-level views seamlessly.
+ * Responsibilities: Injects universal bottom bar routing, restricts creation pathways leveraging bounded geolocation natively, and isolates common view padding safely.
+ * Dependencies: CmuPlaceUsecase, Geolocator, Google Maps Flutter
+ * Lifecycle: Created merely upon initial authorized session setup, Disposed never unless sessions log out explicitly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
 import 'package:cmu_fondue/domain/usecases/cmu_place_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/// Unifies standard page routing maintaining continuous visual states navigating deep logical paths reliably.
 class AppScaffold extends StatefulWidget {
+  /// The active highlighted routing index currently anchoring view layouts locally natively.
   final int currentIndex;
+
+  /// Receives distinct integer payloads broadcasting external routing requests formally immediately.
   final Function(int)? onNavigationChanged;
+
+  /// The isolated dynamic payload occupying structural empty bodies completely seamlessly.
   final Widget child;
+
+  /// The static custom naming applying visual distinctions matching user roles exactly transparently.
   final String profileLabel;
 
+  /// Initializes a new instance of [AppScaffold].
   const AppScaffold({
     super.key,
     this.currentIndex = 0,
@@ -49,6 +68,10 @@ class _AppScaffoldState extends State<AppScaffold> {
     }
   }
 
+  /// Evaluates precise physical bounding boxes snapping graphical indicator limits dynamically across layout streams perfectly.
+  ///
+  /// Side effects:
+  /// Rewrites active graphical variables specifically assigning visual positions mutating view models actively invoking [setState].
   void _updateIndicatorPosition() {
     final navKey = _navKeys[widget.currentIndex];
     final containerKey = _containerKey;
@@ -72,6 +95,12 @@ class _AppScaffoldState extends State<AppScaffold> {
     }
   }
 
+  /// Enforces geographical isolation mapping user paths intercepting outside limits correctly blocking invalid creation flows.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
+  ///
+  /// Side effects:
+  /// Updates local [_isInsideCmu] constraints totally limiting specific system abilities unconditionally natively.
   Future<void> _checkLocation() async {
     try {
       final repo = CmuPlaceRepoImpl();

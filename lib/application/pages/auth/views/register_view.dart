@@ -1,3 +1,13 @@
+/*
+ * File: register_view.dart
+ * Description: The primary onboarding form generating brand new user records securely.
+ * Responsibilities: Captures initial identity fields, strictly enforces complex password matching, and submits creation directives backward towards Firebase.
+ * Dependencies: AuthTextField, RegisterUseCase
+ * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verifications.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/widgets/auth_text_field.dart';
 import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
@@ -5,10 +15,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Captures expansive credentials demanding explicit password confirmations dynamically preventing malformed entries natively.
 class RegisterView extends StatefulWidget {
+  /// The dependent logic instructing cloud creations strictly.
   final RegisterUseCase registerUseCase;
+  
+  /// The reactive closure triggered explicitly when redirecting back towards standard authentication.
   final VoidCallback onSwitchToLogin;
 
+  /// Initializes a new instance of [RegisterView].
   const RegisterView({
     super.key,
     required this.registerUseCase,
@@ -29,6 +44,14 @@ class _RegisterViewState extends State<RegisterView> {
   String? _confirmPasswordError;
   bool _loading = false;
 
+  /// Verifies structural completion natively blocking invalid forms securely before firing network tasks directly asynchronously.
+  ///
+  /// This operates asynchronously initiating deep architecture creations actively. Throws highly specific anomalies
+  /// matching identical domain bounds exposing textual corrections uniformly exactly mapping error strings downwards.
+  ///
+  /// Side effects:
+  /// Rewrites formatting warnings spanning [_emailError], [_passwordError], and [_confirmPasswordError] exclusively,
+  /// locks state rendering mechanisms by checking over [_loading], and fires [setState] continuously.
   Future<void> _submit() async {
     setState(() {
       _emailError = null;

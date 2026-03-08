@@ -1,3 +1,13 @@
+/*
+ * File: assigned_problems_page.dart
+ * Description: Transitional gate-checking screen verifying prior bug reports before drafting duplicates.
+ * Responsibilities: Checks existing submissions surrounding a chosen locale preventing extraneous entries globally.
+ * Dependencies: ProblemProvider, ProblemCard, CreateReportPage
+ * Lifecycle: Pushed via Navigator following explicit search selections, Disposed when drafting begins or cancelled outwardly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
@@ -6,9 +16,12 @@ import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 
+/// Demands citizens explicitly review ongoing vicinity issues preventing unnecessary duplicate logs internally.
 class AssignedProblemsPage extends StatefulWidget {
+  /// The isolated coordinate framework pinning the user intent physically.
   final CmuPlaceEntity location;
 
+  /// Initializes a new instance of [AssignedProblemsPage].
   const AssignedProblemsPage({super.key, required this.location});
 
   @override
@@ -55,7 +68,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Description
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
               child: Text(
@@ -67,8 +79,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                 ),
               ),
             ),
-
-            // Location Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
@@ -92,7 +102,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
 
             const SizedBox(height: 8),
 
-            // Problems List
             Expanded(
               child: Consumer<ProblemProvider>(
                 builder: (context, provider, child) {
@@ -133,8 +142,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                 },
               ),
             ),
-
-            // Bottom Buttons
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -150,7 +157,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
               child: SafeArea(
                 child: Row(
                   children: [
-                    // Report Problem Button
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
@@ -180,7 +186,6 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Cancel Button
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),

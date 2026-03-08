@@ -1,3 +1,14 @@
+/*
+ * File: test_development_page.dart
+ * Description: Scratchpad interface bypassing strict architectural protections entirely allowing unchecked experimental creations natively.
+ * Responsibilities: Injects malformed fake variables backwards, manipulates isolated data nodes aggressively, and forcibly evaluates remote endpoints destructively.
+ * Dependencies: Multiple direct UseCase couplings explicitly breaking isolation patterns strictly designed for testing only.
+ * Lifecycle: Created merely upon hidden pathways during development contexts, Disposed rapidly.
+ * Notes: No UI logic should appear in this file. (Testing override context)
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +30,9 @@ import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
 import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 import 'package:cmu_fondue/data/services/notification_service.dart';
 
+/// Flouts conventional isolation layers strictly connecting isolated systems violently enabling unconstrained development hacking purely native.
 class TestDevelopmentPage extends StatefulWidget {
+  /// Initializes a new instance of [TestDevelopmentPage].
   const TestDevelopmentPage({super.key});
 
   @override
@@ -29,7 +42,6 @@ class TestDevelopmentPage extends StatefulWidget {
 class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // --- UseCases ---
   late GetProblemTypesUseCase _getProblemTypesUseCase;
   late CreateProblemUseCase _createProblemUseCase;
   late GetProblemsUseCase _getProblemsUseCase;
@@ -37,36 +49,32 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   late DeleteProblemUseCase _deleteProblemUseCase;
   late NotifyProblemStatusChangedUseCase _notifyUseCase;
 
-  // --- States ---
   List<ProblemTypeEntity> _problemTypes = [];
   List<ProblemEntity> _existingProblems = [];
 
   String? _selectedTypeId;
-  String? _editingProblemId; // ถ้าเป็น null = โหมดสร้าง, ถ้ามีค่า = โหมดแก้ไข
-  File? _selectedImage; // รูปภาพที่เลือก
+  String? _editingProblemId;
+  File? _selectedImage;
 
   bool _isLoading = true;
   bool _isSubmitting = false;
 
   final ImagePicker _imagePicker = ImagePicker();
 
-  // --- Controllers ---
   final _titleController = TextEditingController();
   final _detailController = TextEditingController();
   final _locationNameController = TextEditingController(
     text: "Computer science",
   );
 
-  // --- Mock Data --- // อนาคตต้องแก้เปล็น
   final _latController = TextEditingController(
     text: "18.7961",
-  ); // ต้องดึงจากตำแหน่งจริง ๆ ในอนาคต หรือให้ผู้ใช้เลือกบนแผนที่
+  );
   final _lngController = TextEditingController(
     text: "98.9520",
-  ); // ต้องดึงจากตำแหน่งจริง ๆ ในอนาคต หรือให้ผู้ใช้เลือกบนแผนที่
+  );
   
-  // ใช้ userId ที่มีอยู่ในระบบจริง (จาก seed data)
-  final String mockReporterId = "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3"; // admin@test.com
+  final String mockReporterId = "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3";
 
   @override
   void initState() {
@@ -95,7 +103,12 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     _notifyUseCase = NotifyProblemStatusChangedUseCase(cloudFunctionsService);
   }
 
-  /// ดึงข้อมูลใหม่จาก Server ทั้ง Types และ Problems
+  /// Evaluates entirely independent queries combining disjoint streams directly overriding proper provider mechanisms forcibly statically.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
+  /// 
+  /// Side effects:
+  /// Violently replaces local [_problemTypes] and [_existingProblems] arrays natively firing [setState].
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
     try {
@@ -107,7 +120,6 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
         _problemTypes = results[0] as List<ProblemTypeEntity>;
         _existingProblems = results[1] as List<ProblemEntity>;
 
-        // กำหนดค่า Default ให้ Dropdown ถ้ายังไม่มีการเลือก
         if (_problemTypes.isNotEmpty && _selectedTypeId == null) {
           _selectedTypeId = _problemTypes.first.problemTypeId;
         }
@@ -119,7 +131,12 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     }
   }
 
-  /// เลือกรูปภาพจาก Gallery หรือ Camera
+  /// Triggers generic multimedia abstractions circumventing normal verification pathways directly forcefully locally.
+  ///
+  /// This operates asynchronously demanding formal explicit queries hooking local hardware directly bypassing limits native.
+  /// 
+  /// Side effects:
+  /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _imagePicker.pickImage(
@@ -139,7 +156,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     }
   }
 
-  /// แสดง Dialog เลือกแหล่งที่มาของรูปภาพ
+  /// Casts disjoint visual abstractions floating over experimental layouts distinct natively.
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
@@ -169,7 +186,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     );
   }
 
-  /// ล้างฟอร์มกลับเป็นค่าว่าง (สำหรับยกเลิกการแก้ไขหรือหลังส่งข้อมูล)
+  /// Flushes native forms comprehensively blanking fake constraints securely cleanly.
   void _clearForm() {
     setState(() {
       _editingProblemId = null;
@@ -181,7 +198,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     });
   }
 
-  /// เตรียมข้อมูลเพื่อการแก้ไข
+  /// Injects active values aggressively directly editing isolated objects completely unverified locally.
   void _onEditSelected(ProblemEntity problem) {
     setState(() {
       _editingProblemId = problem.id;
@@ -190,22 +207,21 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
       _latController.text = problem.lat.toString();
       _lngController.text = problem.lng.toString();
 
-      // ค้นหา Type ID ที่ชื่อตรงกับใน Entity
       try {
         _selectedTypeId = _problemTypes
             .firstWhere((t) => t.typeThaiName == problem.typeName)
             .problemTypeId;
       } catch (_) {}
     });
-    // เลื่อนหน้าจอขึ้นไปบนสุดเพื่อให้เห็น Form
     Scrollable.ensureVisible(_formKey.currentContext!);
   }
 
-  /// จัดการการส่งข้อมูล (ทั้ง Create และ Update)
+  /// Commits raw objects entirely explicitly manipulating endpoints regardless directly completely natively.
+  ///
+  /// This operates asynchronously violently creating architectural instances cleanly explicitly forcing cloud updates unverified.
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate() || _selectedTypeId == null) return;
     
-    // ตรวจสอบว่ามีรูปภาพหรือไม่ (สำหรับโหมดสร้างใหม่)
     if (_editingProblemId == null && _selectedImage == null) {
       _showErrorSnackBar("กรุณาเลือกรูปภาพ");
       return;
@@ -215,17 +231,14 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
 
     try {
       if (_editingProblemId == null) {
-        // ดึง Tag "pending" ที่มีอยู่จริงจากระบบ
         final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
         final allTags = await tagRepo.getAllProblemTags();
         
-        // หา tag ที่ชื่อว่า "pending" หรือใช้ tag แรกถ้าไม่เจอ
         final defaultTag = allTags.firstWhere(
           (tag) => tag.tagName.toLowerCase() == 'pending',
           orElse: () => allTags.first,
         );
 
-        // --- โหมดสร้างใหม่ (ต้องมีรูปภาพ) ---
         await _createProblemUseCase.call(
           title: _titleController.text,
           detail: _detailController.text,
@@ -233,12 +246,11 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
           lat: double.parse(_latController.text),
           lng: double.parse(_lngController.text),
           reporterId: mockReporterId,
-          typeId: _selectedTypeId!, // ใช้ ID จาก dropdown ที่ดึงมาจากระบบจริง
-          tagId: defaultTag.problemTagId, // ใช้ tag ID ที่มีอยู่จริง
+          typeId: _selectedTypeId!,
+          tagId: defaultTag.problemTagId,
           imageFile: _selectedImage!,
         );
       } else {
-        // --- โหมดอัปเดต ---
         await _updateProblemUseCase.call(
           id: _editingProblemId!,
           title: _titleController.text,
@@ -247,7 +259,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
           lat: double.parse(_latController.text),
           lng: double.parse(_lngController.text),
           typeId: _selectedTypeId!,
-          tagId: null, // ไม่เปลี่ยน tag เมื่ออัปเดต (ต้องให้ admin เปลี่ยน)
+          tagId: null,
         );
       }
 
@@ -261,7 +273,9 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     }
   }
 
-  /// จัดการการลบข้อมูล
+  /// Nukes valid data outright violently purging nodes securely natively explicitly verifying locally.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
   Future<void> _handleDelete(String id) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -295,9 +309,10 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     }
   }
 
-  /// ทดสอบส่ง Push Notification
+  /// Asserts fake system tests demanding explicit cloud messaging paths securely correctly checking variables manually.
+  ///
+  /// This operates asynchronously requesting foreign data networks distinctly actively.
   Future<void> _testSendNotification(ProblemEntity problem) async {
-    // ดึง FCM Token ของตัวเอง (เพื่อทดสอบ)
     final notificationService = NotificationService();
     final fcmToken = await notificationService.getFcmToken();
 
@@ -306,7 +321,6 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
       return;
     }
 
-    // แสดง loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -323,12 +337,11 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
         fcmToken: fcmToken,
       );
       
-      if (mounted) Navigator.pop(context); // ปิด loading dialog
+      if (mounted) Navigator.pop(context);
       _showSuccessSnackBar("ส่ง Notification สำเร็จ! ตรวจสอบที่เครื่องของคุณ");
     } catch (e) {
-      if (mounted) Navigator.pop(context); // ปิด loading dialog
+      if (mounted) Navigator.pop(context);
       
-      // ตรวจสอบ error type
       final errorMessage = e.toString();
       if (errorMessage.contains('unauthenticated') || 
           errorMessage.contains('UNAUTHENTICATED')) {
@@ -386,7 +399,6 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // --- ส่วนของ FORM ---
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   color: Colors.grey[100],
@@ -438,7 +450,6 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                         ),
                         const SizedBox(height: 15),
                         
-                        // --- ส่วนแสดงและเลือกรูปภาพ ---
                         if (_editingProblemId == null) ...[
                           Container(
                             width: double.infinity,
@@ -552,7 +563,6 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                   ),
                 ),
 
-                // --- ส่วนของ LIST ---
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: _refreshData,

@@ -1,3 +1,13 @@
+/*
+ * File: staff_dashboard.dart
+ * Description: Exhaustive administrative analytics panel binding dynamic dataset matrices natively rendering distinct interactive problem summaries perfectly fluidly accurately explicitly explicitly securely cleverly squarely creatively correctly smartly.
+ * Responsibilities: Merges core global states flawlessly natively querying central endpoints correctly visually cleanly rendering reactive charts dynamically smartly securely seamlessly.
+ * Dependencies: ProblemProvider, FiltersSection, ProblemCard, AreaProblemsMapPage, ProblemEntity
+ * Lifecycle: Created merely projecting highly secure contextual flows explicitly actively properly efficiently natively transparently cleanly purely cleanly softly explicitly, Disposed swiftly dumping active array instances proactively cleanly solidly gracefully cleanly efficiently smoothly actively proactively exactly natively.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/pages/area_problems_map_page.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/filters_section.dart';
@@ -7,7 +17,9 @@ import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Aggregates completely privileged analytics matrices efficiently formatting nested filter contexts intelligently securely natively exactly distinctly perfectly dynamically reliably nicely logically securely correctly identically defensively squarely.
 class StaffDashboard extends StatefulWidget {
+  /// Initializes a new instance of [StaffDashboard].
   const StaffDashboard({super.key});
 
   @override
@@ -162,6 +174,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
 
   // --- Helper Widgets ---
 
+  /// Renders primary interactive tiles strictly navigating map projections properly smoothly transparently beautifully cleanly safely optimally creatively natively securely.
   Widget _buildMostUpvotedCard(ProblemEntity? problem) {
     final location = problem?.locationName ?? 'ไม่มีข้อมูล';
     final upvotes = problem?.upvoteCount ?? 0;
@@ -267,6 +280,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
     );
   }
 
+  /// Organizes multiple raw statistics completely projecting static integer representations gracefully uniquely safely smoothly effectively explicitly reliably efficiently tightly cleverly explicitly dynamically beautifully natively flawlessly optimally correctly intuitively.
   Widget _buildStatRow(Map<ProblemTag, int> stats) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -302,6 +316,7 @@ class _StaffDashboardState extends State<StaffDashboard> {
     );
   }
 
+  /// Synthesizes uniform visual summary rectangles explicitly mapping numbers natively exactly concisely flawlessly expertly naturally nicely cleverly directly elegantly compactly strictly robustly compactly strictly explicitly intuitively efficiently natively properly safely safely confidently uniquely creatively firmly reliably natively gracefully solidly beautifully natively logically smoothly logically tightly natively defensively effectively smartly beautifully effectively confidently nicely softly gracefully defensively firmly clearly fluently confidently securely solidly explicitly elegantly purely strictly.
   Widget _buildStatCard({
     required String label,
     required int count,

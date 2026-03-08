@@ -1,8 +1,20 @@
+/*
+ * File: admin_page.dart
+ * Description: The primary root dashboard presented purely to authenticated system administrators.
+ * Responsibilities: Hosts the top-level application bar and injects the deeper StaffDashboard interactive region.
+ * Dependencies: ProfileButton, StaffDashboard
+ * Lifecycle: Created via IndexedStack in HomePage, Disposed when application closes or user logs out.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/widgets/profile_button.dart';
 import 'package:cmu_fondue/application/widgets/staff_dashboard.dart';
 import 'package:flutter/material.dart';
 
+/// The high-level scaffold organizing administrative capabilities distinctly from standard citizen views.
 class AdminPage extends StatelessWidget {
+  /// Initializes a new instance of [AdminPage].
   const AdminPage({super.key});
 
   @override

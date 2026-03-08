@@ -1,3 +1,13 @@
+/*
+ * File: area_problems_map_page.dart
+ * Description: Interactive localized map screening isolating problems geometrically.
+ * Responsibilities: Draws pinned clusters targeting isolated sectors and constructs scrolling lists synced closely alongside map actions.
+ * Dependencies: ProblemProvider, ProblemCard, GoogleMap
+ * Lifecycle: Pushed onto Navigator stack by selecting specific map zones, Disposed immediately when user presses back.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -5,10 +15,15 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
+/// Renders a specialized spatial viewer bridging listed occurrences directly toward colored map markers contextually.
 class AreaProblemsMapPage extends StatefulWidget {
+  /// The human-readable regional designation shown within the top app bar.
   final String areaName;
+  
+  /// The constrained selection of issues isolated purely to this locale.
   final List<ProblemEntity> problems;
 
+  /// Initializes a new instance of [AreaProblemsMapPage].
   const AreaProblemsMapPage({
     super.key,
     required this.areaName,
@@ -30,10 +45,13 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
     _setupMarkers();
   }
 
+  /// Calculates geometric center-points and generates visual mapping nodes dynamically.
+  ///
+  /// Side effects:
+  /// Rewrites the [_markers] arrays and the [_center] camera origin directly.
   void _setupMarkers() {
     if (widget.problems.isEmpty) return;
 
-    // Calculate center from all problems
     double totalLat = 0;
     double totalLng = 0;
     for (var problem in widget.problems) {
@@ -45,7 +63,6 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
       totalLng / widget.problems.length,
     );
 
-    // Create markers for each problem
     _markers = widget.problems.map((problem) {
       return Marker(
         markerId: MarkerId(problem.id),
@@ -61,6 +78,9 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
     }).toSet();
   }
 
+  /// Determines strictly which pigment represents a specific operational phase.
+  ///
+  /// Formally enforces red for un-ticketed issues, orange for active repairs, and green signaling closed resolutions. 
   double _getMarkerColor(String tagName) {
     switch (tagName) {
       case 'pending':
@@ -102,7 +122,6 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
       ),
       body: Column(
         children: [
-          // Map Section
           Expanded(
             flex: 2,
             child: Container(
@@ -137,7 +156,6 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
             ),
           ),
 
-          // Legend
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -152,7 +170,6 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
             ),
           ),
 
-          // Problems List Section
           Expanded(
             flex: 3,
             child: Container(
@@ -203,7 +220,6 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
                                 key: ValueKey(widget.problems[index].id),
                                 problem: widget.problems[index],
                                 onDeleted: () {
-                                  // Refresh if needed
                                   setState(() {
                                     widget.problems.removeAt(index);
                                     _setupMarkers();
@@ -228,6 +244,7 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
     );
   }
 
+  /// Constructs a horizontal legend indicator translating internal mapping colors towards user-friendly tags.
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
