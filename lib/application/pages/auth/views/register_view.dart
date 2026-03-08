@@ -8,12 +8,14 @@
  * Course: CMU Fondue
  */
 
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/widgets/auth_text_field.dart';
 import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 /// Captures expansive credentials demanding explicit password confirmations dynamically preventing malformed entries natively.
 class RegisterView extends StatefulWidget {
@@ -91,12 +93,30 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
 
+    final authProvider = context.read<AppAuthProvider>();
     try {
+      // Suppress auth state so the brief sign-in during registration
+      // does not flash the HomePage.
+      authProvider.suppressAuthState = true;
+
       await widget.registerUseCase(
         _emailController.text.trim(),
         _passwordController.text,
         _confirmPasswordController.text,
       );
+
+      authProvider.suppressAuthState = false;
+
+      // Registration succeeded — switch to login page
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registration successful! Please log in.'),
+          ),
+        );
+        widget.onSwitchToLogin();
+        return;
+      }
     } on InvalidEmailException {
       setState(() {
         _emailError = InvalidEmailException().message;
@@ -117,6 +137,7 @@ class _RegisterViewState extends State<RegisterView> {
     } catch (e) {
       debugPrint('Register error: $e');
     } finally {
+      authProvider.suppressAuthState = false;
       if (mounted) {
         setState(() => _loading = false);
       }

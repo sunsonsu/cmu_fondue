@@ -26,9 +26,12 @@ class AppAuthProvider extends ChangeNotifier {
   
   /// The current, active user instance if authenticated.
   UserEntity? _user;
-  
+
   /// Whether the initial stream connection is currently resolving.
   bool _isLoading = true;
+
+  /// Whether auth state changes should be suppressed (e.g. during registration).
+  bool _suppressAuthState = false;
 
   /// Whether the currently signed-in individual holds elevated system privileges.
   bool get isAdmin => _user?.isAdmin ?? false;
@@ -39,6 +42,8 @@ class AppAuthProvider extends ChangeNotifier {
   /// to configure local device tokens properly upon login sequences.
   AppAuthProvider(this._authRepository, this._setupNotificationsUseCase) {
     _authRepository.authStateChanges().listen((user) {
+      if (_suppressAuthState) return;
+
       _user = user;
       _isLoading = false;
 
@@ -58,6 +63,9 @@ class AppAuthProvider extends ChangeNotifier {
   
   /// Whether an active identity session is conclusively verified.
   bool get isAuthenticated => _user != null;
+
+  /// Sets whether auth state changes should be suppressed.
+  set suppressAuthState(bool value) => _suppressAuthState = value;
 
   /// Discards the active identity terminating both local and remote session links.
   ///

@@ -45,7 +45,12 @@ class AuthRepositoryImpl implements AuthRepository {
       rethrow;
     }
 
-    return UserEntity.fromFirebase(user);
+    final userEntity = UserEntity.fromFirebase(user);
+
+    // Sign out after registration so the user must log in explicitly
+    await dataSource.logout();
+
+    return userEntity;
   }
 
   @override

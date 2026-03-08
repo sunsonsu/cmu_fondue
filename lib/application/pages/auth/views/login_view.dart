@@ -8,18 +8,20 @@
  * Course: CMU Fondue
  */
 
+import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/widgets/auth_text_field.dart';
 import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 /// Captures credentials coordinating rigorous backend validations dynamically exposing loading indications natively.
 class LoginView extends StatefulWidget {
   /// The dependent logic instructing cloud validations securely.
   final LoginUseCase loginUseCase;
-  
+
   /// The reactive closure triggered explicitly when redirecting back towards registration.
   final VoidCallback onSwitchToRegister;
 
@@ -74,6 +76,9 @@ class _LoginViewState extends State<LoginView> {
     setState(() => _loading = true);
 
     try {
+      // Ensure auth state is not suppressed so login can proceed normally
+      context.read<AppAuthProvider>().suppressAuthState = false;
+
       await widget.loginUseCase(
         _emailController.text.trim(),
         _passwordController.text,
@@ -153,10 +158,7 @@ class _LoginViewState extends State<LoginView> {
           RichText(
             text: TextSpan(
               text: 'Don\'t have an account? ',
-              style: GoogleFonts.kanit(
-                color: Colors.black,
-                fontSize: 18,
-              ),
+              style: GoogleFonts.kanit(color: Colors.black, fontSize: 18),
               children: [
                 TextSpan(
                   text: 'Sign up',
