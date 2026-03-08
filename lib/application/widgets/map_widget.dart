@@ -13,8 +13,10 @@ import 'dart:math' as math;
 
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
+import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
+import 'package:cmu_fondue/domain/usecases/cmu_place_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -50,7 +52,21 @@ Future<Position> getUserCurrentLocation() async {
     );
   }
 
-  return await Geolocator.getCurrentPosition();
+  try {
+    return await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(timeLimit: Duration(seconds: 5)),
+    );
+  } catch (e) {
+    // If it times out or fails (often happens on first install after accepting location),
+    // we try to gracefully get the last known position.
+    try {
+      final position = await Geolocator.getLastKnownPosition();
+      if (position != null) {
+        return position;
+      }
+    } catch (_) {}
+    return Future.error('Failed to get location: $e');
+  }
 }
 
 /// Abstract generic anchoring map layers strictly constraining global padding and common initialization logic cohesively natively seamlessly.
@@ -58,8 +74,20 @@ class MapWidget extends StatefulWidget {
   /// The fixed padding shielding map UI controls beneath overlapping floating view components intelligently cleanly natively.
   final EdgeInsets mapPadding;
 
+  /// The message to display when the user is located outside CMU.
+  final String outsideCmuMessage;
+
+  /// Whether to suppress the initial notification snackbar on instantiation.
+  final bool disableInitialSnackbar;
+
   /// Initializes a new instance of [MapWidget].
-  const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
+  const MapWidget({
+    super.key,
+    this.mapPadding = EdgeInsets.zero,
+    this.outsideCmuMessage =
+        'คุณอยู่นอกเขตมหาวิทยาลัยเชียงใหม่ ระบบจะแสดงแผนที่บริเวณ มช.',
+    this.disableInitialSnackbar = false,
+  });
 
   @override
   State<MapWidget> createState() => MapWidgetState();
@@ -69,6 +97,7 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
   /// The mutable underlying host controller manipulating native map properties instantly efficiently correctly globally.
   late GoogleMapController mapController;
   late Future<Position> _userLocationFuture;
+  bool _hasNotifiedOutsideCmu = false;
 
   @override
   void initState() {
@@ -86,7 +115,7 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
 
   /// Captures arbitrary manual panning gestures catching camera transitions actively reliably inherently globally.
   void onCameraMove(CameraPosition position) {}
-  
+
   /// Catches terminal camera movements actively firing background logic efficiently reliably transparently locally natively.
   void onCameraIdle() {}
 
@@ -108,9 +137,38 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        LatLng target = LatLng(18.808310458255793, 98.95468245511799);
+        LatLng target = const LatLng(18.808310458255793, 98.95468245511799);
         if (snapshot.hasData) {
-          target = LatLng(snapshot.data!.latitude, snapshot.data!.longitude);
+          final userLocation = LatLng(
+            snapshot.data!.latitude,
+            snapshot.data!.longitude,
+          );
+          final cmuPlaceUsecase = CmuPlaceUsecase(CmuPlaceRepoImpl());
+
+          if (cmuPlaceUsecase.isInsideCmu(userLocation)) {
+            target = userLocation;
+          } else {
+            if (!_hasNotifiedOutsideCmu && !widget.disableInitialSnackbar) {
+              _hasNotifiedOutsideCmu = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('แจ้งเตือน'),
+                      content: Text(widget.outsideCmuMessage),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('ตกลง'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              });
+            }
+          }
         }
 
         return Container(
@@ -148,7 +206,11 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
 /// Specialized implementation binding global cloud datasets actively projecting dynamic graphic clusters atop generic maps flawlessly directly dynamically.
 class MapViewerWidget extends MapWidget {
   /// Initializes a new instance of [MapViewerWidget].
-  const MapViewerWidget({super.key});
+  const MapViewerWidget({super.key})
+    : super(
+        outsideCmuMessage:
+            'คุณไม่ได้อยู่ในพื้นที่ มช. จะสามารถดูปัญหาได้เพียงอย่างเดียว',
+      );
 
   @override
   State<MapViewerWidget> createState() => _MapViewerWidgetState();
@@ -273,7 +335,7 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
   }
 
   /// Bulk loads graphical markers traversing active problem subsets cleanly firing independent async downloads locally completely securely natively.
-  /// 
+  ///
   /// Side effects:
   /// Violently replaces mapping icons within [_markerIcons] triggering native [setState] entirely gracefully cleanly loudly securely dynamically distinctly.
   Future<void> _loadMarkerIcons(List<ProblemEntity> problems) async {
@@ -306,7 +368,7 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
 class MapSubmitWidget extends MapWidget {
   /// Casts arbitrary entity arrays backwards feeding form creation explicitly securely uniquely locally proactively natively.
   final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
-  
+
   /// The specific external entity forcing programmatic camera snaps natively quickly deliberately distinctly consistently directly.
   final CmuPlaceEntity? selectedPlace;
 
@@ -315,7 +377,10 @@ class MapSubmitWidget extends MapWidget {
     super.key,
     this.onPlacemarkChanged,
     this.selectedPlace,
-  }) : super(mapPadding: const EdgeInsets.only(top: 80, bottom: 200));
+  }) : super(
+         mapPadding: const EdgeInsets.only(top: 80, bottom: 200),
+         disableInitialSnackbar: true,
+       );
 
   @override
   State<MapSubmitWidget> createState() => _MapSubmitWidgetState();
@@ -367,9 +432,15 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
     } else {
       try {
         final position = await _userLocationFuture;
-        target = LatLng(position.latitude, position.longitude);
+        final userLocation = LatLng(position.latitude, position.longitude);
+        final cmuPlaceUsecase = CmuPlaceUsecase(CmuPlaceRepoImpl());
+        if (cmuPlaceUsecase.isInsideCmu(userLocation)) {
+          target = userLocation;
+        } else {
+          target = const LatLng(18.808310458255793, 98.95468245511799);
+        }
       } catch (e) {
-        target = LatLng(18.808310458255793, 98.95468245511799);
+        target = const LatLng(18.808310458255793, 98.95468245511799);
       }
     }
 

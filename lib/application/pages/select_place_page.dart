@@ -43,6 +43,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
 
   final TextEditingController _searchController = TextEditingController();
   bool _isProgrammaticMove = false;
+  bool _isFirstLoad = true;
 
   @override
   void initState() {
@@ -59,7 +60,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   /// Pulls authoritative bounding landmarks remotely fetching entirely new constraint arrays distinctly.
   ///
   /// This operates asynchronously demanding formal explicit queries hooking domain logic correctly masking delays gracefully.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites active [_cmuPlaces] comprehensively upon fetching cleanly directly firing [setState].
   Future<void> _refreshData() async {
@@ -93,7 +94,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              _moveToCurrentLocation();
+              _moveToUserLocation();
             },
             child: const Text('ตกลง'),
           ),
@@ -102,33 +103,55 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     );
   }
 
-  /// Hijacks map coordinates shifting views directly towards physical device locators dynamically.
-  ///
-  /// This operates asynchronously initiating deep mobile sensor queries natively demanding system permissions natively mapping vectors elegantly.
-  /// 
-  /// Side effects:
-  /// Mutates globally watched [_placemarkNotifier] completely replacing states triggering external redraws abruptly.
-  Future<void> _moveToCurrentLocation() async {
+  Future<void> _moveToUserLocation() async {
     try {
-      final position = await getUserCurrentLocation();
-      final latLng = LatLng(position.latitude, position.longitude);
-      final placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          timeLimit: Duration(seconds: 5),
+        ),
       );
+      _setLocationToPosition(position.latitude, position.longitude);
+    } catch (e) {
+      try {
+        final position = await Geolocator.getLastKnownPosition();
+        if (position != null) {
+          _setLocationToPosition(position.latitude, position.longitude);
+          return;
+        }
+      } catch (_) {}
 
+      final cmuLatLng = const LatLng(18.798946, 98.953114);
+      _setLocationToPosition(cmuLatLng.latitude, cmuLatLng.longitude);
+    }
+  }
+
+  void _setLocationToPosition(double lat, double lng) async {
+    try {
+      await setLocaleIdentifier("th_TH");
+      final placemarks = await placemarkFromCoordinates(lat, lng);
       if (placemarks.isNotEmpty) {
-        final entity = CmuPlaceEntity.fromPlacemark(placemarks.first, latLng);
+        final entity = CmuPlaceEntity.fromPlacemark(
+          placemarks.first,
+          LatLng(lat, lng),
+        );
         setState(() {
           _isProgrammaticMove = true;
           _placemarkNotifier.value = [entity];
         });
+        return;
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error moving to current location: $e");
-      }
-    }
+    } catch (_) {}
+
+    final entity = CmuPlaceEntity(
+      name: 'ตำแหน่งปัจจุบัน',
+      lat: lat,
+      lng: lng,
+      formattedAddress: 'ตำแหน่งของคุณ',
+    );
+    setState(() {
+      _isProgrammaticMove = true;
+      _placemarkNotifier.value = [entity];
+    });
   }
 
   @override
@@ -215,10 +238,20 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                             if (!_cmuPlaceUsecase.isInsideCmu(
                               LatLng(entity.lat, entity.lng),
                             )) {
-                              _showNotInCmuDialog();
-                              _placemarkNotifier.value = null;
-                              return;
+                              if (_isFirstLoad) {
+                                _isFirstLoad = false;
+                                _moveToUserLocation();
+                                _placemarkNotifier.value = null;
+                                return;
+                              } else if (!_isProgrammaticMove) {
+                                _showNotInCmuDialog();
+                                _placemarkNotifier.value = null;
+                                return;
+                              } else {
+                                _placemarkNotifier.value = null;
+                              }
                             }
+                            _isFirstLoad = false;
                           }
 
                           if (!_isProgrammaticMove) {
