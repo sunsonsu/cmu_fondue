@@ -1,6 +1,18 @@
+/*
+ * File: delete_confirmation_dialog.dart
+ * Description: High-stakes modal intercepting destructive arbitrary actions validating absolute negative user intents securely locally.
+ * Responsibilities: Stalls permanent removal flows, presents stark red/green tactile choices strictly safely independently.
+ * Dependencies: None
+ * Lifecycle: Created instantly when administrators trigger deletion, Disposed absolutely returning boolean confirmation payloads directly back.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:flutter/material.dart';
 
+/// Flashes aggressive blocking dialogs intercepting catastrophic accidental workflows demanding explicit conscious manual overrides distinctly natively.
 class DeleteConfirmationDialog extends StatelessWidget {
+  /// Initializes a new instance of [DeleteConfirmationDialog].
   const DeleteConfirmationDialog({super.key});
 
   @override

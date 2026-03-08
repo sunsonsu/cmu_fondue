@@ -1,9 +1,21 @@
+/*
+ * File: profile_page.dart
+ * Description: Identity inspection hub exposing active email credentials distinctly providing explicit exit pathways.
+ * Responsibilities: Isolates user data strings distinctly, intercepts logout directions aggressively, and dumps active session tokens backward conclusively natively.
+ * Dependencies: AppAuthProvider, CustomSnackBar
+ * Lifecycle: Created instantly when accessing navigation index 3 exclusively, Disposed merely exiting parent tabs correctly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Renders basic visual abstractions surrounding internal active credentials allowing strict explicit token dropping dynamically natively.
 class ProfilePage extends StatefulWidget {
+  /// Initializes a new instance of [ProfilePage].
   const ProfilePage({super.key});
 
   @override
@@ -54,19 +66,13 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 const SizedBox(height: 20),
 
-                // Profile Header Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 32),
-                    // decoration: const BoxDecoration(
-                    //   color: Color(0xFFEAE5F1),
-                    //   borderRadius: BorderRadius.all(Radius.circular(30)),
-                    // ),
                     child: Column(
                       children: [
-                        // Profile Avatar
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -90,7 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // User Name/Email
                         Text(
                           user?.email.split('@')[0].toUpperCase() ?? 'User',
                           style: const TextStyle(
@@ -114,7 +119,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 const SizedBox(height: 10),
 
-                // Logout Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(

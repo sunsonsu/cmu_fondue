@@ -1,3 +1,13 @@
+/*
+ * File: map_widget.dart
+ * Description: Sophisticated native mapping facade integrating raw system geolocation alongside dynamic cloud data markers smoothly seamlessly.
+ * Responsibilities: Orchestrates Google Map camera bindings, queries localized hardware sensors securely, draws intricate custom raster graphics natively explicitly overlaying map instances cleanly.
+ * Dependencies: ProblemProvider, Google Maps Flutter, Geolocator, Geocoding
+ * Lifecycle: Created invariably anchoring core map screens deeply, Disposed cautiously yielding hardware sensors back natively cleanly correctly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
@@ -13,6 +23,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+/// Hijacks local device hardware exposing absolute physical coordinates verifying user intent securely defensively loudly globally natively.
+///
+/// This operates asynchronously demanding formal explicit queries hooking local operating systems distinctly isolating failures gracefully.
 Future<Position> getUserCurrentLocation() async {
   bool serviceEnabled;
   LocationPermission permission;
@@ -40,16 +53,20 @@ Future<Position> getUserCurrentLocation() async {
   return await Geolocator.getCurrentPosition();
 }
 
+/// Abstract generic anchoring map layers strictly constraining global padding and common initialization logic cohesively natively seamlessly.
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
-
+  /// The fixed padding shielding map UI controls beneath overlapping floating view components intelligently cleanly natively.
   final EdgeInsets mapPadding;
+
+  /// Initializes a new instance of [MapWidget].
+  const MapWidget({super.key, this.mapPadding = EdgeInsets.zero});
 
   @override
   State<MapWidget> createState() => MapWidgetState();
 }
 
 class MapWidgetState<T extends MapWidget> extends State<T> {
+  /// The mutable underlying host controller manipulating native map properties instantly efficiently correctly globally.
   late GoogleMapController mapController;
   late Future<Position> _userLocationFuture;
 
@@ -59,13 +76,18 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
     _userLocationFuture = getUserCurrentLocation();
   }
 
+  /// Injects active map engine instances completely explicitly binding local controls dynamically natively seamlessly flawlessly locally.
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
+  /// Overridable property returning dynamic graphics arrays populating canvas spaces dynamically distinctly locally.
   Set<Marker> get markers => {};
 
+  /// Captures arbitrary manual panning gestures catching camera transitions actively reliably inherently globally.
   void onCameraMove(CameraPosition position) {}
+  
+  /// Catches terminal camera movements actively firing background logic efficiently reliably transparently locally natively.
   void onCameraIdle() {}
 
   @override
@@ -123,7 +145,9 @@ class MapWidgetState<T extends MapWidget> extends State<T> {
   }
 }
 
+/// Specialized implementation binding global cloud datasets actively projecting dynamic graphic clusters atop generic maps flawlessly directly dynamically.
 class MapViewerWidget extends MapWidget {
+  /// Initializes a new instance of [MapViewerWidget].
   const MapViewerWidget({super.key});
 
   @override
@@ -172,6 +196,9 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     }).toSet();
   }
 
+  /// Downloads raw byte arrays actively reshaping imagery dynamically parsing raw binary buffers painting intricate graphical markers natively efficiently.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
   Future<Uint8List> getBytesFromUrl(String url, int width) async {
     final http.Response response = await http.get(Uri.parse(url));
 
@@ -245,6 +272,10 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     }
   }
 
+  /// Bulk loads graphical markers traversing active problem subsets cleanly firing independent async downloads locally completely securely natively.
+  /// 
+  /// Side effects:
+  /// Violently replaces mapping icons within [_markerIcons] triggering native [setState] entirely gracefully cleanly loudly securely dynamically distinctly.
   Future<void> _loadMarkerIcons(List<ProblemEntity> problems) async {
     for (final problem in problems) {
       if (problem.imageUrl != null && problem.imageUrl!.isNotEmpty) {
@@ -259,6 +290,9 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
     if (mounted) setState(() {});
   }
 
+  /// Bootstraps complete domain datasets pulling raw objects mapping everything actively initially correctly natively.
+  ///
+  /// This operates asynchronously demanding formal explicit queries hooking local operating systems distinctly isolating failures gracefully.
   Future<void> loadData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<ProblemProvider>(context, listen: false);
@@ -268,15 +302,20 @@ class _MapViewerWidgetState extends MapWidgetState<MapViewerWidget> {
   }
 }
 
+/// Specialized implementation centering explicit cursor pins translating continuous scrolling into validated logical entities cleanly explicitly natively.
 class MapSubmitWidget extends MapWidget {
+  /// Casts arbitrary entity arrays backwards feeding form creation explicitly securely uniquely locally proactively natively.
+  final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
+  
+  /// The specific external entity forcing programmatic camera snaps natively quickly deliberately distinctly consistently directly.
+  final CmuPlaceEntity? selectedPlace;
+
+  /// Initializes a new instance of [MapSubmitWidget].
   const MapSubmitWidget({
     super.key,
     this.onPlacemarkChanged,
     this.selectedPlace,
   }) : super(mapPadding: const EdgeInsets.only(top: 80, bottom: 200));
-
-  final ValueChanged<List<CmuPlaceEntity>>? onPlacemarkChanged;
-  final CmuPlaceEntity? selectedPlace;
 
   @override
   State<MapSubmitWidget> createState() => _MapSubmitWidgetState();
@@ -294,6 +333,9 @@ class _MapSubmitWidgetState extends MapWidgetState<MapSubmitWidget> {
     }
   }
 
+  /// Forces internal Google Map drivers moving actively focusing targeted domains programmatically dynamically instantly perfectly cleanly loudly natively.
+  ///
+  /// This operates asynchronously requesting deep mobile sensor queries distinctly elegantly actively completely gracefully strictly distinct globally natively explicitly.
   Future<void> _animateToSelectedPlace() async {
     try {
       await mapController.animateCamera(

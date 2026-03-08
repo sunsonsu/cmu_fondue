@@ -1,3 +1,13 @@
+/*
+ * File: history_page.dart
+ * Description: Specialized list viewer rendering purely previous logs natively sourced specifically back targeting uniquely reporting accounts.
+ * Responsibilities: Partitions reports automatically mapping groups separating statuses into sections distinctly tracking historical milestones securely.
+ * Dependencies: ProblemProvider, ProblemCard
+ * Lifecycle: Created instantly whenever navigating toward index 2 exclusively, Disposed merely exiting parent tabs correctly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/application/widgets/problem_card.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -5,7 +15,9 @@ import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Aggregates exclusive lists strictly restricted toward identity-owned queries rendering dynamically sectioned interfaces directly.
 class HistoryPage extends StatefulWidget {
+  /// Initializes a new instance of [HistoryPage].
   const HistoryPage({super.key});
 
   @override
@@ -64,7 +76,6 @@ class _HistoryPageState extends State<HistoryPage> {
                 return _buildEmptyState();
               }
 
-              // ✅ รวมข้อมูลและสร้างรายการ Section
               final sections = _getSections(historyList);
 
               return ListView.builder(
@@ -76,10 +87,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   final item = sections[index];
                   
                   if (item is String) {
-                    // ถ้าเป็น Header (ชื่อกลุ่ม)
                     return _buildSectionHeader(item);
                   } else if (item is ProblemEntity) {
-                    // ถ้าเป็นรายการปัญหา
                     return ProblemCard(
                       key: ValueKey(item.id),
                       problem: item,
@@ -99,7 +108,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  // ✅ ฟังก์ชันช่วยจัดกลุ่มข้อมูลเพื่อใช้กับ ListView.builder
+  /// Calculates visual dividers segmenting [problems] deeply segregating items spanning unique execution states statically.
   List<dynamic> _getSections(List<ProblemEntity> problems) {
     final pending = problems.where((p) => [ProblemTag.pending, ProblemTag.received].contains(p.tagName)).toList();
     final inProgress = problems.where((p) => p.tagName == ProblemTag.inProgress).toList();
@@ -121,6 +130,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return items;
   }
 
+  /// Projects simplistic blank placeholders natively covering entirely bare datasets visually stopping errors directly.
   Widget _buildEmptyState() {
     return ListView(
       children: [
@@ -130,6 +140,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
+  /// Constructs textual markers bridging gaps internally describing strictly identical status categories natively utilizing [title] text directly.
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),

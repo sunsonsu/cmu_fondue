@@ -1,3 +1,13 @@
+/*
+ * File: create_report_page.dart
+ * Description: Interactive structural form allowing citizens formally defining problem specifics attaching textual notes natively beside geometric coordinates securely.
+ * Responsibilities: Captures text, intercepts camera media directly natively, enforces mandatory completion, and forwards deep objects backwards securely.
+ * Dependencies: AppAuthProvider, ProblemProvider, CustomSnackBar, ReportingForm, ImagePicker
+ * Lifecycle: Created strictly upon progressing past duplicate verification phases, Disposed dynamically when completely terminating uploading pipelines correctly bouncing citizens backwards completely.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'dart:io';
 import 'package:cmu_fondue/application/pages/app_page.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
@@ -10,9 +20,12 @@ import 'package:cmu_fondue/application/widgets/reporting_form.dart';
 import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
+/// Aggregates textual anomalies alongside raw device camera outputs executing deep structural network transfers successfully natively.
 class CreateReportPage extends StatefulWidget {
+  /// The isolated coordinate framework pinning the user intent physically.
   final CmuPlaceEntity location;
 
+  /// Initializes a new instance of [CreateReportPage].
   const CreateReportPage({super.key, required this.location});
 
   @override
@@ -41,6 +54,13 @@ class _CreateReportPageState extends State<CreateReportPage> {
     super.dispose();
   }
 
+  /// Triggers internal device galleries extracting raw photographic binaries.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely natively hooking local operating systems distinctly isolating failures gracefully.
+  /// Displays a warning message natively if internal gallery reads crash totally dynamically.
+  /// 
+  /// Side effects:
+  /// Rewrites the active [_selectedImage] formally saving binary endpoints locally preventing loss abruptly firing [setState] exactly.
   Future<void> _pickImageFromGallery() async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -63,6 +83,13 @@ class _CreateReportPageState extends State<CreateReportPage> {
     }
   }
 
+  /// Triggers internal device cameras intercepting raw optical sensor results directly into local storage.
+  ///
+  /// This operates asynchronously demanding formal explicit permission mapping seamlessly. 
+  /// Displays a warning message explicitly upon camera connection corruption.
+  /// 
+  /// Side effects:
+  /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
   Future<void> _takePicture() async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -82,6 +109,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
     }
   }
 
+  /// Asserts mandatory completeness validating properties blocking incomplete native requests logically.
   bool _isFormValid() {
     return _titleController.text.isNotEmpty &&
         _selectedCategory != null &&
@@ -121,7 +149,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
             ),
             child: Column(
               children: [
-                // Form Section
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -142,7 +169,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   ),
                 ),
 
-                // Next Button
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(

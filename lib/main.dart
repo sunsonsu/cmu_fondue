@@ -1,3 +1,12 @@
+/*
+ * File: main.dart
+ * Description: Main entry point for the CMU Fondue application.
+ * Responsibilities: Initializes the Flutter framework, sets up required services, and launches the root widget.
+ * Author: App Team
+ * Course: CMU Fondue
+ * Notes: Keep it lightweight. Mention that it initializes the framework and launches the root widget.
+ */
+
 import 'package:cmu_fondue/application/pages/auth/auth_page.dart';
 import 'package:cmu_fondue/application/pages/problem_detail.dart';
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
@@ -37,9 +46,17 @@ import 'package:cmu_fondue/application/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
+/// The global cache service instance.
 final cache = CacheService();
+
+/// The global navigator key used for navigation without a context.
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+/// Initializes the application and launches the root widget.
+///
+/// This function sets up Flutter bindings, initializes Firebase and App Check,
+/// loads environment variables, configures the notification service, and
+/// sets up the dependency injection container before running [MyApp].
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -195,7 +212,13 @@ void main() async {
   );
 }
 
+/// The root UI widget of the application.
+///
+/// This widget returns a [MaterialApp] configured with app routing and theming.
+/// It observes [AppAuthProvider] to determine whether to display the loading
+/// screen, the main application frame, or the authentication screen.
 class MyApp extends StatelessWidget {
+  /// Initializes a new instance of [MyApp].
   const MyApp({super.key});
 
   @override

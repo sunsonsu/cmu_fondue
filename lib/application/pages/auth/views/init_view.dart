@@ -1,11 +1,26 @@
+/*
+ * File: init_view.dart
+ * Description: The initial splash interface greeting unauthenticated guests establishing primary intent.
+ * Responsibilities: Provides large distinct navigation buttons routing newcomers towards either registration or login pathways.
+ * Dependencies: <None>
+ * Lifecycle: Created instantly when AuthPage initializes, Disposed immediately upon selecting either routing option.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Renders the foundational welcome menu distinctly offering identity options natively.
 class InitView extends StatelessWidget {
+  /// The reactive closure triggered explicitly when requesting the sign-in pathway.
   final VoidCallback onLoginTap;
+  
+  /// The reactive closure triggered explicitly when requesting the sign-up pathway.
   final VoidCallback onRegisterTap;
 
+  /// Initializes a new instance of [InitView].
   const InitView({
     super.key,
     required this.onLoginTap,

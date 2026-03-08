@@ -1,3 +1,12 @@
+/*
+ * File: cmu_place_repo_impl.dart
+ * Description: Concrete implementation of the CmuPlaceRepo involving Google Places API.
+ * Responsibilities: Fetches university location data via external APIs and handles basic caching fallback.
+ * Author: App Team
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/repositories/cmu_place_repo.dart';
 import 'package:flutter/rendering.dart';
@@ -6,6 +15,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cmu_fondue/main.dart';
 
+/// Implements domain specifications for gathering university landmarks using the remote Google Places API.
 class CmuPlaceRepoImpl implements CmuPlaceRepo {
   @override
   Future<List<CmuPlaceEntity>> getCmuPlaces() async {
@@ -25,6 +35,13 @@ class CmuPlaceRepoImpl implements CmuPlaceRepo {
     return cmuPlaces;
   }
 
+  /// Initiates an HTTP request to Google Places API to dynamically list locations around the campus coordinates.
+  ///
+  /// This operates asynchronously. It reads boundaries and secrets from the surrounding environment variables.
+  /// Returns raw parsed JSON. Throws an exception if the response explicitly fails.
+  ///
+  /// Side effects:
+  /// Upserts the newly fetched raw data structure directly into the local `cache`.
   dynamic fetchFromGoogle() async {
     const String googleMapsApikey = String.fromEnvironment('GCP_API_KEY');
     const String url = 'https://places.googleapis.com/v1/places:searchNearby';

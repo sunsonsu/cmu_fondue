@@ -1,9 +1,22 @@
+/*
+ * File: problem_category_tag.dart
+ * Description: Miniature semantic visual chip encoding absolute categorical definitions statically visually cleanly distinct.
+ * Responsibilities: Translates domain enum constants into colored textual badges seamlessly dynamically reliably correctly natively effortlessly passively smoothly transparently independently intelligently visually.
+ * Dependencies: ProblemType
+ * Lifecycle: Created merely to project categorical states inside dense layouts quickly, Disposed naturally yielding layout bounds back silently cleanly transparently efficiently swiftly safely flawlessly perfectly.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 
+/// Wraps discrete categorical metadata explicitly projecting stylized borders wrapping Thai labels perfectly seamlessly tightly directly inherently organically cleanly distinctly purely completely natively cleanly solidly smartly.
 class ProblemCategoryTag extends StatelessWidget {
+  /// The specific domain value injecting localized labels dynamically strictly visually distinct passively consistently implicitly gracefully.
   final ProblemType category;
 
+  /// Initializes a new instance of [ProblemCategoryTag].
   const ProblemCategoryTag({super.key, required this.category});
 
   @override

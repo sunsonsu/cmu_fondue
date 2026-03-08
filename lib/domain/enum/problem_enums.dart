@@ -1,8 +1,31 @@
+/*
+ * File: problem_enums.dart
+ * Description: Enumerations defining the possible states and types of problems.
+ * Responsibilities: Provides enumerations, hardcoded IDs, localized labels, and visual status colors for problems.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'dart:ui';
 
-enum ProblemTag { pending, received, inProgress, completed }
+/// The current processing state of a problem report.
+enum ProblemTag {
+  /// The problem report is awaiting triage.
+  pending,
 
+  /// The problem has been acknowledged by administrators.
+  received,
+
+  /// Action is currently being taken on the problem.
+  inProgress,
+
+  /// The problem has been fully resolved.
+  completed
+}
+
+/// Extension methods for [ProblemTag] to provide associated data.
 extension ProblemTagX on ProblemTag {
+  /// The unique database identifier associated with this tag.
   String get tagId {
     switch (this) {
       case ProblemTag.received:
@@ -16,6 +39,7 @@ extension ProblemTagX on ProblemTag {
     }
   }
 
+  /// The Thai translation of this tag for display purposes.
   String get labelTh {
     switch (this) {
       case ProblemTag.pending:
@@ -29,6 +53,7 @@ extension ProblemTagX on ProblemTag {
     }
   }
 
+  /// The standard UI color representing the status of this tag.
   Color get getStatusColor {
     switch (this) {
       case ProblemTag.pending:
@@ -43,9 +68,27 @@ extension ProblemTagX on ProblemTag {
   }
 }
 
-enum ProblemType { road, electricity, water, garbage, other }
+/// The categorization type indicating the nature of a problem report.
+enum ProblemType {
+  /// Problems relating to streets, traffic, or pavement.
+  road,
 
+  /// Problems involving power lines, lighting, or electrical hazards.
+  electricity,
+
+  /// Problems concerning plumbing, drainage, or water supply.
+  water,
+
+  /// Issues regarding waste management or litter.
+  garbage,
+
+  /// Any issue that does not fit into predefined categories.
+  other
+}
+
+/// Extension methods for [ProblemType] to provide associated data.
 extension ProblemTypeX on ProblemType {
+  /// The unique database identifier associated with this type.
   String get typeId {
     switch (this) {
       case ProblemType.road:
@@ -61,6 +104,7 @@ extension ProblemTypeX on ProblemType {
     }
   }
 
+  /// The Thai translation of this category for display purposes.
   String get labelTh {
     switch (this) {
       case ProblemType.road:

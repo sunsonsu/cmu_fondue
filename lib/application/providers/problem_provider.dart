@@ -1,3 +1,12 @@
+/*
+ * File: problem_provider.dart
+ * Description: Primary state management provider aggregating localized problem datasets.
+ * Responsibilities: Caches queried problem records, manages reactive UI filtering flags, and routes updates to usecases.
+ * Author: App Team
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'dart:io';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
@@ -11,13 +20,19 @@ import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
+/// Pairs a [problem] with its calculated geospatial [distance] threshold relative to the active mobile device.
 class ProblemWithDistance {
+  /// The core entity representing the recorded issue.
   final ProblemEntity problem;
+  
+  /// The spatial gap in precise meters.
   final double distance;
 
+  /// Initializes a new instance of [ProblemWithDistance].
   ProblemWithDistance(this.problem, this.distance);
 }
 
+/// Administers reactive state broadcasting for all community-reported map obstacles over the app hierarchy.
 class ProblemProvider with ChangeNotifier {
   final GetProblemsUseCase _getProblemsUseCase;
   final CreateProblemUseCase _createProblemUseCase;
@@ -34,6 +49,9 @@ class ProblemProvider with ChangeNotifier {
   ProblemTag? _selectedTag;
   ProblemType? _selectedCategory;
 
+  /// Initializes a new instance of [ProblemProvider].
+  ///
+  /// Demands broad injections covering core retrieval, editing, and cloud signalling domains.
   ProblemProvider(
     this._getProblemsUseCase,
     this._createProblemUseCase,
@@ -44,13 +62,19 @@ class ProblemProvider with ChangeNotifier {
     this._cloudFunctionsService,
   );
 
+  /// Whether a heavy network refresh operation is actively spinning.
   bool get isLoading => _isLoading;
 
+  /// The active categorization filter applied strictly against current board statuses.
   ProblemTag? get selectedTag => _selectedTag;
+  
+  /// The active categorization filter applied strictly against root hardware/software constraints.
   ProblemType? get selectedCategory => _selectedCategory;
 
+  /// The complete unhindered list representing every record downloaded.
   List<ProblemEntity> get allProblems => _problems;
 
+  /// Retrieves a constrained sublist enforcing the actively chosen tag and category overlays.
   List<ProblemEntity> get filteredProblems {
     if (_selectedTag == null && _selectedCategory == null) return _problems;
 
@@ -62,25 +86,37 @@ class ProblemProvider with ChangeNotifier {
     }).toList();
   }
 
+  /// Retrieves a constrained sublist restricted purely to items originally submitted by the active user.
   List<ProblemEntity> get historyProblems {
     return _problems.where((p) => p.reporterId == _currentUserId).toList();
   }
 
+  /// The sheer volume representing records untouched or formally pending review.
   int get countPending =>
       _problems.where((p) => p.tagName == ProblemTag.pending).length;
+      
+  /// The sheer volume representing records currently occupying an active repair lifecycle.
   int get countInProgress =>
       _problems.where((p) => p.tagName == ProblemTag.inProgress).length;
+      
+  /// The sheer volume representing records fully signed off and cleanly resolved.
   int get countCompleted =>
       _problems.where((p) => p.tagName == ProblemTag.completed).length;
 
+  /// Constrains system views mapping internal lists to exact [tag] or [category] criteria.
+  ///
+  /// Side effects:
+  /// Updates local properties instantly and fires [notifyListeners].
   void setFilters({ProblemTag? tag, ProblemType? category}) {
     _selectedTag = tag;
     _selectedCategory = category;
-    notifyListeners(); // แจ้ง Consumer ให้วาดใหม่พร้อมข้อมูลที่กรองแล้ว
+    notifyListeners();
   }
 
+  /// Generates consolidated analytics identifying the geographical hotspot enduring maximum distress.
+  ///
+  /// Binds reports possessing identical string locations together summing global upvote totals sequentially.
   Map<String, dynamic> getMostReportedAreaData() {
-    // 1. ถ้าไม่มีข้อมูลในระบบเลย ให้ส่งค่า Default กลับไป
     if (_problems.isEmpty) {
       return {
         'location': 'ไม่มีข้อมูล',
@@ -89,8 +125,6 @@ class ProblemProvider with ChangeNotifier {
       };
     }
 
-    // 2. จัดกลุ่มปัญหาตามชื่อสถานที่ (locationName)
-    // Key: ชื่อสถานที่, Value: List ของปัญหาที่เกิด ณ ที่นั้น
     Map<String, List<ProblemEntity>> locationGroups = {};
     for (var problem in _problems) {
       if (!locationGroups.containsKey(problem.locationName)) {
@@ -99,19 +133,16 @@ class ProblemProvider with ChangeNotifier {
       locationGroups[problem.locationName]!.add(problem);
     }
 
-    // 3. หาพื้นที่ที่มีผลกระทบสูงสุด (วัดจากผลรวมของ Upvote ทั้งหมดในพื้นที่นั้น)
     String mostReportedLocation = '';
     List<ProblemEntity> mostReportedProblems = [];
-    int maxUpvoteSum = -1; // เริ่มต้นที่ -1 เพื่อให้เจอค่าที่มากกว่าเสมอ
+    int maxUpvoteSum = -1; 
 
     locationGroups.forEach((location, problemsInArea) {
-      // คำนวณผลรวม Upvote ของปัญหาย่อยๆ ทั้งหมดในสถานที่นี้
       int totalUpvotes = problemsInArea.fold(
         0,
         (sum, problem) => sum + problem.upvoteCount,
       );
 
-      // ถ้าคะแนนรวม Upvote ของที่นี่ มากกว่าที่เคยบันทึกไว้ ให้เปลี่ยนเป็นที่นี่แทน
       if (totalUpvotes > maxUpvoteSum) {
         maxUpvoteSum = totalUpvotes;
         mostReportedLocation = location;
@@ -119,7 +150,6 @@ class ProblemProvider with ChangeNotifier {
       }
     });
 
-    // 4. ส่งข้อมูลสรุปกลับไปให้ Dashboard ใช้งาน
     return {
       'location': mostReportedLocation,
       'problems': mostReportedProblems,
@@ -127,6 +157,7 @@ class ProblemProvider with ChangeNotifier {
     };
   }
 
+  /// Calculates a strict tally separating existing records exclusively by standard tags.
   Map<ProblemTag, int> getLocalStatistics() {
     return {
       ProblemTag.pending: _problems.where((p) => p.tagName == ProblemTag.pending).length,
@@ -140,6 +171,10 @@ class ProblemProvider with ChangeNotifier {
     };
   }
 
+  /// Adjusts the localized reference indicating whom currently commands the context window.
+  ///
+  /// Side effects:
+  /// Assigns the new ID natively and fires [notifyListeners].
   void updateUserId(String? userId) {
     if (_currentUserId == userId) return;
     _currentUserId = userId;
@@ -147,9 +182,14 @@ class ProblemProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Retrieves a constrained sublist actively masking anything definitively marked resolved.
   List<ProblemEntity> get notCompletedProblems =>
       _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
+  /// Scans physical distance comparing current coordinates against cached problem entities dynamically.
+  ///
+  /// Enforces a hard spatial limit defaulting [maxDistance] to 500 meters strictly. Use [onlyNotCompleted] 
+  /// boolean checks to exclude strictly resolved items.
   List<ProblemEntity> getNearbyProblems(
     double lat,
     double lng, {
@@ -168,6 +208,12 @@ class ProblemProvider with ChangeNotifier {
     return problemsWithDistance.map((e) => e.problem).toList();
   }
 
+  /// Requests a blind wholesale refresh pulling down the complete map dataset anew.
+  ///
+  /// This operates asynchronously. Safe to ignore network falters cleanly.
+  ///
+  /// Side effects:
+  /// Rewrites the entire [_problems] structure, asserts locking phases via [_isLoading], and fires [notifyListeners] twice.
   Future<void> fetchProblems() async {
     _isLoading = true;
     notifyListeners();
@@ -181,6 +227,13 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Coordinates consensus additions enforcing real-time binary searches locally tracking priority.
+  ///
+  /// This operates asynchronously against [problemId]. The true intent flips depending on [isUpvoted].
+  /// Throws standard execution errors forward if the remote registry formally drops the ticket.
+  ///
+  /// Side effects:
+  /// Rips out the outdated list item natively swapping its value and fires [notifyListeners].
   Future<void> toggleUpvote({
     required String problemId,
     required bool isUpvoted,
@@ -194,7 +247,6 @@ class ProblemProvider with ChangeNotifier {
 
       final index = _problems.indexWhere((p) => p.id == problemId);
       if (index != -1) {
-        // 1. อัปเดตข้อมูลตัวที่เลือก
         final updatedProblem = _problems[index].copyWith(
           upvoteCount: isUpvoted
               ? _problems[index].upvoteCount + 1
@@ -202,16 +254,13 @@ class ProblemProvider with ChangeNotifier {
           isUpvotedByMe: isUpvoted,
         );
 
-        // 2. ลบตัวเก่าออก และแทรกกลับเข้าไปในตำแหน่งที่เรียงลำดับถูกต้อง (In-place update)
         _problems.removeAt(index);
 
-        // หาตำแหน่งใหม่ที่ควรจะเป็น (Binary Search หรือ Loop หา)
-        // เพื่อความง่ายแต่ยังเร็วอยู่ ใช้การหา index แรกที่น้อยกว่าคะแนนใหม่
         int newIndex = _problems.indexWhere(
           (p) => p.upvoteCount <= updatedProblem.upvoteCount,
         );
         if (newIndex == -1) {
-          _problems.add(updatedProblem); // ถ้าคะแนนน้อยสุดไปอยู่ท้ายสุด
+          _problems.add(updatedProblem); 
         } else {
           _problems.insert(newIndex, updatedProblem);
         }
@@ -223,6 +272,9 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Triggers a remote, constrained fetch querying strictly [tagId] combined exactly with [typeId].
+  ///
+  /// This operates asynchronously. Yields a clean empty map list catching all external anomalies securely.
   Future<List<ProblemEntity>> fetchProblemsByTagAndType({
     required String tagId,
     required String typeId,
@@ -239,6 +291,9 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Triggers a remote, constrained fetch querying strictly against a definitive [tagId].
+  ///
+  /// This operates asynchronously. Yields a clean empty map list catching all external anomalies securely.
   Future<List<ProblemEntity>> fetchProblemsByTag({
     required String tagId,
   }) async {
@@ -251,6 +306,9 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Triggers a remote, constrained fetch querying strictly against a definitive [typeId].
+  ///
+  /// This operates asynchronously. Yields a clean empty map list catching all external anomalies securely.
   Future<List<ProblemEntity>> fetchProblemsByType({
     required String typeId,
   }) async {
@@ -263,6 +321,14 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Pushes a brand new map anomaly alongside uploaded media up completely toward the system core.
+  ///
+  /// This operates asynchronously pushing raw bytes representing [imageFile] outwards initially. Requires
+  /// massive structural data ranging from [title] textual explanations towards [lat] precise mappings.
+  /// Throws a clear interruption preventing navigation rendering if remote connections fail.
+  ///
+  /// Side effects:
+  /// Explicitly requests a full dataset replacement post-commit, locks using [_isLoading], and calls [notifyListeners] twice.
   Future<void> createProblem({
     required String title,
     required String detail,
@@ -288,17 +354,20 @@ class ProblemProvider with ChangeNotifier {
         tagId: tagId,
         imageFile: imageFile,
       );
-      await fetchProblems(); // รีเฟรชข้อมูลหน้ารายการใหม่หลังจากสร้างสำเร็จ
+      await fetchProblems(); 
     } catch (e, stacktrace) {
       print('Create Error: $e');
       print('Stacktrace: $stacktrace');
-      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
+      rethrow; 
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
+  /// Interrogates the server solely seeking the highest consensus ranking report dynamically.
+  ///
+  /// This operates asynchronously. Returns null if failures occur or if the repository explicitly starves results out natively.
   Future<ProblemEntity?> getMaxUpvotedProblem() async {
     try {
       return await _getProblemsUseCase.getMaxUpvotedProblem(_currentUserId);
@@ -309,6 +378,9 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Queries basic integers aggregating the amount of problems existing exactly on [currentTagId].
+  ///
+  /// This operates asynchronously against the database. Yields 0 upon sudden network crashes safely.
   Future<int> countProblemsByTag({required String currentTagId}) async {
     try {
       return await _getProblemsUseCase.countByTag(currentTagId);
@@ -319,6 +391,12 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
+  /// Sends strict execution signals demanding immediate erasure utilizing a target [problemId].
+  ///
+  /// This operates asynchronously. Re-throws any upstream network disruptions causing total failure directly down towards application consumers.
+  ///
+  /// Side effects:
+  /// Tears the matching item structurally out of [_problems] natively and fires [notifyListeners].
   Future<void> deleteProblem({required String problemId}) async {
     try {
       await _deleteProblemUseCase(problemId);
@@ -332,28 +410,33 @@ class ProblemProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Stacktrace: $stacktrace');
       }
-      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
+      rethrow; 
     }
   }
 
+  /// Implements highly complex administrator approvals dynamically alerting local devices correctly.
+  ///
+  /// This operates asynchronously pushing the target [problemId] over to a [newTag] definition. Additionally
+  /// retrieves origin citizen metadata invoking remote Firebase Cloud interactions actively forwarding 
+  /// status strings directly onto physical cellphones properly.
+  /// Formal exception propagation bubbles outward notifying UI boundaries exclusively mapping true failures securely.
+  ///
+  /// Side effects:
+  /// Rewrites the single specified internal list record actively and fires [notifyListeners].
   Future<void> changeProblemTag({
     required String problemId,
     required ProblemTag newTag,
   }) async {
     try {
-      // 1. อัปเดตสถานะใน database
       await _updateProblemUseCase.call(id: problemId, tagId: newTag.tagId);
 
-      // 2. หา problem info เพื่อเอา reporterId และ title
       final index = _problems.indexWhere((p) => p.id == problemId);
       if (index != -1) {
         final problem = _problems[index];
 
-        // 3. ดึงข้อมูล user (reporter) เพื่อเอา fcmToken
         try {
           final reporter = await _getUserByIdUseCase.call(problem.reporterId);
 
-          // 4. ส่ง push notification (ถ้ามี fcmToken)
           if (reporter?.fcmToken != null && reporter!.fcmToken!.isNotEmpty) {
             try {
               await _cloudFunctionsService.sendProblemStatusNotification(
@@ -366,7 +449,6 @@ class ProblemProvider with ChangeNotifier {
                 print('✅ Notification sent to reporter');
               }
             } catch (e) {
-              // ถ้าส่ง notification ไม่สำเร็จ ไม่ต้อง throw error ออกมา
               if (kDebugMode) {
                 print('⚠️ ส่ง notification ไม่สำเร็จ: $e');
               }
@@ -382,7 +464,6 @@ class ProblemProvider with ChangeNotifier {
           }
         }
 
-        // 5. อัปเดตข้อมูลใน Provider ทันที
         _problems[index] = problem.copyWith(tagName: newTag);
         notifyListeners();
       }
@@ -393,7 +474,7 @@ class ProblemProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Stacktrace: $stacktrace');
       }
-      rethrow; // ส่ง Error กลับไปให้ UI แสดงแจ้งเตือน
+      rethrow; 
     }
   }
 }

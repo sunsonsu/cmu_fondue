@@ -1,19 +1,27 @@
-// lib/domain/usecases/notify_problem_status_changed_usecase.dart
+/*
+ * File: notify_problem_status_changed_usecase.dart
+ * Description: Use case responsible for dispatching change notifications.
+ * Responsibilities: Instructs the cloud functions service to send an FCM alert regarding ticket updates.
+ * Author: Komsan
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 
-// Komsan
+/// Orchestrates outgoing push notifications typically triggered by administrator actions.
 class NotifyProblemStatusChangedUseCase {
+  /// The dependent cloud interaction service.
   final CloudFunctionsService _cloudFunctionsService;
 
+  /// Initializes a new instance of [NotifyProblemStatusChangedUseCase].
   NotifyProblemStatusChangedUseCase(this._cloudFunctionsService);
 
-  /// เรียกใช้หลังจาก Admin เปลี่ยนสถานะ Problem แล้ว
-  /// 
-  /// Parameters:
-  /// - problemId: ID ของ Problem ที่เปลี่ยนสถานะ
-  /// - problemTitle: ชื่อปัญหา
-  /// - newTagName: ชื่อสถานะใหม่ (เช่น "รอดำเนินการ", "กำลังดำเนินการ")
-  /// - fcmToken: FCM Token ของเจ้าของปัญหา (reporter)
+  /// Dispatches a notification informing a citizen their ticket's status has updated.
+  ///
+  /// This operates asynchronously. The [problemId] ties the deep link, [problemTitle]
+  /// gives context, [newTagName] illustrates the latest status, and the [fcmToken] pinpoints the correct device.
+  /// Gracefully aborts operations if [fcmToken] is absent.
   Future<void> execute({
     required String problemId,
     required String problemTitle,
@@ -21,7 +29,6 @@ class NotifyProblemStatusChangedUseCase {
     required String fcmToken,
   }) async {
     if (fcmToken.isEmpty) {
-      // ถ้าไม่มี FCM token ก็ไม่ต้องส่ง
       return;
     }
 

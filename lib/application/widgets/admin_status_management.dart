@@ -1,11 +1,28 @@
+/*
+ * File: admin_status_management.dart
+ * Description: Special UI component isolating administrative privileges governing state changes directly natively.
+ * Responsibilities: Renders dynamic progression choices depending linearly across current incident lifecycles securely hiding unauthorized endpoints natively.
+ * Dependencies: ProblemTag
+ * Lifecycle: Created merely upon admin inspections within detail pathways, Disposed backwards navigating outwardly gracefully.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:flutter/material.dart';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 
+/// Segregates exclusive workflow transitions providing tactile paths updating cloud states distinctly explicitly.
 class AdminStatusManagement extends StatelessWidget {
+  /// The static reflection defining which transitions remain valid currently natively.
   final ProblemTag currentStatus;
+  
+  /// Injects external domain behaviors directly intercepting tactile choices dynamically explicitly.
   final Function(ProblemTag) onStatusChange;
+  
+  /// Flags ongoing async locks masking interactive layouts behind circular loading indicators completely gracefully.
   final bool isLoading;
 
+  /// Initializes a new instance of [AdminStatusManagement].
   const AdminStatusManagement({
     super.key,
     required this.currentStatus,
@@ -20,9 +37,9 @@ class AdminStatusManagement extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.admin_panel_settings,
-              color: const Color(0xFF5D3891),
+              color: Color(0xFF5D3891),
               size: 20,
             ),
             const SizedBox(width: 8),

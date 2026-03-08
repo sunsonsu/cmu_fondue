@@ -1,3 +1,13 @@
+/*
+ * File: problem_detail.dart
+ * Description: The comprehensive inspection interface displaying all granular metadata mapping individual incidents.
+ * Responsibilities: Renders text descriptions, loaded images, status timelines, explicit geographic maps, and facilitates administrator resolutions securely.
+ * Dependencies: ProblemProvider, DeleteConfirmationDialog, AdminStatusManagement, ProblemLocationMap, PhotoUploadWidget, CustomSnackBar, ImagePicker
+ * Lifecycle: Created strictly upon explicit selection from list views dynamically, Disposed immediately after backwards navigation unconditionally.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'dart:io';
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
@@ -14,9 +24,12 @@ import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Aggregates granular incident metadata facilitating spatial verification alongside administrator-exclusive state transitions deeply natively.
 class ProblemDetailPage extends StatefulWidget {
+  /// The isolated conceptual chunk demanding deep inspection visually.
   final ProblemEntity problem;
 
+  /// Initializes a new instance of [ProblemDetailPage].
   const ProblemDetailPage({super.key, required this.problem});
 
   @override
@@ -37,8 +50,10 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     _currentStatus = widget.problem.tagName;
   }
 
+  /// Evaluates strictly matching locally applied overrides preventing lag before reflecting real native states dynamically.
   ProblemTag get currentStatus => _currentStatus ?? widget.problem.tagName;
 
+  /// Casts strict machine timestamps towards localized human interpretations visually cleanly.
   String _formatThaiDate(DateTime dateTime) {
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
@@ -47,16 +62,21 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     return '$day/$month/$year $time';
   }
 
+  /// Evaluates mandatory upload contexts launching distinctly layered visual verification prompts whenever concluding events correctly.
   Future<void> _showStatusChangeDialog(ProblemTag newStatus) async {
     if (newStatus == ProblemTag.completed) {
-      // Show photo upload dialog
       await _showPhotoUploadDialog();
     } else {
-      // Direct status change
       _changeStatus(newStatus);
     }
   }
 
+  /// Triggers internal device galleries extracting raw photographic binaries satisfying endpoint completion strictly natively.
+  /// 
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
+  /// 
+  /// Side effects:
+  /// Rewrites the active [_completedImage] formally saving binary endpoints locally preventing loss abruptly firing [setState] exactly.
   Future<void> _showPhotoUploadDialog() async {
     _tempImage = null;
     await showDialog(
@@ -152,6 +172,9 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     );
   }
 
+  /// Obliterates local configurations entirely flushing active problem sets explicitly cleanly towards cloud databases directly.
+  ///
+  /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
   Future<void> _deleteProblem() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -168,7 +191,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
           context: context,
           message: 'ลบปัญหาเรียบร้อยแล้ว',
         );
-        // Navigate back after deletion
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) Navigator.pop(context);
       } catch (e) {
@@ -182,6 +204,10 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     }
   }
 
+  /// Casts localized administrative intent backwards mutating universal item structures safely visually verifying correctly via prompts dynamically.
+  /// 
+  /// Side effects:
+  /// Rewrites the active [_currentStatus] internally temporarily applying graphical overrides abruptly firing [setState] exactly.
   void _changeStatus(ProblemTag newStatus) async {
     setState(() {
       _isLoading = true;
@@ -205,7 +231,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
         );
       }
     } catch (e) {
-      // ไม่ต้อง pop หน้าออกถ้ายิง api พลาด
       if (mounted) {
         CustomSnackBar.showError(
           context: context,
@@ -261,8 +286,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- ส่วนหัว: ชื่อปัญหาและสถานะ ---
-                // ชื่อปัญหา
                 Text(
                   widget.problem.title,
                   style: const TextStyle(
@@ -272,10 +295,8 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Tags Row
                 Row(
                   children: [
-                    // Status Badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -299,7 +320,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Category Badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -324,7 +344,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                     ),
                   ],
                 ),
-                // แสดงวันที่อัปเดตสถานะ
                 if (_statusUpdatedAt != null) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -335,7 +354,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
 
                 const SizedBox(height: 16),
 
-                // --- ข้อมูล: วันที่และสถานที่ ---
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
@@ -346,7 +364,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                   ),
                   child: Column(
                     children: [
-                      // วันที่แจ้ง
                       Row(
                         children: [
                           Icon(
@@ -367,7 +384,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                       const SizedBox(height: 12),
                       const Divider(height: 1),
                       const SizedBox(height: 12),
-                      // สถานที่
                       Row(
                         children: [
                           Icon(
@@ -393,7 +409,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
 
                 const SizedBox(height: 12),
 
-                // --- แผนที่ ---
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
@@ -419,7 +434,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      // Google Map with Coordinates
                       ProblemLocationMap(
                         location: LatLng(
                           widget.problem.lat,
@@ -434,7 +448,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
 
                 const SizedBox(height: 12),
 
-                // --- รายละเอียด ---
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
@@ -478,7 +491,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
 
                 const SizedBox(height: 12),
 
-                // --- รูปภาพ ---
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
@@ -508,7 +520,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      // ตรวจสอบว่ามี imageUrl หรือไม่
                       if (widget.problem.imageUrl != null &&
                           widget.problem.imageUrl!.isNotEmpty)
                         ClipRRect(
@@ -608,7 +619,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                   ),
                 ),
 
-                // --- รูปภาพที่ admin upload ---
                 if (_completedImage != null) ...[
                   const SizedBox(height: 12),
                   Container(
@@ -664,7 +674,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                   ),
                 ],
 
-                // --- ปุ่มสำหรับ Admin ---
                 if (isAdmin) ...[
                   const SizedBox(height: 16),
                   Container(
@@ -687,7 +696,6 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                           isLoading: _isLoading,
                         ),
 
-                        // ปุ่มลบปัญหา
                         const SizedBox(height: 20),
                         const Divider(),
                         const SizedBox(height: 12),

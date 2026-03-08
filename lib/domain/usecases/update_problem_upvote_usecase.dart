@@ -1,19 +1,27 @@
+/*
+ * File: update_problem_upvote_usecase.dart
+ * Description: Use case for issuing or stripping upvotes on problem entities.
+ * Responsibilities: Rejects anonymous attempts and routes the toggle logic properly.
+ * Author: App Team
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 
-/// Use case for updating the upvote status of a problem.
-///
-/// This use case encapsulates the logic for adding or removing an upvote.
-/// It relies on the [ProblemRepository] to perform the actual data operations,
-/// ensuring the [UserUpvote] entity and [Problem.upvoteCount] are kept in sync.
+/// Isolates the logic required to modify the community consensus count for a problem.
 class UpdateProblemUpvoteUseCase {
+  /// The remote registry holding the consensus records.
   final ProblemRepo _problemRepository;
 
+  /// Initializes a new instance of [UpdateProblemUpvoteUseCase].
   UpdateProblemUpvoteUseCase(this._problemRepository);
 
-  /// Executes the upvote update.
+  /// Analyzes the [isUpvoted] intent over [problemId] securely.
   ///
-  /// [problemId]: The unique identifier of the problem.
-  /// [isUpvote]: True to add an upvote, False to remove it.
+  /// This operates asynchronously causing an upstream tally adjustment.
+  /// Provides the acting [userId] explicitly.
+  /// Throws an exception if the user context is absent.
   Future<void> call({
     required String problemId,
     required bool isUpvoted,

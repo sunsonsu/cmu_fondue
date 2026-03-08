@@ -1,6 +1,18 @@
+/*
+ * File: custom_snackbar.dart
+ * Description: Universal feedback dispatcher orchestrating transient visual notifications independently from specific rendering scopes cleanly seamlessly.
+ * Responsibilities: Isolates exact contextual scaffolding streams, pushes formatted messages broadly quickly securely checking contextual active lifetimes cleanly unconditionally.
+ * Dependencies: None
+ * Lifecycle: Created merely when explicitly flashing notifications rapidly, Disposed instantaneously expiring.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:flutter/material.dart';
 
+/// Synthesizes generalized transient feedback pathways exposing static constructors rendering safe identical messages distinctly securely cleanly globally.
 class CustomSnackBar {
+  /// Casts arbitrary message objects pushing custom notification forms actively catching visual limits deeply natively seamlessly.
   static void show({
     required BuildContext context,
     required String message,
@@ -44,6 +56,7 @@ class CustomSnackBar {
     );
   }
 
+  /// Flashes positive confirmation layouts wrapping localized intents visually gracefully safely cleanly transparently.
   static void showSuccess({
     required BuildContext context,
     required String message,
@@ -58,6 +71,7 @@ class CustomSnackBar {
     );
   }
 
+  /// Intercepts extreme negative layout contexts pushing aggressive colors signaling serious issues loudly actively automatically.
   static void showError({
     required BuildContext context,
     required String message,
@@ -72,6 +86,7 @@ class CustomSnackBar {
     );
   }
 
+  /// Renders standard informational alerts mapping neutral behaviors precisely cleanly avoiding intrusive interruptions cleanly silently.
   static void showInfo({
     required BuildContext context,
     required String message,
@@ -86,6 +101,7 @@ class CustomSnackBar {
     );
   }
 
+  /// Prompts moderate warning paths highlighting uncertain situations carefully precisely deliberately flawlessly securely globally.
   static void showWarning({
     required BuildContext context,
     required String message,

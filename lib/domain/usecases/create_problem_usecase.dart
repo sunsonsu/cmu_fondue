@@ -1,21 +1,41 @@
+/*
+ * File: create_problem_usecase.dart
+ * Description: Use case for composing and persisting new problem reports.
+ * Responsibilities: Coordinates image upload, problem record creation, and problem image record linking. Includes rollback mechanisms.
+ * Author: Komsan
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import '../repositories/problem_repo.dart';
 import '../repositories/problem_image_repo.dart';
 import '../../data/services/FirebaseStorageService.dart';
 
-// Komsan
+/// Orchestrates the process of submitting a new problem report, including media uploads.
 class CreateProblemUseCase {
+  /// The dependent repository for core problem data.
   final ProblemRepo problemRepository;
+
+  /// The dependent repository for linking images to problem metadata.
   final ProblemImageRepo problemImageRepository;
+
+  /// The dependent service handling physical file storage on Firebase.
   final FirebaseStorageService storageService;
 
+  /// Initializes a new instance of [CreateProblemUseCase].
   CreateProblemUseCase({
     required this.problemRepository,
     required this.problemImageRepository,
     required this.storageService,
   });
 
+  /// Executes the creation sequence for a new problem report.
+  ///
+  /// This operates asynchronously. It first uploads the provided [imageFile] to cloud storage. 
+  /// Upon successful upload, it persists the problem metadata. Finally, it creates the image linkage.
+  /// Throws an exception if any step fails, attempting to roll back previously succeeded steps.
   Future<String> call({
     required String title,
     required String detail,
@@ -31,10 +51,8 @@ class CreateProblemUseCase {
     String? problemId;
 
     try {
-      // 1. อัพโหลดรูปภาพไป Firebase Storage
       imageUrl = await storageService.uploadProblemImage(imageFile);
 
-      // 2. สร้าง Problem record
       problemId = await problemRepository.createProblem(
         title: title,
         detail: detail,
@@ -46,7 +64,6 @@ class CreateProblemUseCase {
         tagId: tagId,
       );
 
-      // 3. สร้าง ProblemImage record เชื่อมกับ Problem record
       final String fileName = path.basename(imageFile.path);
       final String imageType = path.extension(imageFile.path)
           .replaceFirst('.', '')
@@ -62,25 +79,22 @@ class CreateProblemUseCase {
       return problemId;
       
     } catch (e) {
-      // Rollback: ถ้าสร้าง Problem สำเร็จแล้วแต่สร้าง Image ไม่สำเร็จ
       if (problemId != null) {
         try {
           await problemRepository.deleteProblem(problemId);
         } catch (deleteError) {
-          print('ไม่สามารถลบปัญหาที่สร้างไว้ได้: $deleteError');
+          // Ignored
         }
       }
       
-      // Rollback: ลบรูปที่อัพโหลดไปแล้ว (ถ้าอัพโหลดสำเร็จแต่สร้าง Problem/Image ไม่สำเร็จ)
       if (imageUrl != null) {
         try {
           await storageService.deleteProblemImage(imageUrl);
         } catch (deleteError) {
-          print('ไม่สามารถลบรูปภาพที่อัพโหลดไว้ได้: $deleteError');
+          // Ignored
         }
       }
       
-      // Throw error ต้นฉบับเพื่อให้ UI จัดการต่อ
       rethrow;
     }
   }

@@ -1,10 +1,25 @@
+/*
+ * File: filter_by_tag.dart
+ * Description: Animated sliding horizontal tab array bounding dataset intersections strictly conforming underlying lifecycle lifespans seamlessly natively.
+ * Responsibilities: Interpolates exact physical boundaries moving floating selection bars smoothly, intercepts active taps safely flushing data queries completely identically natively.
+ * Dependencies: ProblemTag
+ * Lifecycle: Created persistently anchoring list viewpoints completely dynamically, Disposed identically abandoning parent scopes.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
 
+/// Wraps sliding horizontal status arrays matching precise visual limits updating continuous data filters distinctly accurately natively.
 class FilterByTag extends StatefulWidget {
+  /// The single validated cloud status currently highlighting tabs identically natively.
   final ProblemTag? selectedTag;
+  
+  /// Invokes arbitrary parent reloads dumping disjoint data streams rapidly natively securely cleanly.
   final Function(ProblemTag?) onTagSelected;
 
+  /// Initializes a new instance of [FilterByTag].
   const FilterByTag({
     super.key,
     required this.selectedTag,
@@ -51,6 +66,10 @@ class _FilterByTagState extends State<FilterByTag> {
     }
   }
 
+  /// Calculates dynamic screen limits tracking bounding box mutations precisely triggering sliding bar movements identically flawlessly locally.
+  /// 
+  /// Side effects:
+  /// Violently modifies layout parameters [_indicatorLeft] anchoring fluid animation pipelines forcefully triggering [setState].
   void _updateIndicatorPosition() {
     if (widget.selectedTag == null) {
       setState(() {
@@ -147,6 +166,7 @@ class _FilterByTagState extends State<FilterByTag> {
     );
   }
 
+  /// Composes simple textual labels registering strict logical node mappings intercepting taps explicitly neatly perfectly natively.
   Widget _buildTab({
     required String label,
     required ProblemTag tag,

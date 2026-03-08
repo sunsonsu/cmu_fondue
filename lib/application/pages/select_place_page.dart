@@ -1,3 +1,13 @@
+/*
+ * File: select_place_page.dart
+ * Description: Geolocation pinpointing tool binding raw manual searching algorithms directly into tactile map movements enforcing bounding boundaries strictly natively.
+ * Responsibilities: Filters valid queries securely, intercepts arbitrary touches gracefully validating coordinates strictly against static limits seamlessly.
+ * Dependencies: CmuPlaceUsecase, SubmitLocationBottomSheet, MapSubmitWidget, LocationSearchWidget
+ * Lifecycle: Created upon router switching dynamically, Disposed automatically retreating out from creation stacks.
+ * Author: App Team
+ * Course: CMU Fondue
+ */
+
 import 'package:cmu_fondue/application/widgets/submit_location_bottom_sheet.dart';
 import 'package:cmu_fondue/data/repositories/cmu_place_repo_impl.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
@@ -10,7 +20,9 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/// Synthesizes tactile Google map structures bridging text queries backwards towards strictly bounded geographical coordinates elegantly.
 class SelectPlaceBottomSheet extends StatefulWidget {
+  /// Initializes a new instance of [SelectPlaceBottomSheet].
   const SelectPlaceBottomSheet({super.key});
 
   @override
@@ -44,6 +56,12 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     _cmuPlaceUsecase = CmuPlaceUsecase(repo);
   }
 
+  /// Pulls authoritative bounding landmarks remotely fetching entirely new constraint arrays distinctly.
+  ///
+  /// This operates asynchronously demanding formal explicit queries hooking domain logic correctly masking delays gracefully.
+  /// 
+  /// Side effects:
+  /// Rewrites active [_cmuPlaces] comprehensively upon fetching cleanly directly firing [setState].
   Future<void> _refreshData() async {
     setState(() => _isLoading = true);
     try {
@@ -64,6 +82,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Projects restrictive system alerts punishing errant geographical selections violently disrupting creation flow deliberately.
   void _showNotInCmuDialog() {
     showDialog(
       context: context,
@@ -83,6 +102,12 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     );
   }
 
+  /// Hijacks map coordinates shifting views directly towards physical device locators dynamically.
+  ///
+  /// This operates asynchronously initiating deep mobile sensor queries natively demanding system permissions natively mapping vectors elegantly.
+  /// 
+  /// Side effects:
+  /// Mutates globally watched [_placemarkNotifier] completely replacing states triggering external redraws abruptly.
   Future<void> _moveToCurrentLocation() async {
     try {
       final position = await getUserCurrentLocation();
@@ -113,6 +138,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     super.dispose();
   }
 
+  /// Validates textual landmark selections explicitly filtering coordinates dynamically rejecting errant values totally identically natively.
   void _onLocationSelected(Placemark place) {
     setState(() {
       _selectedPlace = place.name;
@@ -135,7 +161,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
           return;
         }
 
-        // If it's a new place, map will animate, so flag it
         if (_placemarkNotifier.value == null ||
             _placemarkNotifier.value!.isEmpty ||
             _placemarkNotifier.value!.first.name != selectedEntity.name) {
@@ -177,13 +202,11 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
         ),
         child: Stack(
           children: [
-            // Main Content - Map (Full height)
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Stack(
                   children: [
-                    // Map
                     Positioned.fill(
                       child: MapSubmitWidget(
                         onPlacemarkChanged: (placemark) {
@@ -212,7 +235,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                       ),
                     ),
 
-                    // Bottom Sheet
                     SubmitLocationBottomSheet(
                       locationNotifier: _placemarkNotifier,
                     ),
@@ -221,7 +243,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
               ),
             ),
 
-            // Floating Search Section (On top)
             Positioned(
               top: 0,
               left: 0,
@@ -237,7 +258,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Description text
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
                       child: Align(

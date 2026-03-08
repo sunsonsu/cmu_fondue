@@ -1,21 +1,29 @@
+/*
+ * File: problem_repo_impl.dart
+ * Description: Concrete implementation of the ProblemRepo.
+ * Responsibilities: Executes the core CRUD and querying logic against problems traversing the Data Connect SDK.
+ * Author: App Team
+ * Course: CMU Fondue
+ * Notes: No UI logic should appear in this file.
+ */
+
 import 'package:cmu_fondue/domain/dataconnect_generated/generated.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 import 'package:cmu_fondue/domain/repositories/problem_repo.dart';
 import 'package:firebase_data_connect/firebase_data_connect.dart';
 
+/// Implements domain constraints for problem records utilizing the generated Firebase Data SDK.
 class ProblemRepoImpl implements ProblemRepo {
+  /// The generated connector executing direct GraphQL queries.
   final ConnectorConnector connector;
+
+  /// Initializes a new instance of [ProblemRepoImpl].
   ProblemRepoImpl({required this.connector});
 
-  // Read
-  // Komsan
   @override
   Future<List<ProblemEntity>> getProblems(String userId) async {
     try {
-      // 1. เรียก Query จาก Data Connect SDK (ตัวอย่างชื่อ listProblems)
       final result = await connector.listProblems().execute();
-      // 2. Map ข้อมูลจาก SDK Object ให้กลายเป็น Domain Entity
-      // e ในที่นี้คือข้อมูลดิบที่มีความสัมพันธ์ (Nested Object) ติดมาด้วย
       return result.data.problems.map((e) {
         return ProblemEntity.fromGenerated(e, userId);
       }).toList();
@@ -37,13 +45,9 @@ class ProblemRepoImpl implements ProblemRepo {
         print('Code: ${e.code}');
         print('Message: ${e.message}');
 
-        // ตัวนี้แหละครับที่จะบอกว่า "Instance of ..." คืออะไร
         final errorInfo = e.response;
         if (errorInfo != null) {
-          // ลองพิมพ์ข้อมูลดิบจาก errorInfo
           print('Error Details: ${errorInfo.errors}');
-
-          // ถ้ามี List ของ Errors ย่อยๆ ให้วน Loop ดู
           for (var graphQLError in errorInfo.errors) {
             print('--- GraphQL Error Detail ---');
             print('Message: ${graphQLError.message}');
@@ -56,8 +60,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Create
-  // Komsan
   @override
   Future<String> createProblem({
     required String title,
@@ -85,8 +87,6 @@ class ProblemRepoImpl implements ProblemRepo {
     return result.data.problem_insert.problemId;
   }
 
-  // Update
-  // Komsan
   @override
   Future<void> updateProblem({
     required String id,
@@ -115,8 +115,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Delete
-  // Komsan
   @override
   Future<void> deleteProblem(String id) async {
     try {
@@ -126,7 +124,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Count problems by tag
   @override
   Future<int> countProblemsByTag({required String currentTagId}) async {
     try {
@@ -189,8 +186,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Insert upvote
-  // Rachata
   @override
   Future<void> addUpvote({required String id, required String userId}) async {
     try {
@@ -200,8 +195,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Delete upvote
-  // Rachata
   @override
   Future<void> removeUpvote({
     required String id,
@@ -227,7 +220,6 @@ class ProblemRepoImpl implements ProblemRepo {
     }
   }
 
-  // Komsan
   @override
   Future<List<ProblemEntity>> getProblemsByReporter({
     required String reporterId,
