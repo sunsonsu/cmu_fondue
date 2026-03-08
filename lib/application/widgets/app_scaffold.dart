@@ -217,7 +217,8 @@ class _AppScaffoldState extends State<AppScaffold> {
     return InkWell(
       key: navKey,
       onTap: () {
-        if (enabled) {
+        if (enabled || index != 1) {
+          // Only block and show error on the 'Report' tab (index 1)
           widget.onNavigationChanged?.call(index);
         } else {
           showDialog(
