@@ -10,6 +10,7 @@
 
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:cmu_fondue/application/widgets/auth_text_field.dart';
+import 'package:cmu_fondue/application/widgets/custom_snackbar.dart';
 import 'package:cmu_fondue/domain/exceptions/auth_exception.dart';
 import 'package:cmu_fondue/domain/usecases/register.dart';
 import 'package:flutter/gestures.dart';
@@ -109,10 +110,9 @@ class _RegisterViewState extends State<RegisterView> {
 
       // Registration succeeded — switch to login page
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registration successful! Please log in.'),
-          ),
+        CustomSnackBar.showSuccess(
+          context: context,
+          message: 'Registration successful! Please log in.',
         );
         widget.onSwitchToLogin();
         return;
