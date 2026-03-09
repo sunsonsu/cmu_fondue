@@ -11,6 +11,7 @@
 import 'dart:io';
 import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cmu_fondue/application/widgets/photo_upload.dart';
 
@@ -99,6 +100,8 @@ class _ReportingFormState extends State<ReportingForm> {
         TextField(
           controller: widget.titleController,
           maxLength: 50,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          inputFormatters: [LengthLimitingTextInputFormatter(50)],
           decoration: InputDecoration(
             hintText: 'ระบุหัวข้อ เช่น ประตูเสียที่คณะวิทยาศาสตร์',
             hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
@@ -207,6 +210,8 @@ class _ReportingFormState extends State<ReportingForm> {
         TextField(
           controller: widget.descriptionController,
           maxLength: 255,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          inputFormatters: [LengthLimitingTextInputFormatter(255)],
           maxLines: 5,
           decoration: InputDecoration(
             hintText: 'เขียนคำอธิบายเหตุการณ์พอสังเขป',
