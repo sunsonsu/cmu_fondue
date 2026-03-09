@@ -96,6 +96,7 @@ class PhotoUploadWidget extends StatelessWidget {
                   children: [
                     Text(
                       'เพิ่มรูปภาพประกอบปัญหา',
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.kanit(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -111,6 +112,7 @@ class PhotoUploadWidget extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       'เฉพาะไฟล์ .png, .jpg, .jpeg, .HEIC',
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.kanit(
                         fontSize: 14,
                         color: Colors.grey[600],
