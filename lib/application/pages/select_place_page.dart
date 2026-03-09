@@ -223,97 +223,91 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
             topRight: Radius.circular(30),
           ),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: MapSubmitWidget(
-                        onPlacemarkChanged: (placemark) {
-                          if (placemark.isNotEmpty) {
-                            final entity = placemark.first;
-                            if (!_cmuPlaceUsecase.isInsideCmu(
-                              LatLng(entity.lat, entity.lng),
-                            )) {
-                              if (_isFirstLoad) {
-                                _isFirstLoad = false;
-                                _moveToUserLocation();
-                                _placemarkNotifier.value = null;
-                                return;
-                              } else if (!_isProgrammaticMove) {
-                                _showNotInCmuDialog();
-                                _placemarkNotifier.value = null;
-                                return;
-                              } else {
-                                _placemarkNotifier.value = null;
-                              }
-                            }
-                            _isFirstLoad = false;
-                          }
-
-                          if (!_isProgrammaticMove) {
-                            _searchController.clear();
-                          } else {
-                            _isProgrammaticMove = false;
-                          }
-                          _placemarkNotifier.value = placemark;
-                        },
-                        selectedPlace:
-                            _placemarkNotifier.value?.isNotEmpty == true
-                            ? _placemarkNotifier.value!.first
-                            : null,
-                      ),
-                    ),
-
-                    SubmitLocationBottomSheet(
-                      locationNotifier: _placemarkNotifier,
-                    ),
-                  ],
+            // Search bar section — always on top, never overlapped
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
               ),
-            ),
-
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey[600],
-                          ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ),
+                  ),
 
-                    LocationSearchWidget(
-                      searchController: _searchController,
-                      locations: _cmuPlaces.map((e) => e.name).toList(),
-                      onLocationSelected: _onLocationSelected,
+                  LocationSearchWidget(
+                    searchController: _searchController,
+                    locations: _cmuPlaces.map((e) => e.name).toList(),
+                    onLocationSelected: _onLocationSelected,
+                  ),
+
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+
+            // Map + bottom sheet constrained below the search bar
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: MapSubmitWidget(
+                      onPlacemarkChanged: (placemark) {
+                        if (placemark.isNotEmpty) {
+                          final entity = placemark.first;
+                          if (!_cmuPlaceUsecase.isInsideCmu(
+                            LatLng(entity.lat, entity.lng),
+                          )) {
+                            if (_isFirstLoad) {
+                              _isFirstLoad = false;
+                              _moveToUserLocation();
+                              _placemarkNotifier.value = null;
+                              return;
+                            } else if (!_isProgrammaticMove) {
+                              _showNotInCmuDialog();
+                              _placemarkNotifier.value = null;
+                              return;
+                            } else {
+                              _placemarkNotifier.value = null;
+                            }
+                          }
+                          _isFirstLoad = false;
+                        }
+
+                        if (!_isProgrammaticMove) {
+                          _searchController.clear();
+                        } else {
+                          _isProgrammaticMove = false;
+                        }
+                        _placemarkNotifier.value = placemark;
+                      },
+                      selectedPlace:
+                          _placemarkNotifier.value?.isNotEmpty == true
+                          ? _placemarkNotifier.value!.first
+                          : null,
                     ),
+                  ),
 
-                    const SizedBox(height: 8),
-                  ],
-                ),
+                  SubmitLocationBottomSheet(
+                    locationNotifier: _placemarkNotifier,
+                  ),
+                ],
               ),
             ),
           ],
