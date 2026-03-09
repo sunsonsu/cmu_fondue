@@ -2,7 +2,7 @@
  * File: problem_entity.dart
  * Description: Entity representing a reported problem.
  * Responsibilities: Encapsulates all data related to a problem report and provides methods for parsing from generated SDK data and copying instances.
- * Author: Komsan
+ * Author: Komsan, Rachata
  * Course: CMU Fondue
  */
 
@@ -97,7 +97,6 @@ class ProblemEntity {
 
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,
-
 
       typeName: ProblemType.values.firstWhere(
         (e) => e.labelTh == data.problemType.typeThaiName,

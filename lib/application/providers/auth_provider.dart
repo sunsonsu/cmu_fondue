@@ -2,7 +2,7 @@
  * File: auth_provider.dart
  * Description: State management provider controlling application-wide authentication status.
  * Responsibilities: Holds the current user state, exposes authorization flags, and manages reactive FCM token configurations.
- * Author: App Team
+ * Author: Rachata, Komsan
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */
@@ -17,13 +17,13 @@ import 'package:cmu_fondue/domain/repositories/auth_repo.dart';
 class AppAuthProvider extends ChangeNotifier {
   /// The dependent repository supplying raw identity streams.
   final AuthRepository _authRepository;
-  
+
   /// The specific use case responsible for bootstrapping initial token connections.
   final SetupNotificationsUseCase _setupNotificationsUseCase;
-  
+
   /// The internal service resolving targeted push topic assignments.
   final NotificationService _notificationService = NotificationService();
-  
+
   /// The current, active user instance if authenticated.
   UserEntity? _user;
 
@@ -57,10 +57,10 @@ class AppAuthProvider extends ChangeNotifier {
 
   /// The active identity entity model, or null if the session is absent.
   UserEntity? get user => _user;
-  
+
   /// Whether the initial backend authentication ping is actively blocking.
   bool get isLoading => _isLoading;
-  
+
   /// Whether an active identity session is conclusively verified.
   bool get isAuthenticated => _user != null;
 

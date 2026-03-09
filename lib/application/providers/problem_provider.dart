@@ -2,7 +2,7 @@
  * File: problem_provider.dart
  * Description: Primary state management provider aggregating localized problem datasets.
  * Responsibilities: Caches queried problem records, manages reactive UI filtering flags, and routes updates to usecases.
- * Author: App Team
+ * Author: Rachata, Komsan, Apiwit, Chananchida
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

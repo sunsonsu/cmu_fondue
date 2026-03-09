@@ -4,7 +4,7 @@
  * Responsibilities: Stacks native map widgets alongside custom title bars and drag-capable bottom sheets distinctly.
  * Dependencies: AppTitleBar, MapViewerWidget, ProblemsBottomSheet
  * Lifecycle: Created via app router upon index 0 selection, Disposed when exiting parent navigation flow completely.
- * Author: App Team
+ * Author: Apiwit, Chananchida
  * Course: CMU Fondue
  */
 

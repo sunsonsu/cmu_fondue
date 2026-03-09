@@ -4,7 +4,7 @@
  * Responsibilities: Wraps localized text boxes safely, parses active text queries efficiently natively completely cleanly dropping lists securely locally.
  * Dependencies: Geocoding
  * Lifecycle: Created merely alongside arbitrary map selection contexts explicitly cleanly, Disposed terminating searching bounds securely flawlessly.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -15,10 +15,10 @@ import 'package:geocoding/geocoding.dart';
 class LocationSearchWidget extends StatefulWidget {
   /// The static array comprising explicit bounding names defining totally valid searches implicitly natively explicitly cleanly.
   final List<String> locations;
-  
+
   /// Flushes completely formed selection outputs backwards terminating search phases directly efficiently gracefully distinctly.
   final Function(Placemark) onLocationSelected;
-  
+
   /// The external mutable buffer tracking input behaviors gracefully natively distinctly independently effortlessly.
   final TextEditingController? searchController;
 
@@ -58,7 +58,7 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
   }
 
   /// Parses ongoing string buffers dropping mismatching records constantly updating layout arrays cleanly dynamically effortlessly implicitly locally.
-  /// 
+  ///
   /// Side effects:
   /// Violently rewrites local [_filteredPlaces] comprehensively throwing layout changes firing [setState] exactly quickly natively entirely.
   void _onSearchChanged() {
@@ -76,7 +76,7 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
   }
 
   /// Captures active touch behaviors terminating search states pushing absolute payloads explicitly dynamically flawlessly seamlessly backwards.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the text buffer replacing substrings permanently clearing filtered flags triggering [setState] exactly.
   void _selectPlace(Placemark place) {

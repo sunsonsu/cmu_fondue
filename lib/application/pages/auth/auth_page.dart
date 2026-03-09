@@ -4,7 +4,7 @@
  * Responsibilities: Replaces the viewport distinctly between branding introductions, credential submissions, and identity creation forms dynamically.
  * Dependencies: InitView, LoginView, RegisterView, LoginUseCase, RegisterUseCase
  * Lifecycle: Created exclusively when stream states emit null users, Disposed entirely when token streams verify authentication.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 
@@ -23,7 +23,7 @@ enum AuthMode { init, login, register }
 class AuthPage extends StatefulWidget {
   /// The dependent logic instructing cloud validations securely.
   final LoginUseCase loginUseCase;
-  
+
   /// The dependent logic defining password requirements strictly.
   final RegisterUseCase registerUseCase;
 
@@ -48,17 +48,18 @@ class _AuthPageState extends State<AuthPage> {
         child: SingleChildScrollView(
           child: switch (mode) {
             AuthMode.init => InitView(
-                onLoginTap: () => setState(() => mode = AuthMode.login),
-                onRegisterTap: () => setState(() => mode = AuthMode.register),
-              ),
+              onLoginTap: () => setState(() => mode = AuthMode.login),
+              onRegisterTap: () => setState(() => mode = AuthMode.register),
+            ),
             AuthMode.login => LoginView(
-                loginUseCase: widget.loginUseCase,
-                onSwitchToRegister: () => setState(() => mode = AuthMode.register),
-              ),
+              loginUseCase: widget.loginUseCase,
+              onSwitchToRegister: () =>
+                  setState(() => mode = AuthMode.register),
+            ),
             AuthMode.register => RegisterView(
-                registerUseCase: widget.registerUseCase,
-                onSwitchToLogin: () => setState(() => mode = AuthMode.login),
-              ),
+              registerUseCase: widget.registerUseCase,
+              onSwitchToLogin: () => setState(() => mode = AuthMode.login),
+            ),
           },
         ),
       ),

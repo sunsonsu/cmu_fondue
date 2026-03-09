@@ -4,7 +4,7 @@
  * Responsibilities: Isolates user data strings distinctly, intercepts logout directions aggressively, and dumps active session tokens backward conclusively natively.
  * Dependencies: AppAuthProvider, CustomSnackBar
  * Lifecycle: Created instantly when accessing navigation index 3 exclusively, Disposed merely exiting parent tabs correctly.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 
@@ -125,35 +125,38 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        try {
-                          await authProvider.logout();
-                          if (context.mounted) {
-                            CustomSnackBar.showSuccess(
-                              context: context,
-                              message: 'ออกจากระบบสำเร็จ',
-                            );
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              try {
+                                await authProvider.logout();
+                                if (context.mounted) {
+                                  CustomSnackBar.showSuccess(
+                                    context: context,
+                                    message: 'ออกจากระบบสำเร็จ',
+                                  );
 
-                            Navigator.of(
-                              context,
-                            ).pushNamedAndRemoveUntil('/', (route) => false);
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            CustomSnackBar.showError(
-                              context: context,
-                              message:
-                                  'ออกจากระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
-                            );
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        }
-                      },
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/',
+                                    (route) => false,
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  CustomSnackBar.showError(
+                                    context: context,
+                                    message:
+                                        'ออกจากระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
+                                  );
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         disabledBackgroundColor: Colors.red.withAlpha(150),

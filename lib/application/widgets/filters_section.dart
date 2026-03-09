@@ -4,7 +4,7 @@
  * Responsibilities: Mounts disjoint independent criteria layers cohesively simplifying parent history scaffolds greatly neatly.
  * Dependencies: FilterByCategory, FilterByTag, ProblemTag, ProblemType
  * Lifecycle: Created passively persisting along entire history list lifetimes safely completely seamlessly.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -17,13 +17,13 @@ import 'package:flutter/material.dart';
 class FiltersSection extends StatelessWidget {
   /// The isolated single status currently shaping query nodes exactly completely.
   final ProblemTag? selectedTag;
-  
+
   /// The isolated categorical block narrowing target queries distinctly securely directly natively.
   final ProblemType? selectedCategory;
-  
+
   /// Passes dynamic tag changes backwards routing intent implicitly completely quickly cleanly natively.
   final Function(ProblemTag?) onTagSelected;
-  
+
   /// Rejects categorical changes throwing logic hooks recursively natively perfectly flawlessly dynamically natively.
   final Function(ProblemType?) onCategorySelected;
 
@@ -42,10 +42,7 @@ class FiltersSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Filter by Tag
-        FilterByTag(
-          selectedTag: selectedTag,
-          onTagSelected: onTagSelected,
-        ),
+        FilterByTag(selectedTag: selectedTag, onTagSelected: onTagSelected),
 
         // Filter by Category
         FilterByCategory(

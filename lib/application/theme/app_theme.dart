@@ -2,7 +2,7 @@
  * File: app_theme.dart
  * Description: Contains centralized theme definitions configuring the entire application blueprint.
  * Responsibilities: Provisions material designs, textual bindings matching the Kanit typography, and core coloring schemes.
- * Author: App Team
+ * Author: Rachata, Chananchida
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

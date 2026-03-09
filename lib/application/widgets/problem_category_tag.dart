@@ -4,7 +4,7 @@
  * Responsibilities: Translates domain enum constants into colored textual badges seamlessly dynamically reliably correctly natively effortlessly passively smoothly transparently independently intelligently visually.
  * Dependencies: ProblemType
  * Lifecycle: Created merely to project categorical states inside dense layouts quickly, Disposed naturally yielding layout bounds back silently cleanly transparently efficiently swiftly safely flawlessly perfectly.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 

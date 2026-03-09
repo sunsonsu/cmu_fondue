@@ -1,12 +1,44 @@
+/*
+ * File: photo_upload.dart
+ * Description: A widget that provides photo upload functionality for problem reports.
+ * Responsibilities: Displays image placeholder or preview, handles gallery upload and camera capture callbacks, validates supported file types (.png, .jpg, .jpeg, .HEIC).
+ * Dependencies: Flutter, Google Fonts
+ * Lifecycle: Created as part of the create report page, Stateless widget rebuilt when selectedImage changes.
+ * Author: Chananchida
+ * Course: CMU Fondue
+ */
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// A widget that provides photo upload functionality for problem reports.
+///
+/// Displays either:
+/// - A placeholder view with upload and camera buttons when no image is
+///   selected.
+/// - A preview of the selected image with options to re-select or retake
+///   the photo.
+///
+/// Supported file types: `.png`, `.jpg`, `.jpeg`, `.HEIC`.
+///
+/// {@category Widgets}
 class PhotoUploadWidget extends StatelessWidget {
+  /// Callback invoked when the user presses the upload (gallery) button.
   final VoidCallback? onUploadPressed;
+
+  /// Callback invoked when the user presses the take photo (camera) button.
   final VoidCallback? onTakePhotoPressed;
+
+  /// The currently selected image file, or `null` if no image is selected.
   final File? selectedImage;
 
+  /// Creates a [PhotoUploadWidget].
+  ///
+  /// All parameters are optional:
+  /// - [onUploadPressed] handles gallery selection.
+  /// - [onTakePhotoPressed] handles camera capture.
+  /// - [selectedImage] displays a preview when provided.
   const PhotoUploadWidget({
     super.key,
     this.onUploadPressed,

@@ -4,7 +4,7 @@
  * Responsibilities: Renders dynamic progression choices depending linearly across current incident lifecycles securely hiding unauthorized endpoints natively.
  * Dependencies: ProblemTag
  * Lifecycle: Created merely upon admin inspections within detail pathways, Disposed backwards navigating outwardly gracefully.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -15,10 +15,10 @@ import 'package:cmu_fondue/domain/enum/problem_enums.dart';
 class AdminStatusManagement extends StatelessWidget {
   /// The static reflection defining which transitions remain valid currently natively.
   final ProblemTag currentStatus;
-  
+
   /// Injects external domain behaviors directly intercepting tactile choices dynamically explicitly.
   final Function(ProblemTag) onStatusChange;
-  
+
   /// Flags ongoing async locks masking interactive layouts behind circular loading indicators completely gracefully.
   final bool isLoading;
 

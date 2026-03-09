@@ -4,7 +4,7 @@
  * Responsibilities: Isolates map interactions parsing dynamic location arrays, handles discrete user selections explicitly dispatching navigation hooks flawlessly organically smartly efficiently.
  * Dependencies: CmuPlaceEntity, AssignedProblemsPage
  * Lifecycle: Created merely alongside map submission flows capturing specific user intents dynamically cleanly actively elegantly, Disposed safely tearing down passive listeners efficiently cleanly distinctly smartly.
- * Author: App Team
+ * Author: Apiwit
  * Course: CMU Fondue
  */
 
@@ -42,7 +42,7 @@ class _SubmitLocationBottomSheetState extends State<SubmitLocationBottomSheet> {
   }
 
   /// Catches active changes injected backwards remapping local cursors elegantly effectively smartly explicitly cleanly properly beautifully cleverly softly smoothly efficiently smoothly stably fluently beautifully firmly compactly natively explicitly expertly.
-  /// 
+  ///
   /// Side effects:
   /// Violently rewrites private state flags immediately triggering [setState] organically smoothly smoothly solidly smoothly dynamically strongly natively perfectly smoothly cleverly dynamically accurately elegantly gracefully reliably inherently effectively smoothly elegantly accurately cleanly safely smoothly explicitly distinctly naturally explicitly explicitly cleanly efficiently securely correctly intuitively.
   void _onPlacemarksChanged() {

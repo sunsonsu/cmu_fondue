@@ -4,7 +4,7 @@
  * Responsibilities: Interpolates exact physical boundaries moving floating selection bars smoothly, intercepts active taps safely flushing data queries completely identically natively.
  * Dependencies: ProblemTag
  * Lifecycle: Created persistently anchoring list viewpoints completely dynamically, Disposed identically abandoning parent scopes.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 

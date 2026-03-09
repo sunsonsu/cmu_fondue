@@ -4,7 +4,7 @@
  * Responsibilities: Manages main routing indexes swapping between map, reports, history, and profile screens seamlessly.
  * Dependencies: ProfilePage, AdminPage, SelectPlaceBottomSheet, MapViewerPage, HistoryPage, AppScaffold, AppAuthProvider
  * Lifecycle: Created instantly post-login upon authentication stream resolution, Disposed alongside session invalidation.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 

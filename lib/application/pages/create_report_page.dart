@@ -4,7 +4,7 @@
  * Responsibilities: Captures text, intercepts camera media directly natively, enforces mandatory completion, and forwards deep objects backwards securely.
  * Dependencies: AppAuthProvider, ProblemProvider, CustomSnackBar, ReportingForm, ImagePicker
  * Lifecycle: Created strictly upon progressing past duplicate verification phases, Disposed dynamically when completely terminating uploading pipelines correctly bouncing citizens backwards completely.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -58,7 +58,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
   ///
   /// This operates asynchronously initiating deep architecture queries securely natively hooking local operating systems distinctly isolating failures gracefully.
   /// Displays a warning message natively if internal gallery reads crash totally dynamically.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the active [_selectedImage] formally saving binary endpoints locally preventing loss abruptly firing [setState] exactly.
   Future<void> _pickImageFromGallery() async {
@@ -85,9 +85,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
   /// Triggers internal device cameras intercepting raw optical sensor results directly into local storage.
   ///
-  /// This operates asynchronously demanding formal explicit permission mapping seamlessly. 
+  /// This operates asynchronously demanding formal explicit permission mapping seamlessly.
   /// Displays a warning message explicitly upon camera connection corruption.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
   Future<void> _takePicture() async {

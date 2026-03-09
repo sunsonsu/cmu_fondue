@@ -4,7 +4,7 @@
  * Responsibilities: Captures raw email/password inputs, handles validation rules, and dispatches strict backend authentication attempts.
  * Dependencies: AuthTextField, LoginUseCase
  * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verification propagating downwards.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 

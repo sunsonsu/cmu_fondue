@@ -4,7 +4,7 @@
  * Responsibilities: Partitions reports automatically mapping groups separating statuses into sections distinctly tracking historical milestones securely.
  * Dependencies: ProblemProvider, ProblemCard
  * Lifecycle: Created instantly whenever navigating toward index 2 exclusively, Disposed merely exiting parent tabs correctly.
- * Author: App Team
+ * Author: Chananchida, Komsan
  * Course: CMU Fondue
  */
 
@@ -85,7 +85,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 itemCount: sections.length,
                 itemBuilder: (context, index) {
                   final item = sections[index];
-                  
+
                   if (item is String) {
                     return _buildSectionHeader(item);
                   } else if (item is ProblemEntity) {
@@ -110,9 +110,17 @@ class _HistoryPageState extends State<HistoryPage> {
 
   /// Calculates visual dividers segmenting [problems] deeply segregating items spanning unique execution states statically.
   List<dynamic> _getSections(List<ProblemEntity> problems) {
-    final pending = problems.where((p) => [ProblemTag.pending, ProblemTag.received].contains(p.tagName)).toList();
-    final inProgress = problems.where((p) => p.tagName == ProblemTag.inProgress).toList();
-    final completed = problems.where((p) => p.tagName == ProblemTag.completed).toList();
+    final pending = problems
+        .where(
+          (p) => [ProblemTag.pending, ProblemTag.received].contains(p.tagName),
+        )
+        .toList();
+    final inProgress = problems
+        .where((p) => p.tagName == ProblemTag.inProgress)
+        .toList();
+    final completed = problems
+        .where((p) => p.tagName == ProblemTag.completed)
+        .toList();
 
     List<dynamic> items = [];
     if (pending.isNotEmpty) {
@@ -135,7 +143,12 @@ class _HistoryPageState extends State<HistoryPage> {
     return ListView(
       children: [
         SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-        const Center(child: Text('ไม่มีประวัติการแจ้งเรื่อง', style: TextStyle(color: Colors.grey))),
+        const Center(
+          child: Text(
+            'ไม่มีประวัติการแจ้งเรื่อง',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
       ],
     );
   }
@@ -146,7 +159,11 @@ class _HistoryPageState extends State<HistoryPage> {
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF5D3891)),
+        style: const TextStyle(
+          fontSize: 19,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF5D3891),
+        ),
       ),
     );
   }

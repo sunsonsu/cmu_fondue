@@ -4,7 +4,7 @@
  * Responsibilities: Renders text descriptions, loaded images, status timelines, explicit geographic maps, and facilitates administrator resolutions securely.
  * Dependencies: ProblemProvider, DeleteConfirmationDialog, AdminStatusManagement, ProblemLocationMap, PhotoUploadWidget, CustomSnackBar, ImagePicker
  * Lifecycle: Created strictly upon explicit selection from list views dynamically, Disposed immediately after backwards navigation unconditionally.
- * Author: App Team
+ * Author: Rachata, Chananchida, Apiwit
  * Course: CMU Fondue
  */
 
@@ -72,9 +72,9 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   }
 
   /// Triggers internal device galleries extracting raw photographic binaries satisfying endpoint completion strictly natively.
-  /// 
+  ///
   /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the active [_completedImage] formally saving binary endpoints locally preventing loss abruptly firing [setState] exactly.
   Future<void> _showPhotoUploadDialog() async {
@@ -205,7 +205,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   }
 
   /// Casts localized administrative intent backwards mutating universal item structures safely visually verifying correctly via prompts dynamically.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the active [_currentStatus] internally temporarily applying graphical overrides abruptly firing [setState] exactly.
   void _changeStatus(ProblemTag newStatus) async {

@@ -4,7 +4,7 @@
  * Responsibilities: Draws pinned clusters targeting isolated sectors and constructs scrolling lists synced closely alongside map actions.
  * Dependencies: ProblemProvider, ProblemCard, GoogleMap
  * Lifecycle: Pushed onto Navigator stack by selecting specific map zones, Disposed immediately when user presses back.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 class AreaProblemsMapPage extends StatefulWidget {
   /// The human-readable regional designation shown within the top app bar.
   final String areaName;
-  
+
   /// The constrained selection of issues isolated purely to this locale.
   final List<ProblemEntity> problems;
 
@@ -80,7 +80,7 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
 
   /// Determines strictly which pigment represents a specific operational phase.
   ///
-  /// Formally enforces red for un-ticketed issues, orange for active repairs, and green signaling closed resolutions. 
+  /// Formally enforces red for un-ticketed issues, orange for active repairs, and green signaling closed resolutions.
   double _getMarkerColor(String tagName) {
     switch (tagName) {
       case 'pending':

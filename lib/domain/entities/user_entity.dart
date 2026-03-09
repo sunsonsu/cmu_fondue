@@ -2,7 +2,7 @@
  * File: user_entity.dart
  * Description: Entity representing a user of the application.
  * Responsibilities: Encapsulates user profile details, roles, and device tokens. Contains factories for mapping from Firebase Auth and generated SDK data.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 

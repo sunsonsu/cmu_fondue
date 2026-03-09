@@ -5,7 +5,7 @@
  * Dependencies: Multiple direct UseCase couplings explicitly breaking isolation patterns strictly designed for testing only.
  * Lifecycle: Created merely upon hidden pathways during development contexts, Disposed rapidly.
  * Notes: No UI logic should appear in this file. (Testing override context)
- * Author: App Team
+ * Author: Komsan
  * Course: CMU Fondue
  */
 
@@ -67,13 +67,9 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     text: "Computer science",
   );
 
-  final _latController = TextEditingController(
-    text: "18.7961",
-  );
-  final _lngController = TextEditingController(
-    text: "98.9520",
-  );
-  
+  final _latController = TextEditingController(text: "18.7961");
+  final _lngController = TextEditingController(text: "98.9520");
+
   final String mockReporterId = "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3";
 
   @override
@@ -106,7 +102,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// Evaluates entirely independent queries combining disjoint streams directly overriding proper provider mechanisms forcibly statically.
   ///
   /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
-  /// 
+  ///
   /// Side effects:
   /// Violently replaces local [_problemTypes] and [_existingProblems] arrays natively firing [setState].
   Future<void> _refreshData() async {
@@ -134,7 +130,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// Triggers generic multimedia abstractions circumventing normal verification pathways directly forcefully locally.
   ///
   /// This operates asynchronously demanding formal explicit queries hooking local hardware directly bypassing limits native.
-  /// 
+  ///
   /// Side effects:
   /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
   Future<void> _pickImage(ImageSource source) async {
@@ -221,19 +217,21 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// This operates asynchronously violently creating architectural instances cleanly explicitly forcing cloud updates unverified.
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate() || _selectedTypeId == null) return;
-    
+
     if (_editingProblemId == null && _selectedImage == null) {
       _showErrorSnackBar("กรุณาเลือกรูปภาพ");
       return;
     }
-    
+
     setState(() => _isSubmitting = true);
 
     try {
       if (_editingProblemId == null) {
-        final tagRepo = ProblemTagRepoImpl(connector: ConnectorConnector.instance);
+        final tagRepo = ProblemTagRepoImpl(
+          connector: ConnectorConnector.instance,
+        );
         final allTags = await tagRepo.getAllProblemTags();
-        
+
         final defaultTag = allTags.firstWhere(
           (tag) => tag.tagName.toLowerCase() == 'pending',
           orElse: () => allTags.first,
@@ -324,9 +322,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (ctx) => const Center(child: CircularProgressIndicator()),
     );
 
     try {
@@ -336,19 +332,19 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
         newTagName: "กำลังดำเนินการ (ทดสอบ)",
         fcmToken: fcmToken,
       );
-      
+
       if (mounted) Navigator.pop(context);
       _showSuccessSnackBar("ส่ง Notification สำเร็จ! ตรวจสอบที่เครื่องของคุณ");
     } catch (e) {
       if (mounted) Navigator.pop(context);
-      
+
       final errorMessage = e.toString();
-      if (errorMessage.contains('unauthenticated') || 
+      if (errorMessage.contains('unauthenticated') ||
           errorMessage.contains('UNAUTHENTICATED')) {
         _showErrorDialog(
           "กรุณา Login ก่อน\n\n"
           "Firebase Functions ต้องการให้คุณเข้าสู่ระบบก่อนส่ง notification\n\n"
-          "กรุณา logout และ login อีกครั้ง หรือรีสตาร์ท app"
+          "กรุณา logout และ login อีกครั้ง หรือรีสตาร์ท app",
         );
       } else {
         _showErrorDialog("ส่ง Notification ไม่สำเร็จ: $e");
@@ -358,18 +354,12 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
 
   void _showSuccessSnackBar(String message) {
     if (!mounted) return;
-    CustomSnackBar.showSuccess(
-      context: context,
-      message: message,
-    );
+    CustomSnackBar.showSuccess(context: context, message: message);
   }
 
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
-    CustomSnackBar.showError(
-      context: context,
-      message: message,
-    );
+    CustomSnackBar.showError(context: context, message: message);
   }
 
   void _showErrorDialog(String message) {
@@ -449,7 +439,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                           maxLines: 2,
                         ),
                         const SizedBox(height: 15),
-                        
+
                         if (_editingProblemId == null) ...[
                           Container(
                             width: double.infinity,
@@ -463,7 +453,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                                 ? InkWell(
                                     onTap: _showImageSourceDialog,
                                     child: const Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.add_photo_alternate,
@@ -516,10 +507,14 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                                           right: 8,
                                           child: ElevatedButton.icon(
                                             onPressed: _showImageSourceDialog,
-                                            icon: const Icon(Icons.edit, size: 18),
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              size: 18,
+                                            ),
                                             label: const Text('เปลี่ยนรูป'),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white.withOpacity(0.9),
+                                              backgroundColor: Colors.white
+                                                  .withOpacity(0.9),
                                               foregroundColor: Colors.black87,
                                             ),
                                           ),
@@ -529,7 +524,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
                           ),
                           const SizedBox(height: 15),
                         ],
-                        
+
                         ElevatedButton(
                           onPressed: _isSubmitting ? null : _submitData,
                           style: ElevatedButton.styleFrom(

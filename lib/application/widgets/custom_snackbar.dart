@@ -4,7 +4,7 @@
  * Responsibilities: Isolates exact contextual scaffolding streams, pushes formatted messages broadly quickly securely checking contextual active lifetimes cleanly unconditionally.
  * Dependencies: None
  * Lifecycle: Created merely when explicitly flashing notifications rapidly, Disposed instantaneously expiring.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 

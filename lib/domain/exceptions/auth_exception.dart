@@ -2,7 +2,7 @@
  * File: auth_exception.dart
  * Description: Exception classes for handling authentication errors.
  * Responsibilities: Defines custom exceptions for various sign-in and sign-up failure states.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 
@@ -10,7 +10,7 @@
 abstract class AuthException implements Exception {
   /// The descriptive error message detailing the reason for the exception.
   final String message;
-  
+
   /// Initializes a new instance of [AuthException].
   const AuthException(this.message);
 }
@@ -61,6 +61,5 @@ class UnknownAuthException extends AuthException {
 /// Thrown when login credentials (like email/password combination) are outright invalid.
 class InvalidCredentialsException extends AuthException {
   /// Initializes a new instance of [InvalidCredentialsException].
-  const InvalidCredentialsException()
-      : super('Invalid email or password');
+  const InvalidCredentialsException() : super('Invalid email or password');
 }

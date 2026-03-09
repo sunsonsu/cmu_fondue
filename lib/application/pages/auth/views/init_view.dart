@@ -4,7 +4,7 @@
  * Responsibilities: Provides large distinct navigation buttons routing newcomers towards either registration or login pathways.
  * Dependencies: <None>
  * Lifecycle: Created instantly when AuthPage initializes, Disposed immediately upon selecting either routing option.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 

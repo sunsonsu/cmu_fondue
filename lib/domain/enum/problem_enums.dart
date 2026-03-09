@@ -2,7 +2,7 @@
  * File: problem_enums.dart
  * Description: Enumerations defining the possible states and types of problems.
  * Responsibilities: Provides enumerations, hardcoded IDs, localized labels, and visual status colors for problems.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 
@@ -20,7 +20,7 @@ enum ProblemTag {
   inProgress,
 
   /// The problem has been fully resolved.
-  completed
+  completed,
 }
 
 /// Extension methods for [ProblemTag] to provide associated data.
@@ -83,7 +83,7 @@ enum ProblemType {
   garbage,
 
   /// Any issue that does not fit into predefined categories.
-  other
+  other,
 }
 
 /// Extension methods for [ProblemType] to provide associated data.

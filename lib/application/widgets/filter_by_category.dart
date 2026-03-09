@@ -4,7 +4,7 @@
  * Responsibilities: Evaluates active semantic clusters, visualizes highlighted filter pills explicitly mapping internal enumerations correctly explicitly natively.
  * Dependencies: ProblemType
  * Lifecycle: Created merely while viewing lists exposing filtering tabs dynamically, Disposed automatically when abandoning history flows.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 class FilterByCategory extends StatelessWidget {
   /// The isolated single domain presently filtering list queries correctly transparently natively.
   final ProblemType? selectedCategory;
-  
+
   /// Dispatches strict metadata shifts backwards rewriting upstream streams abruptly safely.
   final Function(ProblemType?) onCategorySelected;
 
@@ -55,7 +55,7 @@ class FilterByCategory extends StatelessWidget {
                 final index = entry.key;
                 final isSelected = selectedCategory == type;
                 final isLast = index == ProblemType.values.length - 1;
-                
+
                 return Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(right: isLast ? 0 : 8),
@@ -107,11 +107,7 @@ class FilterByCategory extends StatelessWidget {
             ),
             if (isSelected) ...[
               const SizedBox(width: 4),
-              const Icon(
-                Icons.close,
-                size: 16,
-                color: Colors.white,
-              ),
+              const Icon(Icons.close, size: 16, color: Colors.white),
             ],
           ],
         ),

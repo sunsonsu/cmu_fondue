@@ -2,7 +2,7 @@
  * File: main.dart
  * Description: Main entry point for the CMU Fondue application.
  * Responsibilities: Initializes the Flutter framework, sets up required services, and launches the root widget.
- * Author: App Team
+ * Author: Whole Team
  * Course: CMU Fondue
  * Notes: Keep it lightweight. Mention that it initializes the framework and launches the root widget.
  */
@@ -68,7 +68,7 @@ void main() async {
 
   if (kDebugMode) {
     // Development mode: Use production Firebase with debug App Check
-    
+
     // App Check with debug provider
     await FirebaseAppCheck.instance.activate(
       androidProvider: AndroidProvider.debug,
@@ -80,7 +80,9 @@ void main() async {
       final token = await FirebaseAppCheck.instance.getToken();
       if (token != null) {
         print('🔑 App Check Debug Token: $token');
-        print('   Add this token at: https://console.firebase.google.com/project/cmu-fondue/appcheck');
+        print(
+          '   Add this token at: https://console.firebase.google.com/project/cmu-fondue/appcheck',
+        );
       }
     } catch (e) {
       print('⚠️  Could not get App Check token: $e');
@@ -144,23 +146,23 @@ void main() async {
   notificationService.setNavigationCallback((problemId) async {
     // รอจน navigator พร้อม
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     if (navigatorKey.currentContext == null) return;
-    
+
     try {
       // ดึงข้อมูล problem จาก problemId
       final problem = await getProblemByIdUseCase(
         problemId: problemId,
         userId: null,
       );
-      
+
       if (problem == null) {
         if (kDebugMode) {
           print('⚠️ Problem not found: $problemId');
         }
         return;
       }
-      
+
       // Navigate ไปหน้า ProblemDetailPage
       navigatorKey.currentState?.push(
         MaterialPageRoute(

@@ -4,7 +4,7 @@
  * Responsibilities: Checks existing submissions surrounding a chosen locale preventing extraneous entries globally.
  * Dependencies: ProblemProvider, ProblemCard, CreateReportPage
  * Lifecycle: Pushed via Navigator following explicit search selections, Disposed when drafting begins or cancelled outwardly.
- * Author: App Team
+ * Author: Apiwit, Chananchida
  * Course: CMU Fondue
  */
 

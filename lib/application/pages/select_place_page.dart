@@ -4,7 +4,7 @@
  * Responsibilities: Filters valid queries securely, intercepts arbitrary touches gracefully validating coordinates strictly against static limits seamlessly.
  * Dependencies: CmuPlaceUsecase, SubmitLocationBottomSheet, MapSubmitWidget, LocationSearchWidget
  * Lifecycle: Created upon router switching dynamically, Disposed automatically retreating out from creation stacks.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -243,10 +243,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'ค้นหาตำแหน่งในช่องค้นหา หรือ เลือกตำแหน่งจากแผนที่',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                       ),
                     ),
                   ),

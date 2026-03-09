@@ -4,7 +4,7 @@
  * Responsibilities: Hosts the top-level application bar and injects the deeper StaffDashboard interactive region.
  * Dependencies: ProfileButton, StaffDashboard
  * Lifecycle: Created via IndexedStack in HomePage, Disposed when application closes or user logs out.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 

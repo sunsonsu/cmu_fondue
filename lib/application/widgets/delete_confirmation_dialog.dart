@@ -4,7 +4,7 @@
  * Responsibilities: Stalls permanent removal flows, presents stark red/green tactile choices strictly safely independently.
  * Dependencies: None
  * Lifecycle: Created instantly when administrators trigger deletion, Disposed absolutely returning boolean confirmation payloads directly back.
- * Author: App Team
+ * Author: Chananchida
  * Course: CMU Fondue
  */
 
@@ -18,9 +18,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: const Text(
         'ต้องการลบรายงานปัญหานี้หรือไม่ ?',
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -32,10 +30,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       actionsAlignment: MainAxisAlignment.center,
-      actionsPadding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 16,
-      ),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       actions: [
         Column(
           children: [
@@ -53,10 +48,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
                 ),
                 child: const Text(
                   'ยืนยัน',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -75,10 +67,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
                 ),
                 child: const Text(
                   'ยกเลิก',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

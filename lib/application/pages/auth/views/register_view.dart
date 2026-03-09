@@ -4,7 +4,7 @@
  * Responsibilities: Captures initial identity fields, strictly enforces complex password matching, and submits creation directives backward towards Firebase.
  * Dependencies: AuthTextField, RegisterUseCase
  * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verifications.
- * Author: App Team
+ * Author: Rachata
  * Course: CMU Fondue
  */
 
