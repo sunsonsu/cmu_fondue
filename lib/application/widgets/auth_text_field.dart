@@ -14,22 +14,22 @@ import 'package:flutter/material.dart';
 class AuthTextField extends StatefulWidget {
   /// The reactive text buffer driving continuous external form logic uniquely strictly.
   final TextEditingController controller;
-  
+
   /// The brief textual label guiding localized physical input actions completely native explicitly.
   final String label;
-  
+
   /// The active contextual failure asserting negative form validation backwards gracefully natively.
   final String? errorText;
-  
+
   /// Whether internal character bounds apply strict star masking intentionally securely distinctly.
   final bool isPassword;
-  
+
   /// Injects external domain behaviors immediately firing custom logic matching typing natively.
   final ValueChanged<String>? onChanged;
-  
+
   /// Forces specific device keyboard layouts enforcing correct formatting limits completely smoothly locally.
   final TextInputType? keyboardType;
-  
+
   /// The layout rule switching localized hardware buttons advancing arbitrary sequences implicitly automatically.
   final TextInputAction? textInputAction;
 
@@ -79,7 +79,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
                 ),
                 onPressed: () => setState(() => _obscureText = !_obscureText),
               )
