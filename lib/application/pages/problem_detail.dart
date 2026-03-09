@@ -252,7 +252,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
     final isAdmin = authProvider.user?.isAdmin ?? false;
     final formattedDate = DateFormat(
       'dd/MM/yyyy HH:mm',
-    ).format(widget.problem.createdAt);
+    ).format(widget.problem.createdAt.toLocal());
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAE5F1),

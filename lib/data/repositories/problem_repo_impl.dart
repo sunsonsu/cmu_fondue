@@ -24,9 +24,11 @@ class ProblemRepoImpl implements ProblemRepo {
   Future<List<ProblemEntity>> getProblems(String userId) async {
     try {
       final result = await connector.listProblems().execute();
-      return result.data.problems.map((e) {
+      final problems = result.data.problems.map((e) {
         return ProblemEntity.fromGenerated(e, userId);
       }).toList();
+      problems.sort((a, b) => b.upvoteCount.compareTo(a.upvoteCount));
+      return problems;
     } catch (e) {
       throw Exception("ไม่สามารถดึงข้อมูลปัญหาได้: $e");
     }
@@ -36,9 +38,11 @@ class ProblemRepoImpl implements ProblemRepo {
   Future<List<ProblemEntity>> getNotCompletedProblems(String userId) async {
     try {
       final result = await connector.listNotCompletedProblems().execute();
-      return result.data.problems.map((e) {
+      final problems = result.data.problems.map((e) {
         return ProblemEntity.fromGenerated(e, userId);
       }).toList();
+      problems.sort((a, b) => b.upvoteCount.compareTo(a.upvoteCount));
+      return problems;
     } catch (e) {
       if (e is DataConnectOperationError) {
         print('--- Data Connect Error Found ---');

@@ -93,7 +93,7 @@ class ProblemEntity {
       lat: data.problemLat.toDouble(),
       lng: data.problemLng.toDouble(),
 
-      upvoteCount: data.upvoteCount,
+      upvoteCount: data.userUpvotes_on_problem?.length ?? 0,
 
       createdAt: data.createdAt.toDateTime(),
       reporterEmail: data.reporter.email,

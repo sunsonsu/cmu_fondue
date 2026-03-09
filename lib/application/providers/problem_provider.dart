@@ -24,7 +24,7 @@ import 'package:geolocator/geolocator.dart';
 class ProblemWithDistance {
   /// The core entity representing the recorded issue.
   final ProblemEntity problem;
-  
+
   /// The spatial gap in precise meters.
   final double distance;
 
@@ -67,7 +67,7 @@ class ProblemProvider with ChangeNotifier {
 
   /// The active categorization filter applied strictly against current board statuses.
   ProblemTag? get selectedTag => _selectedTag;
-  
+
   /// The active categorization filter applied strictly against root hardware/software constraints.
   ProblemType? get selectedCategory => _selectedCategory;
 
@@ -94,11 +94,11 @@ class ProblemProvider with ChangeNotifier {
   /// The sheer volume representing records untouched or formally pending review.
   int get countPending =>
       _problems.where((p) => p.tagName == ProblemTag.pending).length;
-      
+
   /// The sheer volume representing records currently occupying an active repair lifecycle.
   int get countInProgress =>
       _problems.where((p) => p.tagName == ProblemTag.inProgress).length;
-      
+
   /// The sheer volume representing records fully signed off and cleanly resolved.
   int get countCompleted =>
       _problems.where((p) => p.tagName == ProblemTag.completed).length;
@@ -135,7 +135,7 @@ class ProblemProvider with ChangeNotifier {
 
     String mostReportedLocation = '';
     List<ProblemEntity> mostReportedProblems = [];
-    int maxUpvoteSum = -1; 
+    int maxUpvoteSum = -1;
 
     locationGroups.forEach((location, problemsInArea) {
       int totalUpvotes = problemsInArea.fold(
@@ -160,8 +160,12 @@ class ProblemProvider with ChangeNotifier {
   /// Calculates a strict tally separating existing records exclusively by standard tags.
   Map<ProblemTag, int> getLocalStatistics() {
     return {
-      ProblemTag.pending: _problems.where((p) => p.tagName == ProblemTag.pending).length,
-      ProblemTag.received: _problems.where((p) => p.tagName == ProblemTag.received).length,
+      ProblemTag.pending: _problems
+          .where((p) => p.tagName == ProblemTag.pending)
+          .length,
+      ProblemTag.received: _problems
+          .where((p) => p.tagName == ProblemTag.received)
+          .length,
       ProblemTag.inProgress: _problems
           .where((p) => p.tagName == ProblemTag.inProgress)
           .length,
@@ -188,7 +192,7 @@ class ProblemProvider with ChangeNotifier {
 
   /// Scans physical distance comparing current coordinates against cached problem entities dynamically.
   ///
-  /// Enforces a hard spatial limit defaulting [maxDistance] to 500 meters strictly. Use [onlyNotCompleted] 
+  /// Enforces a hard spatial limit defaulting [maxDistance] to 500 meters strictly. Use [onlyNotCompleted]
   /// boolean checks to exclude strictly resolved items.
   List<ProblemEntity> getNearbyProblems(
     double lat,
@@ -247,26 +251,15 @@ class ProblemProvider with ChangeNotifier {
 
       final index = _problems.indexWhere((p) => p.id == problemId);
       if (index != -1) {
-        final updatedProblem = _problems[index].copyWith(
-          upvoteCount: isUpvoted
-              ? _problems[index].upvoteCount + 1
-              : _problems[index].upvoteCount - 1,
+        final problem = _problems[index];
+        final newCount = problem.upvoteCount + (isUpvoted ? 1 : -1);
+        _problems[index] = problem.copyWith(
+          upvoteCount: newCount < 0 ? 0 : newCount,
           isUpvotedByMe: isUpvoted,
         );
-
-        _problems.removeAt(index);
-
-        int newIndex = _problems.indexWhere(
-          (p) => p.upvoteCount <= updatedProblem.upvoteCount,
-        );
-        if (newIndex == -1) {
-          _problems.add(updatedProblem); 
-        } else {
-          _problems.insert(newIndex, updatedProblem);
-        }
-
-        notifyListeners();
       }
+
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
@@ -354,11 +347,11 @@ class ProblemProvider with ChangeNotifier {
         tagId: tagId,
         imageFile: imageFile,
       );
-      await fetchProblems(); 
+      await fetchProblems();
     } catch (e, stacktrace) {
       print('Create Error: $e');
       print('Stacktrace: $stacktrace');
-      rethrow; 
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -410,14 +403,14 @@ class ProblemProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Stacktrace: $stacktrace');
       }
-      rethrow; 
+      rethrow;
     }
   }
 
   /// Implements highly complex administrator approvals dynamically alerting local devices correctly.
   ///
   /// This operates asynchronously pushing the target [problemId] over to a [newTag] definition. Additionally
-  /// retrieves origin citizen metadata invoking remote Firebase Cloud interactions actively forwarding 
+  /// retrieves origin citizen metadata invoking remote Firebase Cloud interactions actively forwarding
   /// status strings directly onto physical cellphones properly.
   /// Formal exception propagation bubbles outward notifying UI boundaries exclusively mapping true failures securely.
   ///
@@ -474,7 +467,7 @@ class ProblemProvider with ChangeNotifier {
       if (kDebugMode) {
         print('Stacktrace: $stacktrace');
       }
-      rethrow; 
+      rethrow;
     }
   }
 }

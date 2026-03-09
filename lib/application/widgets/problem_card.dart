@@ -76,7 +76,7 @@ class _ProblemCardState extends State<ProblemCard> {
     final isAdmin = authProvider.user?.isAdmin ?? false;
     final formattedDate = DateFormat(
       'dd/MM/yyyy HH:mm',
-    ).format(widget.problem.createdAt);
+    ).format(widget.problem.createdAt.toLocal());
 
     return InkWell(
       onTap: () {
