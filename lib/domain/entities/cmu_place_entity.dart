@@ -47,8 +47,12 @@ class CmuPlaceEntity {
       name: placemark.name ?? "Unknown",
       lat: latLng.latitude,
       lng: latLng.longitude,
-      formattedAddress:
-          "${placemark.street}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.country}",
+      formattedAddress: [
+        placemark.street,
+        placemark.subLocality,
+        placemark.locality,
+        placemark.country,
+      ].where((s) => s != null && s.isNotEmpty).join(", "),
     );
   }
 }
