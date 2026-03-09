@@ -16,7 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 class InitView extends StatelessWidget {
   /// The reactive closure triggered explicitly when requesting the sign-in pathway.
   final VoidCallback onLoginTap;
-  
+
   /// The reactive closure triggered explicitly when requesting the sign-up pathway.
   final VoidCallback onRegisterTap;
 
@@ -41,14 +41,16 @@ class InitView extends StatelessWidget {
             onPressed: onLoginTap,
             style: ButtonStyle(
               minimumSize: MaterialStateProperty.all(const Size(200, 40)),
-              backgroundColor: MaterialStateProperty.all(const Color(0xFF5D3891)),
+              backgroundColor: MaterialStateProperty.all(
+                const Color(0xFF5D3891),
+              ),
               foregroundColor: MaterialStateProperty.all(Colors.white),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
             child: Text(
-              'Login',
+              'เข้าสู่ระบบ',
               style: GoogleFonts.kanit(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -60,14 +62,11 @@ class InitView extends StatelessWidget {
           const SizedBox(height: 30),
           RichText(
             text: TextSpan(
-              text: 'Don\'t have an account? ',
-              style: GoogleFonts.kanit(
-                color: Colors.black,
-                fontSize: 18,
-              ),
+              text: 'ยังไม่มีบัญชี? ',
+              style: GoogleFonts.kanit(color: Colors.black, fontSize: 18),
               children: [
                 TextSpan(
-                  text: 'Sign up',
+                  text: 'ลงทะเบียน',
                   style: GoogleFonts.kanit(
                     color: const Color(0xFF5D3891),
                     fontWeight: FontWeight.bold,

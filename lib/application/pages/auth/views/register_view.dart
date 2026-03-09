@@ -64,15 +64,15 @@ class _RegisterViewState extends State<RegisterView> {
 
     bool hasError = false;
     if (_emailController.text.trim().isEmpty) {
-      _emailError = 'Please enter email';
+      _emailError = 'กรุณากรอกอีเมล';
       hasError = true;
     }
     if (_passwordController.text.isEmpty) {
-      _passwordError = 'Please enter password';
+      _passwordError = 'กรุณากรอกรหัสผ่าน';
       hasError = true;
     }
     if (_confirmPasswordController.text.isEmpty) {
-      _confirmPasswordError = 'Please confirm your password';
+      _confirmPasswordError = 'กรุณายืนยันรหัสผ่าน';
       hasError = true;
     }
 
@@ -88,7 +88,7 @@ class _RegisterViewState extends State<RegisterView> {
 
     if (password != confirmPassword) {
       setState(() {
-        _confirmPasswordError = 'Password does not match';
+        _confirmPasswordError = 'รหัสผ่านไม่ตรงกัน';
         _loading = false;
       });
       return;
@@ -112,7 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
       if (mounted) {
         CustomSnackBar.showSuccess(
           context: context,
-          message: 'Registration successful! Please log in.',
+          message: 'ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ',
         );
         widget.onSwitchToLogin();
         return;
@@ -132,7 +132,7 @@ class _RegisterViewState extends State<RegisterView> {
     } on InvalidCredentialsException {
       setState(() {
         _emailError = ' ';
-        _passwordError = 'Invalid email or password';
+        _passwordError = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
       });
     } catch (e) {
       debugPrint('Register error: $e');
@@ -156,7 +156,7 @@ class _RegisterViewState extends State<RegisterView> {
 
           AuthTextField(
             controller: _emailController,
-            label: 'Email',
+            label: 'อีเมล',
             errorText: _emailError,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -165,7 +165,7 @@ class _RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 32),
           AuthTextField(
             controller: _passwordController,
-            label: 'Password',
+            label: 'รหัสผ่าน',
             isPassword: true,
             errorText: _passwordError,
             onChanged: (_) => setState(() => _passwordError = null),
@@ -173,7 +173,7 @@ class _RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 32),
           AuthTextField(
             controller: _confirmPasswordController,
-            label: 'Confirm Password',
+            label: 'ยืนยันรหัสผ่าน',
             isPassword: true,
             errorText: _confirmPasswordError,
             onChanged: (_) => setState(() => _confirmPasswordError = null),
@@ -186,21 +186,11 @@ class _RegisterViewState extends State<RegisterView> {
               minimumSize: WidgetStateProperty.all(const Size(200, 40)),
               backgroundColor: WidgetStateProperty.all(const Color(0xFF5D3891)),
               foregroundColor: WidgetStateProperty.all(Colors.white),
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
             ),
             child: _loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                ? const CircularProgressIndicator(color: Colors.white)
                 : Text(
-                    'Sign up',
+                    'ลงทะเบียน',
                     style: GoogleFonts.kanit(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -212,12 +202,12 @@ class _RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 20),
           LayoutBuilder(
             builder: (context, constraints) {
-              final isSmall = constraints.maxWidth < 400;
+              final isSmall = constraints.maxWidth < 320;
               if (isSmall) {
                 return Column(
                   children: [
                     Text(
-                      'You already have an account?',
+                      'มีบัญชีอยู่แล้ว?',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.kanit(
                         color: Colors.black,
@@ -227,7 +217,7 @@ class _RegisterViewState extends State<RegisterView> {
                     GestureDetector(
                       onTap: widget.onSwitchToLogin,
                       child: Text(
-                        'Login',
+                        'เข้าสู่ระบบ',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.kanit(
                           color: const Color(0xFF5D3891),
@@ -242,11 +232,11 @@ class _RegisterViewState extends State<RegisterView> {
               }
               return RichText(
                 text: TextSpan(
-                  text: 'You already have an account? ',
+                  text: 'มีบัญชีอยู่แล้ว? ',
                   style: GoogleFonts.kanit(color: Colors.black, fontSize: 18),
                   children: [
                     TextSpan(
-                      text: 'Login',
+                      text: 'เข้าสู่ระบบ',
                       style: GoogleFonts.kanit(
                         color: const Color(0xFF5D3891),
                         fontWeight: FontWeight.bold,

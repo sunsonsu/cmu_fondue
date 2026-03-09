@@ -60,11 +60,11 @@ class _LoginViewState extends State<LoginView> {
 
     bool hasError = false;
     if (_emailController.text.trim().isEmpty) {
-      _emailError = 'Please enter email';
+      _emailError = 'กรุณากรอกอีเมล';
       hasError = true;
     }
     if (_passwordController.text.isEmpty) {
-      _passwordError = 'Please enter password';
+      _passwordError = 'กรุณากรอกรหัสผ่าน';
       hasError = true;
     }
 
@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView> {
 
           AuthTextField(
             controller: _emailController,
-            label: 'Email',
+            label: 'อีเมล',
             errorText: _emailError,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -126,7 +126,7 @@ class _LoginViewState extends State<LoginView> {
           const SizedBox(height: 32),
           AuthTextField(
             controller: _passwordController,
-            label: 'Password',
+            label: 'รหัสผ่าน',
             isPassword: true,
             errorText: _passwordError,
             onChanged: (_) => setState(() => _passwordError = null),
@@ -145,7 +145,7 @@ class _LoginViewState extends State<LoginView> {
             child: _loading
                 ? const CircularProgressIndicator(color: Colors.white)
                 : Text(
-                    'Login',
+                    'เข้าสู่ระบบ',
                     style: GoogleFonts.kanit(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -157,11 +157,11 @@ class _LoginViewState extends State<LoginView> {
           const SizedBox(height: 20),
           RichText(
             text: TextSpan(
-              text: 'Don\'t have an account? ',
+              text: 'ยังไม่มีบัญชี? ',
               style: GoogleFonts.kanit(color: Colors.black, fontSize: 18),
               children: [
                 TextSpan(
-                  text: 'Sign up',
+                  text: 'ลงทะเบียน',
                   style: GoogleFonts.kanit(
                     color: const Color(0xFF5D3891),
                     fontWeight: FontWeight.bold,
