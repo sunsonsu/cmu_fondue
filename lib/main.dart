@@ -2,7 +2,7 @@
  * File: main.dart
  * Description: Main entry point for the CMU Fondue application.
  * Responsibilities: Initializes the Flutter framework, sets up required services, and launches the root widget.
- * Author: Whole Team
+ * Author: App team
  * Course: CMU Fondue
  * Notes: Keep it lightweight. Mention that it initializes the framework and launches the root widget.
  */

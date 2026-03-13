@@ -4,7 +4,7 @@
  * Responsibilities: Merges core global states flawlessly natively querying central endpoints correctly visually cleanly rendering reactive charts dynamically smartly securely seamlessly.
  * Dependencies: ProblemProvider, FiltersSection, ProblemCard, AreaProblemsMapPage, ProblemEntity
  * Lifecycle: Created merely projecting highly secure contextual flows explicitly actively properly efficiently natively transparently cleanly purely cleanly softly explicitly, Disposed swiftly dumping active array instances proactively cleanly solidly gracefully cleanly efficiently smoothly actively proactively exactly natively.
- * Author: Chananchida Prathum 650510659
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

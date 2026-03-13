@@ -2,7 +2,7 @@
  * File: notification_service.dart
  * Description: Centralizes internal push notification management.
  * Responsibilities: Provisions FCM permissions, handles local notification display channels, and maps deep link handlers.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

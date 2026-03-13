@@ -2,7 +2,7 @@
  * File: problem_entity.dart
  * Description: Entity representing a reported problem.
  * Responsibilities: Encapsulates all data related to a problem report and provides methods for parsing from generated SDK data and copying instances.
- * Author: Komsan, Rachata
+ * Author: Komsan 650510601 & Rachata 650510638
  * Course: CMU Fondue
  */
 

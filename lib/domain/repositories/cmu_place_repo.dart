@@ -2,7 +2,7 @@
  * File: cmu_place_repo.dart
  * Description: Abstract repository interface for retrieving predefined CMU places.
  * Responsibilities: Declares the contract for accessing locations inside the university campus.
- * Author: App Team
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  */
 

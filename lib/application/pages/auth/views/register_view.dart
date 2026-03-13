@@ -1,11 +1,13 @@
 /*
  * File: register_view.dart
- * Description: The primary onboarding form generating brand new user records securely.
- * Responsibilities: Captures initial identity fields, strictly enforces complex password matching, and submits creation directives backward towards Firebase.
- * Dependencies: AuthTextField, RegisterUseCase
- * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verifications.
- * Author: Rachata
- * Course: CMU Fondue
+ * Description: The primary onboarding form generating brand new user records securely within the system.
+ * Responsibilities: 
+ * - Captures initial identity fields including email and password.
+ * - Enforces complex password matching validation logic.
+ * - Submits user creation directives to the backend via the registration use case.
+ * Author: Rachata 650510638 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Created from [AuthPage] router upon intent, Disposed upon successful registration and token verification.
  */
 
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
@@ -19,6 +21,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 /// Captures expansive credentials demanding explicit password confirmations dynamically preventing malformed entries natively.
+/// 
+/// Interacts with [RegisterUseCase] to create new accounts. 
+/// Validates that the password and confirmation password fields match before submission.
 class RegisterView extends StatefulWidget {
   /// The dependent logic instructing cloud creations strictly.
   final RegisterUseCase registerUseCase;
@@ -38,23 +43,42 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  /// Controls the email input text.
   final _emailController = TextEditingController();
+
+  /// Controls the password input text.
   final _passwordController = TextEditingController();
+
+  /// Controls the password confirmation input text.
   final _confirmPasswordController = TextEditingController();
 
+  /// The active error message displayed for the email field.
   String? _emailError;
+
+  /// The active error message displayed for the initial password field.
   String? _passwordError;
+
+  /// The active error message displayed for the confirmation password field.
   String? _confirmPasswordError;
+
+  /// Whether the registration process is currently in progress.
   bool _loading = false;
 
-  /// Verifies structural completion natively blocking invalid forms securely before firing network tasks directly asynchronously.
-  ///
-  /// This operates asynchronously initiating deep architecture creations actively. Throws highly specific anomalies
-  /// matching identical domain bounds exposing textual corrections uniformly exactly mapping error strings downwards.
-  ///
+  /// Verifies structural completion blocking invalid forms before firing network tasks directly.
+  /// 
+  /// Validates input presence and ensures that the provided passwords match. 
+  /// If valid, an asynchronous request is made to [widget.registerUseCase].
+  /// 
+  /// Throws an [InvalidEmailException] if the email format is rejected by the server.
+  /// Throws a [WeakPasswordException] if the password does not meet security criteria.
+  /// Throws an [EmailAlreadyInUseException] if the email is already registered.
+  /// Throws an [InvalidCredentialsException] if generic verification fails.
+  /// 
   /// Side effects:
-  /// Rewrites formatting warnings spanning [_emailError], [_passwordError], and [_confirmPasswordError] exclusively,
-  /// locks state rendering mechanisms by checking over [_loading], and fires [setState] continuously.
+  /// - Toggles the [_loading] state to disable the submit button during execution.
+  /// - Manipulates [AppAuthProvider.suppressAuthState] to prevent premature navigation flashes.
+  /// - Triggers a success [CustomSnackBar] upon successful account creation.
+  /// - Resets error states like [_emailError] before each attempt.
   Future<void> _submit() async {
     setState(() {
       _emailError = null;

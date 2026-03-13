@@ -4,7 +4,7 @@
  * Responsibilities: Mounts disjoint independent criteria layers cohesively simplifying parent history scaffolds greatly neatly.
  * Dependencies: FilterByCategory, FilterByTag, ProblemTag, ProblemType
  * Lifecycle: Created passively persisting along entire history list lifetimes safely completely seamlessly.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

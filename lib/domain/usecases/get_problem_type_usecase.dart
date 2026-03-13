@@ -2,7 +2,7 @@
  * File: get_problem_type_usecase.dart
  * Description: Use case for obtaining possible problem system categories.
  * Responsibilities: Coordinates the query to fetch categories from the repository.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

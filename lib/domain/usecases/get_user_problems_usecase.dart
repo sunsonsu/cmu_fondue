@@ -2,7 +2,7 @@
  * File: get_user_problems_usecase.dart
  * Description: Use case for fetching problems recorded by a designated user.
  * Responsibilities: Requests filtered problem records restricted to those reported by a specific profile.
- * Author: App Team
+ * Author: Komsan 650510601 & Rachata 650510638
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */
@@ -14,7 +14,7 @@ import '../repositories/problem_repo.dart';
 class GetUserProblemsUseCase {
   /// The dependent repository supplying problem lists.
   final ProblemRepo repository;
-  
+
   /// Initializes a new instance of [GetUserProblemsUseCase].
   GetUserProblemsUseCase(this.repository);
 

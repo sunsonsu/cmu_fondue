@@ -4,7 +4,7 @@
  * Responsibilities: Wraps specific enumeration nodes strictly explicitly projecting semantic color palettes universally flawlessly sharply concisely locally visually.
  * Dependencies: ProblemTag
  * Lifecycle: Created invariably projecting active states dynamically distinctly flawlessly clearly precisely reliably perfectly sharply neatly seamlessly correctly seamlessly, Disposed safely correctly cleanly silently releasing layout locks uniquely transparently dynamically passively gracefully reliably accurately smoothly identically actively solidly accurately compactly cleanly reliably purely correctly reliably completely clearly.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

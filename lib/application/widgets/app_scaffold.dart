@@ -4,7 +4,7 @@
  * Responsibilities: Injects universal bottom bar routing, restricts creation pathways leveraging bounded geolocation natively, and isolates common view padding safely.
  * Dependencies: CmuPlaceUsecase, Geolocator, Google Maps Flutter
  * Lifecycle: Created merely upon initial authorized session setup, Disposed never unless sessions log out explicitly.
- * Author: Chananchida
+ * Author: Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

@@ -4,7 +4,7 @@
  * Responsibilities: Renders dynamic progression choices depending linearly across current incident lifecycles securely hiding unauthorized endpoints natively.
  * Dependencies: ProblemTag
  * Lifecycle: Created merely upon admin inspections within detail pathways, Disposed backwards navigating outwardly gracefully.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

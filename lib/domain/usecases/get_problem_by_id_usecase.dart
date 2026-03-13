@@ -2,7 +2,7 @@
  * File: get_problem_by_id_usecase.dart
  * Description: Use case for fetching a single problem record by its ID.
  * Responsibilities: Orchestrates retrieval of problems and isolates the specific one required.
- * Author: App Team
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

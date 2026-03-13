@@ -2,7 +2,7 @@
  * File: firebase_auth_data_source.dart
  * Description: Direct integration layer interfacing with the Firebase Auth SDK.
  * Responsibilities: Performs explicit API calls for login, registration, and logout utilizing Firebase credentials.
- * Author: App Team
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */
@@ -17,10 +17,10 @@ class FirebaseAuthDataSource {
 
   /// Initializes a new instance of [FirebaseAuthDataSource].
   FirebaseAuthDataSource(this._firebaseAuth);
-  
+
   /// Retrieves the currently cached authentication profile, or null if unauthenticated.
   User? get currentUser => _firebaseAuth.currentUser;
-  
+
   /// Submits an authentication request using the provided [email] and [password].
   ///
   /// This operates asynchronously over the network.

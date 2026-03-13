@@ -4,7 +4,7 @@
  * Responsibilities: Stalls permanent removal flows, presents stark red/green tactile choices strictly safely independently.
  * Dependencies: None
  * Lifecycle: Created instantly when administrators trigger deletion, Disposed absolutely returning boolean confirmation payloads directly back.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

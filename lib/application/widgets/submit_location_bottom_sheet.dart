@@ -4,7 +4,7 @@
  * Responsibilities: Isolates map interactions parsing dynamic location arrays, handles discrete user selections explicitly dispatching navigation hooks flawlessly organically smartly efficiently.
  * Dependencies: CmuPlaceEntity, AssignedProblemsPage
  * Lifecycle: Created merely alongside map submission flows capturing specific user intents dynamically cleanly actively elegantly, Disposed safely tearing down passive listeners efficiently cleanly distinctly smartly.
- * Author: Apiwit
+ * Author: Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

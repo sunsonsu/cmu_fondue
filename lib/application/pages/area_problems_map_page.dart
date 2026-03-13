@@ -1,11 +1,13 @@
 /*
  * File: area_problems_map_page.dart
- * Description: Interactive localized map screening isolating problems geometrically.
- * Responsibilities: Draws pinned clusters targeting isolated sectors and constructs scrolling lists synced closely alongside map actions.
- * Dependencies: ProblemProvider, ProblemCard, GoogleMap
- * Lifecycle: Pushed onto Navigator stack by selecting specific map zones, Disposed immediately when user presses back.
- * Author: Chananchida
- * Course: CMU Fondue
+ * Description: Interactive localized map screen isolating problem reports within a specific geographical sector.
+ * Responsibilities:
+ * - Draws pinned markers for each reported problem on a Google Map.
+ * - Synchronizes the map view with a scrolling list of problem cards.
+ * - Provides color-coded status legends for reporting transparency.
+ * Author: Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Pushed onto Navigator stack when selecting specific map zones, Disposed immediately when the user navigates back.
  */
 
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
@@ -16,6 +18,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 /// Renders a specialized spatial viewer bridging listed occurrences directly toward colored map markers contextually.
+/// 
+/// Displays the regional designation designated by [areaName] and allows users to 
+/// interact with specific [problems] through markers or the bottom list.
 class AreaProblemsMapPage extends StatefulWidget {
   /// The human-readable regional designation shown within the top app bar.
   final String areaName;
@@ -35,8 +40,13 @@ class AreaProblemsMapPage extends StatefulWidget {
 }
 
 class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
+  /// The controller managing Google Map interactions like zooming and panning.
   GoogleMapController? _mapController;
+
+  /// The set of markers representing reported problems on the map.
   Set<Marker> _markers = {};
+
+  /// The calculated geographic center to focus the map camera initially.
   LatLng? _center;
 
   @override
@@ -47,8 +57,11 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
 
   /// Calculates geometric center-points and generates visual mapping nodes dynamically.
   ///
+  /// Analyzes the coordinates of all [widget.problems] to find the logical average 
+  /// position and prepares the marker set with appropriate status colors.
+  /// 
   /// Side effects:
-  /// Rewrites the [_markers] arrays and the [_center] camera origin directly.
+  /// Updates the internal [_markers] set and the [_center] camera origin state.
   void _setupMarkers() {
     if (widget.problems.isEmpty) return;
 
@@ -80,7 +93,8 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
 
   /// Determines strictly which pigment represents a specific operational phase.
   ///
-  /// Formally enforces red for un-ticketed issues, orange for active repairs, and green signaling closed resolutions.
+  /// Formally enforces red for un-ticketed issues, orange for active repairs, 
+  /// and green signaling closed resolutions based on the provided [tagName].
   double _getMarkerColor(String tagName) {
     switch (tagName) {
       case 'pending':
@@ -245,6 +259,8 @@ class _AreaProblemsMapPageState extends State<AreaProblemsMapPage> {
   }
 
   /// Constructs a horizontal legend indicator translating internal mapping colors towards user-friendly tags.
+  /// 
+  /// Uses a small colored circle and a [label] to explain the significance of marker colors on the map.
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,

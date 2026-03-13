@@ -2,7 +2,7 @@
  * File: auth_repo.dart
  * Description: Abstract repository interface for authentication operations.
  * Responsibilities: Declares the contract for authenticating, registering, and managing user sessions.
- * Author: Rachata
+ * Author: Rachata 650510638 & Apiwit 650510648
  * Course: CMU Fondue
  */
 

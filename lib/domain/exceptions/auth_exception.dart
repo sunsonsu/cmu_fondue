@@ -2,7 +2,7 @@
  * File: auth_exception.dart
  * Description: Exception classes for handling authentication errors.
  * Responsibilities: Defines custom exceptions for various sign-in and sign-up failure states.
- * Author: Rachata
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  */
 

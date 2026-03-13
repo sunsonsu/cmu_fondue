@@ -1,11 +1,14 @@
 /*
  * File: create_report_page.dart
- * Description: Interactive structural form allowing citizens formally defining problem specifics attaching textual notes natively beside geometric coordinates securely.
- * Responsibilities: Captures text, intercepts camera media directly natively, enforces mandatory completion, and forwards deep objects backwards securely.
- * Dependencies: AppAuthProvider, ProblemProvider, CustomSnackBar, ReportingForm, ImagePicker
- * Lifecycle: Created strictly upon progressing past duplicate verification phases, Disposed dynamically when completely terminating uploading pipelines correctly bouncing citizens backwards completely.
- * Author: Chananchida
- * Course: CMU Fondue
+ * Description: Interactive structural form allowing citizens to formally define problem specifics and attach photographic evidence for submission.
+ * Responsibilities: 
+ * - Captures user-entered text for problem titles and descriptions.
+ * - Interacts with the device camera and gallery to attach multimedia reports.
+ * - Validates form completeness before submitting data to the [ProblemProvider].
+ * - Coordinates geolocated data attributes with the provided [location].
+ * Author: Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Created strictly upon progressing past duplicate verification phases, Disposed when terminating the uploading pipeline.
  */
 
 import 'dart:io';
@@ -21,6 +24,9 @@ import 'package:provider/provider.dart';
 import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 
 /// Aggregates textual anomalies alongside raw device camera outputs executing deep structural network transfers successfully natively.
+/// 
+/// Provides a comprehensive reporting interface pinned to a specific [location]. 
+/// Users can categorize issues, describe the situation, and take supporting photos.
 class CreateReportPage extends StatefulWidget {
   /// The isolated coordinate framework pinning the user intent physically.
   final CmuPlaceEntity location;
@@ -33,11 +39,22 @@ class CreateReportPage extends StatefulWidget {
 }
 
 class _CreateReportPageState extends State<CreateReportPage> {
+  /// The controller for the report title input field.
   final TextEditingController _titleController = TextEditingController();
+
+  /// The controller for the detailed description input field.
   final TextEditingController _descriptionController = TextEditingController();
+
+  /// The utility for selecting or capturing images from the device.
   final ImagePicker _picker = ImagePicker();
+
+  /// The currently selected problem category from the [ProblemType] enum.
   ProblemType? _selectedCategory;
+
+  /// The local file reference for the captured or selected image.
   File? _selectedImage;
+
+  /// Whether the report submission is currently in progress.
   bool _isLoading = false;
 
   @override
@@ -55,12 +72,12 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   /// Triggers internal device galleries extracting raw photographic binaries.
-  ///
-  /// This operates asynchronously initiating deep architecture queries securely natively hooking local operating systems distinctly isolating failures gracefully.
-  /// Displays a warning message natively if internal gallery reads crash totally dynamically.
-  ///
+  /// 
+  /// Initiates an asynchronous image selection process. Displays a success message 
+  /// upon selection or an error [CustomSnackBar] if the process fails.
+  /// 
   /// Side effects:
-  /// Rewrites the active [_selectedImage] formally saving binary endpoints locally preventing loss abruptly firing [setState] exactly.
+  /// Updates the internal [_selectedImage] state to reflect the picked file.
   Future<void> _pickImageFromGallery() async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -84,12 +101,12 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   /// Triggers internal device cameras intercepting raw optical sensor results directly into local storage.
-  ///
-  /// This operates asynchronously demanding formal explicit permission mapping seamlessly.
-  /// Displays a warning message explicitly upon camera connection corruption.
-  ///
+  /// 
+  /// Requests camera access and captures a new photo. If the capture is cancelled or fails, 
+  /// an error [CustomSnackBar] is shown to the user.
+  /// 
   /// Side effects:
-  /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
+  /// Rewrites the active [_selectedImage] with the newly captured camera binary.
   Future<void> _takePicture() async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -110,6 +127,8 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   /// Asserts mandatory completeness validating properties blocking incomplete native requests logically.
+  /// 
+  /// Returns `true` if all required fields are populated and no loading process is active.
   bool _isFormValid() {
     return _titleController.text.isNotEmpty &&
         _selectedCategory != null &&

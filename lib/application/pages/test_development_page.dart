@@ -1,12 +1,14 @@
 /*
  * File: test_development_page.dart
  * Description: Scratchpad interface bypassing strict architectural protections entirely allowing unchecked experimental creations natively.
- * Responsibilities: Injects malformed fake variables backwards, manipulates isolated data nodes aggressively, and forcibly evaluates remote endpoints destructively.
- * Dependencies: Multiple direct UseCase couplings explicitly breaking isolation patterns strictly designed for testing only.
- * Lifecycle: Created merely upon hidden pathways during development contexts, Disposed rapidly.
+ * Responsibilities: 
+ * - Injects malformed fake variables and manipulates isolated data nodes for testing.
+ * - Forcibly evaluates remote endpoints and bypasses conventional provider mechanisms.
+ * - Serves as a hidden testing ground for rapid prototyping of new features.
+ * Author: Komsan 650510601
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Created merely upon developer intent for feature prototyping, Disposed when returning to the standard user journey.
  * Notes: No UI logic should appear in this file. (Testing override context)
- * Author: Komsan
- * Course: CMU Fondue
  */
 
 import 'dart:io';
@@ -30,7 +32,9 @@ import 'package:cmu_fondue/data/services/FirebaseStorageService.dart';
 import 'package:cmu_fondue/data/services/cloud_functions_service.dart';
 import 'package:cmu_fondue/data/services/notification_service.dart';
 
-/// Flouts conventional isolation layers strictly connecting isolated systems violently enabling unconstrained development hacking purely native.
+/// Flouts conventional isolation layers strictly connecting isolated systems violently enabling unconstrained development hacking purely natively.
+/// 
+/// A development-only page providing direct access to data repositories and use cases.
 class TestDevelopmentPage extends StatefulWidget {
   /// Initializes a new instance of [TestDevelopmentPage].
   const TestDevelopmentPage({super.key});
@@ -40,36 +44,69 @@ class TestDevelopmentPage extends StatefulWidget {
 }
 
 class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
+  /// Global key for the form state.
   final _formKey = GlobalKey<FormState>();
 
+  /// Domain logic for fetching problem types.
   late GetProblemTypesUseCase _getProblemTypesUseCase;
+
+  /// Domain logic for report creation.
   late CreateProblemUseCase _createProblemUseCase;
+
+  /// Domain logic for report retrieval.
   late GetProblemsUseCase _getProblemsUseCase;
+
+  /// Domain logic for report updates.
   late UpdateProblemUseCase _updateProblemUseCase;
+
+  /// Domain logic for report deletion.
   late DeleteProblemUseCase _deleteProblemUseCase;
+
+  /// Domain logic for reporting status changes to users.
   late NotifyProblemStatusChangedUseCase _notifyUseCase;
 
+  /// Cached list of available problem types.
   List<ProblemTypeEntity> _problemTypes = [];
+
+  /// Cached list of existing system problems.
   List<ProblemEntity> _existingProblems = [];
 
+  /// The currently selected problem type ID in the form.
   String? _selectedTypeId;
+
+  /// The ID of the problem currently being edited.
   String? _editingProblemId;
+
+  /// The local file reference for the experimental image selection.
   File? _selectedImage;
 
+  /// Whether the initial data load is active.
   bool _isLoading = true;
+
+  /// Whether a data submission is currently in progress.
   bool _isSubmitting = false;
 
+  /// The utility for selecting or capturing images from the device.
   final ImagePicker _imagePicker = ImagePicker();
 
+  /// The controller for the test report title input.
   final _titleController = TextEditingController();
+
+  /// The controller for the test report detail input.
   final _detailController = TextEditingController();
+
+  /// The controller for the test report location name input.
   final _locationNameController = TextEditingController(
     text: "Computer science",
   );
 
+  /// The controller for the test report latitude input.
   final _latController = TextEditingController(text: "18.7961");
+
+  /// The controller for the test report longitude input.
   final _lngController = TextEditingController(text: "98.9520");
 
+  /// A mock user ID used for development reporting bypasses.
   final String mockReporterId = "nGdg0vtmLMeEQs2ZHmAKPsp4K0A3";
 
   @override
@@ -79,6 +116,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     _refreshData();
   }
 
+  /// Initializes required domain controllers for rapid debugging.
   void _initDependencies() {
     final connector = ConnectorConnector.instance;
     final typeRepo = ProblemTypeRepoImpl(connector: connector);
@@ -129,7 +167,7 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
 
   /// Triggers generic multimedia abstractions circumventing normal verification pathways directly forcefully locally.
   ///
-  /// This operates asynchronously demanding formal explicit queries hooking local hardware directly bypassing limits native.
+  /// This operates asynchronously demanding formal explicit queries hooking local hardware directly bypassing limits natives.
   ///
   /// Side effects:
   /// Rewrites the active [_selectedImage] formally dropping bytes temporarily firing [setState] exactly.
@@ -153,6 +191,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   }
 
   /// Casts disjoint visual abstractions floating over experimental layouts distinct natively.
+  /// 
+  /// Displays an options picker for selecting between gallery and camera sources.
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
@@ -195,6 +235,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   }
 
   /// Injects active values aggressively directly editing isolated objects completely unverified locally.
+  /// 
+  /// Populates the test form with existing [problem] metadata for modification.
   void _onEditSelected(ProblemEntity problem) {
     setState(() {
       _editingProblemId = problem.id;
@@ -215,6 +257,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// Commits raw objects entirely explicitly manipulating endpoints regardless directly completely natively.
   ///
   /// This operates asynchronously violently creating architectural instances cleanly explicitly forcing cloud updates unverified.
+  /// 
+  /// Executes the creation or update logic depending on whether [_editingProblemId] is set.
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate() || _selectedTypeId == null) return;
 
@@ -274,6 +318,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// Nukes valid data outright violently purging nodes securely natively explicitly verifying locally.
   ///
   /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
+  /// 
+  /// Deletes the problem with the specified [id].
   Future<void> _handleDelete(String id) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -310,6 +356,8 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
   /// Asserts fake system tests demanding explicit cloud messaging paths securely correctly checking variables manually.
   ///
   /// This operates asynchronously requesting foreign data networks distinctly actively.
+  /// 
+  /// Tests FCM notification delivery for the specified [problem].
   Future<void> _testSendNotification(ProblemEntity problem) async {
     final notificationService = NotificationService();
     final fcmToken = await notificationService.getFcmToken();
@@ -352,16 +400,19 @@ class _TestDevelopmentPageState extends State<TestDevelopmentPage> {
     }
   }
 
+  /// Displays simple success feedback to the developer.
   void _showSuccessSnackBar(String message) {
     if (!mounted) return;
     CustomSnackBar.showSuccess(context: context, message: message);
   }
 
+  /// Displays error feedback via snackbar for rapid troubleshooting.
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
     CustomSnackBar.showError(context: context, message: message);
   }
 
+  /// Displays detailed error explanations via modal dialog.
   void _showErrorDialog(String message) {
     showDialog(
       context: context,

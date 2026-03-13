@@ -2,7 +2,7 @@
  * File: get_user_by_id_usecase.dart
  * Description: Use case for fetching a specific profile user entity.
  * Responsibilities: Isolates and grabs targeted user data based purely on a database ID string.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

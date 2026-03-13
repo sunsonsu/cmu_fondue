@@ -1,9 +1,12 @@
 /*
  * File: problem_provider.dart
  * Description: Primary state management provider aggregating localized problem datasets.
- * Responsibilities: Caches queried problem records, manages reactive UI filtering flags, and routes updates to usecases.
- * Author: Rachata, Komsan, Apiwit, Chananchida
- * Course: CMU Fondue
+ * Responsibilities: 
+ * - Caches queried problem records and manages reactive UI filtering flags.
+ * - Routes data mutations (create, update, delete) to appropriate usecases safely.
+ * - Provides geographical analytics and nearby incident discovery logic.
+ * Author: Komsan 650510601 & Rachata 650510638 & Apiwit 650510648 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
  * Notes: No UI logic should appear in this file.
  */
 
@@ -33,20 +36,44 @@ class ProblemWithDistance {
 }
 
 /// Administers reactive state broadcasting for all community-reported map obstacles over the app hierarchy.
+///
+/// Manages synchronization between the local UI state and backend storage using several use cases
+/// for fetching, creating, voting, and administrative tagging.
 class ProblemProvider with ChangeNotifier {
+  /// The logic for retrieving multiple problem records.
   final GetProblemsUseCase _getProblemsUseCase;
+
+  /// The logic for submitting new problem reports.
   final CreateProblemUseCase _createProblemUseCase;
+
+  /// The logic for asserting community upvotes on existing reports.
   final UpdateProblemUpvoteUseCase _updateProblemUpvoteUseCase;
+
+  /// The logic for removing problem records from the system.
   final DeleteProblemUseCase _deleteProblemUseCase;
+
+  /// The logic for modifying existing problem metadata.
   final UpdateProblemUseCase _updateProblemUseCase;
+
+  /// The logic for retrieving detailed user profiles.
   final GetUserByIdUseCase _getUserByIdUseCase;
+
+  /// The service for triggering remote cloud behaviors.
   final CloudFunctionsService _cloudFunctionsService;
 
+  /// The ID of the currently signed-in individual.
   String? _currentUserId;
+
+  /// Whether a data retrieval operation is currently active.
   bool _isLoading = false;
+
+  /// Internal cache of all retrieved problem entities.
   List<ProblemEntity> _problems = [];
 
+  /// The currently active status filter for report lists.
   ProblemTag? _selectedTag;
+
+  /// The currently active category filter for report lists.
   ProblemType? _selectedCategory;
 
   /// Initializes a new instance of [ProblemProvider].
@@ -175,7 +202,7 @@ class ProblemProvider with ChangeNotifier {
     };
   }
 
-  /// Adjusts the localized reference indicating whom currently commands the context window.
+  /// Adjusts the localized reference indicating whom currently commands the context window via [userId].
   ///
   /// Side effects:
   /// Assigns the new ID natively and fires [notifyListeners].
@@ -190,7 +217,7 @@ class ProblemProvider with ChangeNotifier {
   List<ProblemEntity> get notCompletedProblems =>
       _problems.where((p) => p.tagName != ProblemTag.completed).toList();
 
-  /// Scans physical distance comparing current coordinates against cached problem entities dynamically.
+  /// Scans physical distance comparing [lat] and [lng] coordinates against cached problem entities dynamically.
   ///
   /// Enforces a hard spatial limit defaulting [maxDistance] to 500 meters strictly. Use [onlyNotCompleted]
   /// boolean checks to exclude strictly resolved items.
@@ -231,9 +258,9 @@ class ProblemProvider with ChangeNotifier {
     }
   }
 
-  /// Coordinates consensus additions enforcing real-time binary searches locally tracking priority.
+  /// Coordinates consensus additions enforcing real-time binary searches locally tracking priority using [problemId].
   ///
-  /// This operates asynchronously against [problemId]. The true intent flips depending on [isUpvoted].
+  /// This operates asynchronously. The true intent flips depending on [isUpvoted].
   /// Throws standard execution errors forward if the remote registry formally drops the ticket.
   ///
   /// Side effects:
@@ -318,6 +345,7 @@ class ProblemProvider with ChangeNotifier {
   ///
   /// This operates asynchronously pushing raw bytes representing [imageFile] outwards initially. Requires
   /// massive structural data ranging from [title] textual explanations towards [lat] precise mappings.
+  /// Requires [detail], [locationName], [lng], [reporterId], [typeId], and [tagId].
   /// Throws a clear interruption preventing navigation rendering if remote connections fail.
   ///
   /// Side effects:
@@ -408,6 +436,8 @@ class ProblemProvider with ChangeNotifier {
   }
 
   /// Implements highly complex administrator approvals dynamically alerting local devices correctly.
+  ///
+  /// Updates the report matching [problemId] with a [newTag].
   ///
   /// This operates asynchronously pushing the target [problemId] over to a [newTag] definition. Additionally
   /// retrieves origin citizen metadata invoking remote Firebase Cloud interactions actively forwarding

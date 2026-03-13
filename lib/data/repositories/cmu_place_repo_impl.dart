@@ -2,7 +2,7 @@
  * File: cmu_place_repo_impl.dart
  * Description: Concrete implementation of the CmuPlaceRepo involving Google Places API.
  * Responsibilities: Fetches university location data via external APIs and handles basic caching fallback.
- * Author: App Team
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

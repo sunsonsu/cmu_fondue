@@ -4,7 +4,7 @@
  * Responsibilities: Isolates exact coordinate sets anchoring custom graphical markers strictly inside fixed physical borders silently uniquely actively locally optimally dynamically completely perfectly natively.
  * Dependencies: Google Maps Flutter
  * Lifecycle: Created invariably exposing fixed locations natively flawlessly cleanly flawlessly strictly flawlessly dynamically securely securely softly reliably purely seamlessly natively gracefully perfectly identically distinctly rapidly, Disposed explicitly terminating map controllers deliberately cautiously uniquely carefully reliably efficiently elegantly smoothly definitively gracefully quickly cleanly accurately efficiently forcefully strictly intelligently independently beautifully firmly gracefully solidly.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

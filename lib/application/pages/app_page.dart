@@ -1,11 +1,13 @@
 /*
  * File: app_page.dart
- * Description: The primary architectural container anchoring horizontal tab navigation.
- * Responsibilities: Manages main routing indexes swapping between map, reports, history, and profile screens seamlessly.
- * Dependencies: ProfilePage, AdminPage, SelectPlaceBottomSheet, MapViewerPage, HistoryPage, AppScaffold, AppAuthProvider
+ * Description: The primary architectural container anchoring horizontal tab navigation for the entire application.
+ * Responsibilities:
+ * - Manages the main routing indexes swapping between various destination screens.
+ * - Synchronizes the navigation state between the navigation bar and the visible page content.
+ * - Determines the appropriate user profile or admin view based on authentication roles.
+ * Author: Rachata 650510638 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
  * Lifecycle: Created instantly post-login upon authentication stream resolution, Disposed alongside session invalidation.
- * Author: Chananchida
- * Course: CMU Fondue
  */
 
 import 'package:cmu_fondue/application/pages/profile_page.dart';
@@ -19,6 +21,9 @@ import 'package:cmu_fondue/application/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 /// Hosts the root navigation paradigm connecting global destination widgets dynamically.
+///
+/// Uses an [IndexedStack] to preserve the state of sub-pages like [MapViewerPage],
+/// [SelectPlaceBottomSheet], and [HistoryPage] while navigating via the [AppScaffold].
 class HomePage extends StatefulWidget {
   /// The starting destination pane index selected natively upon launch.
   final int initialIndex;
@@ -31,6 +36,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /// The current index representing the active page in the bottom navigation.
   late int _currentIndex;
 
   @override

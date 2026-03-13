@@ -2,7 +2,7 @@
  * File: user_repo.dart
  * Description: Abstract repository interface for user profile data operations.
  * Responsibilities: Declares the contract for updating tokens and retrieving user entries.
- * Author: App Team
+ * Author: Rachata 650510638 & Komsan 650510601
  * Course: CMU Fondue
  */
 

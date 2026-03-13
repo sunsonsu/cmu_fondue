@@ -4,7 +4,7 @@
  * Responsibilities: Wraps localized text boxes safely, parses active text queries efficiently natively completely cleanly dropping lists securely locally.
  * Dependencies: Geocoding
  * Lifecycle: Created merely alongside arbitrary map selection contexts explicitly cleanly, Disposed terminating searching bounds securely flawlessly.
- * Author: Chananchida
+ * Author: Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

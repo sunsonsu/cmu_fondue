@@ -2,7 +2,7 @@
  * File: problem_repo_impl.dart
  * Description: Concrete implementation of the ProblemRepo.
  * Responsibilities: Executes the core CRUD and querying logic against problems traversing the Data Connect SDK.
- * Author: App Team
+ * Author: Komsan 650510601, Rachata 650510638, Apiwit 650510648, Chananchida 650510659
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */
@@ -50,12 +50,10 @@ class ProblemRepoImpl implements ProblemRepo {
         print('Message: ${e.message}');
 
         final errorInfo = e.response;
-        if (errorInfo != null) {
-          print('Error Details: ${errorInfo.errors}');
-          for (var graphQLError in errorInfo.errors) {
-            print('--- GraphQL Error Detail ---');
-            print('Message: ${graphQLError.message}');
-          }
+        print('Error Details: ${errorInfo.errors}');
+        for (var graphQLError in errorInfo.errors) {
+          print('--- GraphQL Error Detail ---');
+          print('Message: ${graphQLError.message}');
         }
       } else {
         print('Unknown Error: $e');
@@ -231,7 +229,9 @@ class ProblemRepoImpl implements ProblemRepo {
     required String currentUserId,
   }) async {
     try {
-      final result = await connector.listProblemsByReporter(reporterId: reporterId).execute();
+      final result = await connector
+          .listProblemsByReporter(reporterId: reporterId)
+          .execute();
       return result.data.problems.map((e) {
         return ProblemEntity.fromGenerated(e, currentUserId);
       }).toList();

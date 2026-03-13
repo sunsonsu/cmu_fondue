@@ -2,7 +2,7 @@
  * File: get_problem_usecase.dart
  * Description: Use case aggregating broad queries involving multiple problem instances.
  * Responsibilities: Handles listing problems, querying by tags or types, counting constraints, and determining maximum upvote holders.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

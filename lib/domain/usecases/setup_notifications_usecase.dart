@@ -2,7 +2,7 @@
  * File: setup_notifications_usecase.dart
  * Description: Use case for gathering and anchoring device push tokens to personal accounts.
  * Responsibilities: Interrogates the device for a token and then pushes it upstream to the user's database entry.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

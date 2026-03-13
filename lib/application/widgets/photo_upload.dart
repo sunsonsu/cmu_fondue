@@ -4,7 +4,7 @@
  * Responsibilities: Displays image placeholder or preview, handles gallery upload and camera capture callbacks, validates supported file types (.png, .jpg, .jpeg, .HEIC).
  * Dependencies: Flutter, Google Fonts
  * Lifecycle: Created as part of the create report page, Stateless widget rebuilt when selectedImage changes.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

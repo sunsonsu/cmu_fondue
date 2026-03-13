@@ -4,7 +4,7 @@
  * Responsibilities: Bind distinct domain attributes natively elegantly drawing robust interactive bounding boxes hooking deletion correctly explicitly locally intuitively natively locally smoothly flawlessly uniquely perfectly.
  * Dependencies: ProblemEntity, ProblemProvider, Default Auth Provider 
  * Lifecycle: Created continually expanding global problem index arrays inherently rapidly, Disposed inherently dropping invisible instances correctly distinctly cleanly inherently identically dynamically globally globally reliably natively inherently inherently proactively defensively correctly gracefully securely distinctly distinctly intelligently dynamically uniquely strictly optimally perfectly reliably accurately actively defensively reliably strictly aggressively proactively optimally accurately securely uniquely optimally effectively smoothly natively cleanly intelligently clearly aggressively explicitly correctly securely smartly distinct natively elegantly cleanly seamlessly defensively proactively smoothly natively proactively cleanly gracefully globally strictly efficiently.
- * Author: Rachata, Chananchida
+ * Author: Rachata 650510638 & Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

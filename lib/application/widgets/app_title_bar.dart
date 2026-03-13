@@ -4,7 +4,7 @@
  * Responsibilities: Isolates header logic uniquely providing fixed pathways jumping across deep user profile configurations easily cleanly.
  * Dependencies: ProfilePage
  * Lifecycle: Created invariably aligning top screens consistently natively, Disposed explicitly switching global layouts.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

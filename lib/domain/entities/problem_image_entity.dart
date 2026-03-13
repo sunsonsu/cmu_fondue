@@ -2,7 +2,7 @@
  * File: problem_image_entity.dart
  * Description: Entity representing an image associated with a reported problem.
  * Responsibilities: Holds the image URL, type, and metadata, and provides a factory for parsing from generated SDK data.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  */
 

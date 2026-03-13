@@ -2,7 +2,7 @@
  * File: update_problem_upvote_usecase.dart
  * Description: Use case for issuing or stripping upvotes on problem entities.
  * Responsibilities: Rejects anonymous attempts and routes the toggle logic properly.
- * Author: App Team
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

@@ -2,7 +2,7 @@
  * File: cache_service.dart
  * Description: Service for handling local data caching using Hive.
  * Responsibilities: Initializes the Hive box, stores, retrieves, and expires cached data.
- * Author: App Team
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

@@ -2,7 +2,7 @@
  * File: FirebaseStorageService.dart
  * Description: Interacts directly with Firebase Storage for media asset handling.
  * Responsibilities: Handles file uploads, generates unique filenames, maps remote URLs, and deletes binary assets.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

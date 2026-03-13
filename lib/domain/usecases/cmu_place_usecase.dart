@@ -2,7 +2,7 @@
  * File: cmu_place_usecase.dart
  * Description: Contains business logic to handle reading and evaluating CMU place locations.
  * Responsibilities: Checks if user locations fall within the campus boundaries and provides place entities.
- * Author: App Team
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

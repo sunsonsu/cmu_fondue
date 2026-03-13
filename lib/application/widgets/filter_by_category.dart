@@ -4,7 +4,7 @@
  * Responsibilities: Evaluates active semantic clusters, visualizes highlighted filter pills explicitly mapping internal enumerations correctly explicitly natively.
  * Dependencies: ProblemType
  * Lifecycle: Created merely while viewing lists exposing filtering tabs dynamically, Disposed automatically when abandoning history flows.
- * Author: Chananchida
+ * Author: Chananchida 650510659
  * Course: CMU Fondue
  */
 

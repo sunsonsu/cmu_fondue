@@ -2,7 +2,7 @@
  * File: logout.dart
  * Description: Use case responsible for severing the active session.
  * Responsibilities: Directs the authentication datastore to drop current keys or tokens.
- * Author: App Team
+ * Author: Rachata 650510638 & Chananchida 650510659
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

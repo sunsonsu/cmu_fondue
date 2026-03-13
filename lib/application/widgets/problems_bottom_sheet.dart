@@ -4,7 +4,7 @@
  * Responsibilities: Coordinates draggable native physics natively intercepting touch behaviors flawlessly updating internal cursors projecting dynamic cards continuously cleanly correctly smartly smartly natively strictly distinctly correctly cleanly natively directly passively intelligently clearly carefully.
  * Dependencies: ProblemProvider, ProblemCard, Google Maps Flutter 
  * Lifecycle: Created merely alongside mapping contexts universally projecting context accurately securely quickly smartly correctly, Disposed automatically yielding gesture contexts gracefully defensively flawlessly cleanly smoothly seamlessly clearly optimally aggressively transparently actively tightly dynamically smoothly correctly proactively actively effectively strictly cleanly dynamically strictly robustly purely solidly accurately perfectly directly intelligently actively neatly exactly efficiently nicely cleanly effortlessly identically optimally completely smoothly strictly dynamically cleanly reliably beautifully sharply actively.
- * Author: Chananchida
+ * Author: Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

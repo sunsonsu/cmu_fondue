@@ -2,7 +2,7 @@
  * File: cmu_place_entity.dart
  * Description: Entity representing a location or place within the CMU Fondue system.
  * Responsibilities: Holds data for a place, including its coordinates and address, and provides factories for parsing from API or placemark data.
- * Author: App Team
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  */
 

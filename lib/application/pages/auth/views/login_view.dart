@@ -1,11 +1,13 @@
 /*
  * File: login_view.dart
- * Description: The primary identity verification form capturing returning user credentials securely.
- * Responsibilities: Captures raw email/password inputs, handles validation rules, and dispatches strict backend authentication attempts.
- * Dependencies: AuthTextField, LoginUseCase
- * Lifecycle: Created from AuthPage router upon intent, Disposed upon successful token stream verification propagating downwards.
- * Author: Rachata
- * Course: CMU Fondue
+ * Description: The primary identity verification form capturing returning user credentials securely during the authentication phase.
+ * Responsibilities: 
+ * - Captures raw email and password inputs from the user.
+ * - Handles input validation rules to ensure data completeness.
+ * - Dispatches backend authentication attempts via the provided use case.
+ * Author: Rachata 650510638 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Created from [AuthPage] router upon intent, Disposed upon successful token stream verification.
  */
 
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
@@ -18,6 +20,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 /// Captures credentials coordinating rigorous backend validations dynamically exposing loading indications natively.
+/// 
+/// Interacts with [LoginUseCase] to verify user identity. 
+/// Displays specific error messages for invalid emails, weak passwords, or incorrect credentials.
 class LoginView extends StatefulWidget {
   /// The dependent logic instructing cloud validations securely.
   final LoginUseCase loginUseCase;
@@ -37,21 +42,35 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  /// Controls the email input text.
   final _emailController = TextEditingController();
+
+  /// Controls the password input text.
   final _passwordController = TextEditingController();
 
+  /// The active error message displayed for the email field.
   String? _emailError;
+
+  /// The active error message displayed for the password field.
   String? _passwordError;
+
+  /// Whether the login process is currently in progress.
   bool _loading = false;
 
-  /// Executes stringent validations rejecting empty fields securely before submitting native credentials upstream asynchronously.
-  ///
-  /// This operates asynchronously initiating deep architecture verifications actively. Formal failures mapping identically
-  /// to invalid credentials or poor formats natively mutate internal UI rendering variables pushing identical messages
-  /// underneath distinct text inputs exactly.
-  ///
+  /// Executes stringent validations rejecting empty fields before submitting credentials upstream.
+  /// 
+  /// Initiates an asynchronous call to [widget.loginUseCase]. If successful, the authentication 
+  /// state is updated globally. If an [AuthException] occurs, it is caught and 
+  /// mapped to user-friendly error strings.
+  /// 
+  /// Throws an [InvalidEmailException] if the email format is incorrect.
+  /// Throws a [WeakPasswordException] if the password does not meet security standards.
+  /// Throws an [InvalidCredentialsException] if the login attempt fails due to incorrect data.
+  /// 
   /// Side effects:
-  /// Rewrites [_emailError] and [_passwordError] distinctly upon rule breaking, toggles [_loading] phases, and fires [setState].
+  /// - Toggles the [_loading] state during the asynchronous operation.
+  /// - Mutates [_emailError] and [_passwordError] to display feedback to the user.
+  /// - Notifies the [AppAuthProvider] to stop suppressing authentication state updates.
   Future<void> _submit() async {
     setState(() {
       _emailError = null;

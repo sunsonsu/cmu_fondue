@@ -2,7 +2,7 @@
  * File: auth_repo_impl.dart
  * Description: Concrete implementation of the AuthRepository.
  * Responsibilities: Bridges the authentication use cases to the actual Firebase and Data Connect data sources.
- * Author: App Team
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

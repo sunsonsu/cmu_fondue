@@ -1,11 +1,13 @@
 /*
  * File: profile_page.dart
- * Description: Identity inspection hub exposing active email credentials distinctly providing explicit exit pathways.
- * Responsibilities: Isolates user data strings distinctly, intercepts logout directions aggressively, and dumps active session tokens backward conclusively natively.
- * Dependencies: AppAuthProvider, CustomSnackBar
+ * Description: High-level identity hub surfacing active account credentials and session termination controls directly.
+ * Responsibilities: 
+ * - Renders the user's primary email and display identity from active providers.
+ * - Provides distinct interactive triggers for account logout.
+ * - Manages the transition between authenticated states and the root welcome screen.
+ * Author: Rachata 650510638 & Chananchida 65051065959
+ * Course: Mobile Application Development Framework
  * Lifecycle: Created instantly when accessing navigation index 3 exclusively, Disposed merely exiting parent tabs correctly.
- * Author: Rachata
- * Course: CMU Fondue
  */
 
 import 'package:cmu_fondue/application/providers/auth_provider.dart';
@@ -14,6 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 /// Renders basic visual abstractions surrounding internal active credentials allowing strict explicit token dropping dynamically natively.
+///
+/// Displays user info including their email and a profile avatar generated from their identity.
+/// Handles the logout flow using [AppAuthProvider].
 class ProfilePage extends StatefulWidget {
   /// Initializes a new instance of [ProfilePage].
   const ProfilePage({super.key});
@@ -23,6 +28,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  /// Whether a logout process is currently in progress.
   bool _isLoading = false;
 
   @override

@@ -2,7 +2,7 @@
  * File: problem_image_repo.dart
  * Description: Abstract repository interface for problem image data operations.
  * Responsibilities: Declares the contract for fetching, storing, and modifying images associated with problems.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  */
 

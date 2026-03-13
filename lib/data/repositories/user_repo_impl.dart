@@ -2,7 +2,7 @@
  * File: user_repo_impl.dart
  * Description: Concrete implementation of the UserRepo.
  * Responsibilities: Manages user metadata and push token assignments via Firebase Data Connect.
- * Author: App Team
+ * Author: Rachata 650510638 & Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

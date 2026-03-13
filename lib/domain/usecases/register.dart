@@ -2,7 +2,7 @@
  * File: register.dart
  * Description: Use case for vetting and creating brand new accounts.
  * Responsibilities: Implements domain-specific constraints regarding account formation such as password integrity.
- * Author: App Team
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

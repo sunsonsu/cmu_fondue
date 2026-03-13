@@ -1,11 +1,13 @@
 /*
  * File: history_page.dart
- * Description: Specialized list viewer rendering purely previous logs natively sourced specifically back targeting uniquely reporting accounts.
- * Responsibilities: Partitions reports automatically mapping groups separating statuses into sections distinctly tracking historical milestones securely.
- * Dependencies: ProblemProvider, ProblemCard
- * Lifecycle: Created instantly whenever navigating toward index 2 exclusively, Disposed merely exiting parent tabs correctly.
- * Author: Chananchida, Komsan
- * Course: CMU Fondue
+ * Description: A specialized list viewer rendering a user's previous problem reports sourced from uniquely reporting accounts.
+ * Responsibilities: 
+ * - Partitions reported issues automatically into sections based on their status.
+ * - Displays historical milestones for personal submissions.
+ * - Provides a pull-to-refresh mechanism for manual data synchronization.
+ * Author: Komsan 650510601 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Created instantly whenever navigating toward index 2 exclusively, Disposed when exiting parent navigation tabs.
  */
 
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
@@ -16,6 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 /// Aggregates exclusive lists strictly restricted toward identity-owned queries rendering dynamically sectioned interfaces directly.
+///
+/// Consumes the [ProblemProvider] to retrieve and display only the problems
+/// reported by the current authenticated user inside the [HistoryPage].
 class HistoryPage extends StatefulWidget {
   /// Initializes a new instance of [HistoryPage].
   const HistoryPage({super.key});
@@ -108,7 +113,10 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  /// Calculates visual dividers segmenting [problems] deeply segregating items spanning unique execution states statically.
+  /// Calculates visual dividers segmenting [problems] into unique analytical sections.
+  ///
+  /// Grouping logic splits the provided [problems] list into Pending, In Progress,
+  /// and Completed sections for easier scanning.
   List<dynamic> _getSections(List<ProblemEntity> problems) {
     final pending = problems
         .where(
@@ -139,6 +147,8 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   /// Projects simplistic blank placeholders natively covering entirely bare datasets visually stopping errors directly.
+  ///
+  /// Renders a centered message informing the user that no history records were found.
   Widget _buildEmptyState() {
     return ListView(
       children: [
@@ -153,7 +163,9 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  /// Constructs textual markers bridging gaps internally describing strictly identical status categories natively utilizing [title] text directly.
+  /// Constructs textual markers bridging gaps internally describing strictly identical status categories.
+  ///
+  /// Renders a styled [title] to act as a header for different problem status categories.
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),

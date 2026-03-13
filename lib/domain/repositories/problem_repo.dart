@@ -2,7 +2,7 @@
  * File: problem_repo.dart
  * Description: Abstract repository interface for problem data operations.
  * Responsibilities: Declares the contract for creating, fetching, updating, and deleting problems, as well as managing upvotes.
- * Author: App Team
+ * Author: Komsan 650510601 & Rachata 650510638 & Apiwit 650510648 & Chananchida 650510659
  * Course: CMU Fondue
  */
 

@@ -2,7 +2,7 @@
  * File: problem_type_entity.dart
  * Description: Entity representing a category type of a problem.
  * Responsibilities: Holds the problem type data and provides a factory for parsing from generated SDK data.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  */
 

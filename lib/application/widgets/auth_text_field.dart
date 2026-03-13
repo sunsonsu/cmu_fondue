@@ -4,7 +4,7 @@
  * Responsibilities: Hides sensitive strings, connects remote validators consistently, formats native device keyboards explicitly, and tracks internal cursor focus effortlessly.
  * Dependencies: None
  * Lifecycle: Created upon arbitrary user credential actions, Disposed rapidly closing forms deeply.
- * Author: Rachata
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  */
 

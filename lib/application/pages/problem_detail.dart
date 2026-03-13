@@ -1,11 +1,13 @@
 /*
  * File: problem_detail.dart
  * Description: The comprehensive inspection interface displaying all granular metadata mapping individual incidents.
- * Responsibilities: Renders text descriptions, loaded images, status timelines, explicit geographic maps, and facilitates administrator resolutions securely.
- * Dependencies: ProblemProvider, DeleteConfirmationDialog, AdminStatusManagement, ProblemLocationMap, PhotoUploadWidget, CustomSnackBar, ImagePicker
+ * Responsibilities: 
+ * - Renders text descriptions, loaded images, and status timelines for specific reports.
+ * - Facilitates administrator resolutions and status transitions securely.
+ * - Integrates geographic maps for precise pinpointing of reported anomalies.
+ * Author: Rachata 650510638 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
  * Lifecycle: Created strictly upon explicit selection from list views dynamically, Disposed immediately after backwards navigation unconditionally.
- * Author: Rachata, Chananchida, Apiwit
- * Course: CMU Fondue
  */
 
 import 'dart:io';
@@ -25,6 +27,9 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// Aggregates granular incident metadata facilitating spatial verification alongside administrator-exclusive state transitions deeply natively.
+/// 
+/// Displays detailed information about a specific [problem], including its title, 
+/// category, status, location, and supporting imagery.
 class ProblemDetailPage extends StatefulWidget {
   /// The isolated conceptual chunk demanding deep inspection visually.
   final ProblemEntity problem;
@@ -37,11 +42,22 @@ class ProblemDetailPage extends StatefulWidget {
 }
 
 class _ProblemDetailPageState extends State<ProblemDetailPage> {
+  /// The local file reference for the image captured upon problem completion.
   File? _completedImage;
+
+  /// A temporary file holder during the photo selection dialog.
   File? _tempImage;
+
+  /// The utility for selecting or capturing images from the device.
   final ImagePicker _picker = ImagePicker();
+
+  /// The current status of the problem, overriding the entity value if updated locally.
   ProblemTag? _currentStatus;
+
+  /// The timestamp when the status was last updated in the current session.
   DateTime? _statusUpdatedAt;
+
+  /// Whether a status update or deletion process is currently in progress.
   bool _isLoading = false;
 
   @override
@@ -54,6 +70,8 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   ProblemTag get currentStatus => _currentStatus ?? widget.problem.tagName;
 
   /// Casts strict machine timestamps towards localized human interpretations visually cleanly.
+  /// 
+  /// Formats the provided [dateTime] into a Thai locale string including Buddhist year conversion.
   String _formatThaiDate(DateTime dateTime) {
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
@@ -63,6 +81,9 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   }
 
   /// Evaluates mandatory upload contexts launching distinctly layered visual verification prompts whenever concluding events correctly.
+  /// 
+  /// Initiates a status change attempt to [newStatus]. If the status is [ProblemTag.completed], 
+  /// it enforces an image upload via [_showPhotoUploadDialog] first.
   Future<void> _showStatusChangeDialog(ProblemTag newStatus) async {
     if (newStatus == ProblemTag.completed) {
       await _showPhotoUploadDialog();
@@ -175,6 +196,8 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   /// Obliterates local configurations entirely flushing active problem sets explicitly cleanly towards cloud databases directly.
   ///
   /// This operates asynchronously initiating deep architecture queries securely hooking local operating systems distinctly isolating failures gracefully.
+  /// 
+  /// Asks for confirmation before deleting the current problem report via [ProblemProvider].
   Future<void> _deleteProblem() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -187,7 +210,7 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
           problemId: widget.problem.id,
         );
 
-        CustomSnackBar.showSuccess(
+         CustomSnackBar.showSuccess(
           context: context,
           message: 'ลบปัญหาเรียบร้อยแล้ว',
         );
@@ -208,7 +231,9 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
   ///
   /// Side effects:
   /// Rewrites the active [_currentStatus] internally temporarily applying graphical overrides abruptly firing [setState] exactly.
-  void _changeStatus(ProblemTag newStatus) async {
+  /// 
+  /// Updates the problem's tag to [newStatus] on the server.
+  Future<void> _changeStatus(ProblemTag newStatus) async {
     setState(() {
       _isLoading = true;
     });
@@ -541,12 +566,12 @@ class _ProblemDetailPageState extends State<ProblemDetailPage> {
                                   child: CircularProgressIndicator(
                                     value:
                                         loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                              loadingProgress
-                                                  .expectedTotalBytes!
-                                        : null,
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
                                   ),
                                 ),
                               );

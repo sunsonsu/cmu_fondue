@@ -2,7 +2,7 @@
  * File: notify_problem_status_changed_usecase.dart
  * Description: Use case responsible for dispatching change notifications.
  * Responsibilities: Instructs the cloud functions service to send an FCM alert regarding ticket updates.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

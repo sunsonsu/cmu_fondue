@@ -2,7 +2,7 @@
  * File: problem_enums.dart
  * Description: Enumerations defining the possible states and types of problems.
  * Responsibilities: Provides enumerations, hardcoded IDs, localized labels, and visual status colors for problems.
- * Author: Rachata
+ * Author: Rachata 650510638
  * Course: CMU Fondue
  */
 

@@ -4,7 +4,7 @@
  * Responsibilities: Orchestrates Google Map camera bindings, queries localized hardware sensors securely, draws intricate custom raster graphics natively explicitly overlaying map instances cleanly.
  * Dependencies: ProblemProvider, Google Maps Flutter, Geolocator, Geocoding
  * Lifecycle: Created invariably anchoring core map screens deeply, Disposed cautiously yielding hardware sensors back natively cleanly correctly.
- * Author: Apiwit
+ * Author: Apiwit 650510648
  * Course: CMU Fondue
  */
 

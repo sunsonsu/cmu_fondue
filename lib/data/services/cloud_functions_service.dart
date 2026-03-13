@@ -2,7 +2,7 @@
  * File: cloud_functions_service.dart
  * Description: Wrapper for executing remote Firebase Cloud Functions.
  * Responsibilities: Acts as a central dispatcher for invoking secure serverless backend logic securely.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

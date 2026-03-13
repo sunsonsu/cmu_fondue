@@ -2,7 +2,7 @@
  * File: login.dart
  * Description: Use case spanning the core authentication login flow.
  * Responsibilities: Validates credentials broadly and forwards login commands to the auth repository.
- * Author: App Team
+ * Author: Rachata 650510638 & Chananchida 650510659
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

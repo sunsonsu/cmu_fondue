@@ -1,11 +1,13 @@
 /*
  * File: assigned_problems_page.dart
- * Description: Transitional gate-checking screen verifying prior bug reports before drafting duplicates.
- * Responsibilities: Checks existing submissions surrounding a chosen locale preventing extraneous entries globally.
- * Dependencies: ProblemProvider, ProblemCard, CreateReportPage
- * Lifecycle: Pushed via Navigator following explicit search selections, Disposed when drafting begins or cancelled outwardly.
- * Author: Apiwit, Chananchida
- * Course: CMU Fondue
+ * Description: A transitional gate-checking screen verifying prior bug reports before drafting duplicates.
+ * Responsibilities: 
+ * - Checks existing submissions surrounding a chosen locale to prevent extraneous entries.
+ * - Displays a vicinity list of unresolved problems for user review.
+ * - Allows users to upvote existing issues instead of creating new ones.
+ * Author: Apiwit 650510648 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
+ * Lifecycle: Pushed via [Navigator] following explicit search selections, Disposed when drafting begins or is cancelled.
  */
 
 import 'package:cmu_fondue/application/providers/problem_provider.dart';
@@ -17,6 +19,9 @@ import 'package:cmu_fondue/domain/entities/cmu_place_entity.dart';
 import 'package:cmu_fondue/domain/entities/problem_entity.dart';
 
 /// Demands citizens explicitly review ongoing vicinity issues preventing unnecessary duplicate logs internally.
+/// 
+/// Presents a list of nearby [ProblemEntity] records based on the [location] coordinates.
+/// Users are encouraged to [Upvote] instead of creating a new report if their issue is already listed.
 class AssignedProblemsPage extends StatefulWidget {
   /// The isolated coordinate framework pinning the user intent physically.
   final CmuPlaceEntity location;
@@ -133,9 +138,9 @@ class _AssignedProblemsPageState extends State<AssignedProblemsPage> {
                         problem: displayProblems[index],
                         onUpvote: (isUpvoted) =>
                             context.read<ProblemProvider>().toggleUpvote(
-                              problemId: displayProblems[index].id,
-                              isUpvoted: isUpvoted,
-                            ),
+                                problemId: displayProblems[index].id,
+                                isUpvoted: isUpvoted,
+                              ),
                       );
                     },
                   );

@@ -1,11 +1,13 @@
 /*
  * File: select_place_page.dart
  * Description: Geolocation pinpointing tool binding raw manual searching algorithms directly into tactile map movements enforcing bounding boundaries strictly natively.
- * Responsibilities: Filters valid queries securely, intercepts arbitrary touches gracefully validating coordinates strictly against static limits seamlessly.
- * Dependencies: CmuPlaceUsecase, SubmitLocationBottomSheet, MapSubmitWidget, LocationSearchWidget
+ * Responsibilities: 
+ * - Facilitates the selection of a specific [CmuPlaceEntity] for reporting.
+ * - Intercepts map interactions to validate coordinates against University boundaries.
+ * - Provides immediate feedback via bottom sheets upon successful location locking.
+ * Author: Apiwit 650510648 & Chananchida 650510659
+ * Course: Mobile Application Development Framework
  * Lifecycle: Created upon router switching dynamically, Disposed automatically retreating out from creation stacks.
- * Author: Chananchida
- * Course: CMU Fondue
  */
 
 import 'package:cmu_fondue/application/widgets/submit_location_bottom_sheet.dart';
@@ -21,6 +23,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Synthesizes tactile Google map structures bridging text queries backwards towards strictly bounded geographical coordinates elegantly.
+///
+/// Integrates a [LocationSearchWidget] for keyword-based site finding alongside
+/// a [MapSubmitWidget] for manual pin drops. Returns selected place metadata
+/// to the calling process.
 class SelectPlaceBottomSheet extends StatefulWidget {
   /// Initializes a new instance of [SelectPlaceBottomSheet].
   const SelectPlaceBottomSheet({super.key});
@@ -30,19 +36,27 @@ class SelectPlaceBottomSheet extends StatefulWidget {
 }
 
 class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
+  /// The reactive name of the currently targeted place.
   String? _selectedPlace;
 
+  /// The domain logic for place retrieval and boundary validation.
   late CmuPlaceUsecase _cmuPlaceUsecase;
 
+  /// The full list of authoritative University landmarks.
   List<CmuPlaceEntity> _cmuPlaces = [];
-  bool _isLoading = true;
 
+  /// Notifies listeners of changes to the current placemark candidates.
   final ValueNotifier<List<CmuPlaceEntity>?> _placemarkNotifier = ValueNotifier(
     null,
   );
 
+  /// The controller for the text-based location search input.
   final TextEditingController _searchController = TextEditingController();
+
+  /// Whether the map move was triggered by program code rather than a manual drag.
   bool _isProgrammaticMove = false;
+
+  /// Tracks the first load to handle initial location centering.
   bool _isFirstLoad = true;
 
   @override
@@ -52,6 +66,7 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     _refreshData();
   }
 
+  /// Initializes required domain controllers for place handling.
   void _initDependencies() {
     final repo = CmuPlaceRepoImpl();
     _cmuPlaceUsecase = CmuPlaceUsecase(repo);
@@ -64,7 +79,6 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   /// Side effects:
   /// Rewrites active [_cmuPlaces] comprehensively upon fetching cleanly directly firing [setState].
   Future<void> _refreshData() async {
-    setState(() => _isLoading = true);
     try {
       final result = await _cmuPlaceUsecase.getCmuPlaces();
       setState(() {
@@ -72,11 +86,10 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
       });
     } catch (e) {
       _showErrorSnackBar("โหลดข้อมูลไม่สำเร็จ: $e");
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
+  /// Displays generic error notifications to the user via the [ScaffoldMessenger].
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
@@ -84,6 +97,8 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   }
 
   /// Projects restrictive system alerts punishing errant geographical selections violently disrupting creation flow deliberately.
+  ///
+  /// Informs the user that the selected location is outside the University boundaries.
   void _showNotInCmuDialog() {
     showDialog(
       context: context,
@@ -103,6 +118,9 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     );
   }
 
+  /// Attempts to center the map on the user's current physical position.
+  ///
+  /// Falls back to default University coordinates if location services are disabled or unavailable.
   Future<void> _moveToUserLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition(
@@ -125,6 +143,10 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
     }
   }
 
+  /// Updates the internal search state to focus on a specific [lat] and [lng] coordinate.
+  ///
+  /// Side effects:
+  /// Updates [_placemarkNotifier] with a newly constructed [CmuPlaceEntity].
   void _setLocationToPosition(double lat, double lng) async {
     try {
       await setLocaleIdentifier("th_TH");
@@ -162,6 +184,8 @@ class _SelectPlaceBottomSheetState extends State<SelectPlaceBottomSheet> {
   }
 
   /// Validates textual landmark selections explicitly filtering coordinates dynamically rejecting errant values totally identically natively.
+  ///
+  /// Dispatched when the user picks a suggested [place] from the search list.
   void _onLocationSelected(Placemark place) {
     setState(() {
       _selectedPlace = place.name;

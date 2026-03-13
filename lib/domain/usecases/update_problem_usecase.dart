@@ -2,7 +2,7 @@
  * File: update_problem_usecase.dart
  * Description: Use case for altering the metadata attributes of an existing problem.
  * Responsibilities: Forwards field replacements down to the problem datastore.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  * Notes: No UI logic should appear in this file.
  */

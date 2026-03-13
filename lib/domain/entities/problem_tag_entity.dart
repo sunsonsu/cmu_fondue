@@ -2,7 +2,7 @@
  * File: problem_tag_entity.dart
  * Description: Entity representing a tag or status category for a problem.
  * Responsibilities: Holds the tag data and provides a factory for parsing from generated SDK data.
- * Author: Komsan
+ * Author: Komsan 650510601
  * Course: CMU Fondue
  */
 
