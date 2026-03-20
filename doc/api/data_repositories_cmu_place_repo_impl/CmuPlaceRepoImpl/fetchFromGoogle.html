@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the fetchFromGoogle method from the CmuPlaceRepoImpl class, for the Dart programming language.">
+  <title>fetchFromGoogle method - CmuPlaceRepoImpl class - cmu_place_repo_impl library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">cmu_fondue</a></li>
+    <li><a href="../../data_repositories_cmu_place_repo_impl/">data&#47;repositories&#47;cmu_place_repo_impl.dart</a></li>
+    <li><a href="../../data_repositories_cmu_place_repo_impl/CmuPlaceRepoImpl-class.html">CmuPlaceRepoImpl</a></li>
+    <li class="self-crumb">fetchFromGoogle method</li>
+  </ol>
+  <div class="self-name">fetchFromGoogle</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="data_repositories_cmu_place_repo_impl&#47;CmuPlaceRepoImpl-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">fetchFromGoogle</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">dynamic</span>
+<span class="name ">fetchFromGoogle</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Initiates an HTTP request to Google Places API to dynamically list locations around the campus coordinates.</p>
+<p>This operates asynchronously. It reads boundaries and secrets from the surrounding environment variables.
+Returns raw parsed JSON. Throws an exception if the response explicitly fails.</p>
+<p>Side effects:
+Upserts the newly fetched raw data structure directly into the local <code>cache</code>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">dynamic fetchFromGoogle() async {
+  const String googleMapsApikey = String.fromEnvironment(&#39;GCP_API_KEY&#39;);
+  const String url = &#39;https:&#47;&#47;places.googleapis.com&#47;v1&#47;places:searchNearby&#39;;
+  final cmuLat = double.parse(dotenv.env[&#39;CMU_LAT&#39;]!);
+  final cmuLng = double.parse(dotenv.env[&#39;CMU_LNG&#39;]!);
+  final cmuRadius = double.parse(dotenv.env[&#39;CMU_RADIUS&#39;]!);
+
+  final Map&lt;String, String&gt; headers = {
+    &#39;Content-Type&#39;: &#39;application&#47;json&#39;,
+    &#39;X-Goog-Api-Key&#39;: googleMapsApikey,
+    &#39;X-Goog-FieldMask&#39;:
+        &#39;places.displayName,places.formattedAddress,places.location&#39;,
+  };
+
+  final Map&lt;String, dynamic&gt; body = {
+    &quot;includedTypes&quot;: [
+      &quot;academic_department&quot;,
+      &quot;educational_institution&quot;,
+      &quot;library&quot;,
+      &quot;research_institute&quot;,
+      &quot;school&quot;,
+      &quot;university&quot;,
+      &quot;food_court&quot;,
+      &quot;museum&quot;,
+      &quot;convenience_store&quot;,
+      &quot;park&quot;,
+      &quot;historical_place&quot;,
+    ],
+    &quot;maxResultCount&quot;: 20,
+    &quot;languageCode&quot;: &quot;th&quot;,
+    &quot;locationRestriction&quot;: {
+      &quot;circle&quot;: {
+        &quot;center&quot;: {&quot;latitude&quot;: cmuLat, &quot;longitude&quot;: cmuLng},
+        &quot;radius&quot;: cmuRadius,
+      },
+    },
+  };
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: headers,
+    body: json.encode(body),
+  );
+
+  if (response.statusCode != 200) {
+    debugPrint(response.body);
+    throw Exception(&#39;Failed to fetch CMU places&#39;);
+  }
+
+  final data = json.decode(response.body);
+  await cache.set(&#39;cmu_places&#39;, data);
+  return data;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">cmu_fondue</a></li>
+    <li><a href="../../data_repositories_cmu_place_repo_impl/">cmu_place_repo_impl</a></li>
+    <li><a href="../../data_repositories_cmu_place_repo_impl/CmuPlaceRepoImpl-class.html">CmuPlaceRepoImpl</a></li>
+    <li class="self-crumb">fetchFromGoogle method</li>
+</ol>
+
+    <h5>CmuPlaceRepoImpl class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    cmu_fondue
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
